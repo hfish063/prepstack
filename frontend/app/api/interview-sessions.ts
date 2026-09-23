@@ -27,14 +27,14 @@ export async function findAllInterviewsForUser(token: string) {
     throw new Error("Failed to fetch interview sessions.");
   }
 
-  return (await response.json()) as InterviewSession;
+  return (await response.json()) as InterviewSession[];
 }
 
 export async function saveInterview(
   token: string,
   newInterviewSession: InterviewSessionCreate,
 ) {
-  const response = await apiFetch("/api/interviews/save", {
+  const response = await apiFetch("/interviews/save", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

@@ -15,8 +15,8 @@ class InterviewSessionRead(CamelModel):
     id: int
     role: str
     experience_level: str
-    topics: str
-    description: str
+    topics: str | None
+    description: str | None
     user_id: str
     created_at: datetime
     updated_at: datetime
