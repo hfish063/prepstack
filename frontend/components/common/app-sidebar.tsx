@@ -1,4 +1,4 @@
-import { Layers, LayoutDashboard, MessageSquare } from "lucide-react";
+import { LayoutDashboard, MessageSquare } from "lucide-react";
 import {
   Sidebar,
   SidebarHeader,
@@ -15,18 +15,11 @@ const SIDEBAR_LINKS = [
 
 export default function AppSidebar() {
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Layers />
-              <span className="font-bold text-lg">PrepStack</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <span className="font-semibold">PrepStack</span>
       </SidebarHeader>
-      <SidebarMenu className="p-2">
+      <SidebarMenu>
         {SIDEBAR_LINKS.map((item, index) => (
           <SidebarMenuItem key={index}>
             <Link href={item.link}>
