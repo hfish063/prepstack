@@ -1,6 +1,5 @@
 import { Show, UserButton } from "@clerk/nextjs";
 import { SidebarTrigger } from "../ui/sidebar";
-import { Separator } from "../ui/separator";
 
 export default function AppHeader() {
   return (
@@ -11,7 +10,6 @@ export default function AppHeader() {
           <UserButton />
         </Show>
       </div>
-      <Separator />
     </header>
   );
 }

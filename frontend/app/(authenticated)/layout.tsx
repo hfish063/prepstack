@@ -9,7 +9,7 @@ export default function AuthenticatedLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider>
       <AppSidebar />
       <main className="flex flex-1 flex-col min-w-0 h-svh overflow-hidden">
         <TooltipProvider>
