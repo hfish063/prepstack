@@ -4,24 +4,81 @@
 
 Many computer science students face significant hurdles entering the job market because academic coursework rarely replicates the high-pressure, nuanced environment of technical interviews. This application aims to bridge that gap by providing a full-fledged, real-time interview simulation that evaluates both programmatic problem-solving and critical communication skills, moving far beyond the scope of a standard "chatbot".
 
-## Development
+## Architecture
 
-### Setup
+This is a mono-repo with two apps:
 
-The project is structured within a mono-repository, meaning both the frontend and backend portions of the application exist in the same project space.
+- **`frontend/`** — Next.js (React 19) app, using [Clerk](https://clerk.com) for authentication.
+- **`backend/`** — FastAPI app, using SQLModel + Alembic on Postgres for persistence, Clerk for auth verification, and the OpenAI API for interview generation.
 
-In order to successfully launch the web app we must first complete some prerequisite steps.
+The frontend talks to the backend's `/api` routes; the backend talks to Postgres and OpenAI.
 
-1. `docker run --name prepstack -e POSTGRES_PASSWORD=password -p`
-2. Setup an account for [Clerk](https://clerk.com), this service provides user management and authentication.
-3. Create a project in the Clerk dashboard, and obtain a secret API key.
-4. Add this key to your `.env` (Note: you might have to create a `.env` file yourself) in the `backend` directory.
-5. Now setup the Clerk SDK for your frontend, follow [this](https://clerk.com/docs/nextjs/getting-started/quickstart) guide
-6. It's time to install our backend dependencies. Run the following command from the `backend` folder.
-   `python3 -m pip install -r requirements.txt`
+## Prerequisites
 
-### Running the Application
+- Python 3.14+
+- Node.js 20+
+- Docker (for a local Postgres instance)
+- A [Clerk](https://clerk.com) account and application
+- An [OpenAI](https://platform.openai.com) API key
 
-1. Ensure your database is up and running on port 5432 (or whichever port it was configured with).
-2. Launch the frontend with `npm run dev`
-3. Launch the backend with `fastapi dev`
+## Setup
+
+### 1. Database
+
+Start a local Postgres instance:
+
+```bash
+docker run --name prepstack -e POSTGRES_PASSWORD=password -e POSTGRES_DB=prepstack -p 5432:5432 -d postgres
+```
+
+### 2. Backend
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+Edit `backend/.env` and fill in:
+
+- `DATABASE_URL` — connection string for the Postgres instance above (defaults match the `docker run` command)
+- `CLERK_SECRET_KEY` — from your Clerk dashboard
+- `OPENAI_API_KEY` — from your OpenAI account
+
+Apply the database migrations:
+
+```bash
+alembic upgrade head
+```
+
+### 3. Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+Create `frontend/.env.local` with your Clerk keys (see the [Next.js quickstart](https://clerk.com/docs/nextjs/getting-started/quickstart)):
+
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+```
+
+## Running the Application
+
+From `backend/` (with the virtualenv activated):
+
+```bash
+fastapi dev app/main.py
+```
+
+From `frontend/`:
+
+```bash
+npm run dev
+```
+
+The frontend runs at `http://localhost:3000` and the backend API at `http://localhost:8000`.
