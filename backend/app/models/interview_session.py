@@ -11,8 +11,8 @@ class InterviewSession(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     role: str
     experience_level: str
-    topics: str = Field(default="")
-    description: str = Field(default="")
+    topics: Optional[str] = Field(default=None)
+    description: Optional[str] = Field(default=None)
     user_id: str = Field(index=True)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),

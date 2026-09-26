@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlmodel import Session, select
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -28,7 +29,7 @@ def create_user_interview(db: Session, new_interview_session: InterviewSessionCr
 def delete_user_interview_by_id(db: Session, user_id: str, interview_id: int) -> None:
     interview = get_user_interview_by_id(db, user_id, interview_id)
     if not interview:
-        return
+        raise HTTPException(status_code=404, detail="Failed to locate interview session with corresponding id.")
 
     try:
         db.delete(interview)
