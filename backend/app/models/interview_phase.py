@@ -12,6 +12,7 @@ class InterviewPhase(CamelModel):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     interview_id = None
+    coding_problem_id = None # Optional, for future implementation
     phase_type: PhaseType
     order_index: int # 0 behavioral 1 conceptual 2 technical
     status: PhaseStatus 
