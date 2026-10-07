@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from sqlalchemy import UniqueConstraint
 from sqlmodel import Field
 
 from app.enums import PhaseStatus, PhaseType
@@ -9,6 +10,7 @@ from app.schemas.base import CamelModel
 
 class InterviewPhase(CamelModel):
     __table_name__ = "interview_phases"
+    __table_args__ = (UniqueConstraint("interview_id", "order_index"))
 
     id: Optional[int] = Field(default=None, primary_key=True)
     interview_id = None
