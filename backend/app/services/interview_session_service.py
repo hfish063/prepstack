@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.models.interview_session import InterviewSession
 from app.schemas.interview_session import InterviewSessionCreate
+from app.services.interview_phase_service import create_interview_phases
 
 
 def get_all_user_interviews(db: Session, user_id: str) -> list[InterviewSession]:
@@ -21,10 +22,12 @@ def create_user_interview(db: Session, new_interview_session: InterviewSessionCr
         db.add(db_session)
         db.commit()
         db.refresh(db_session)
-        return db_session
     except SQLAlchemyError:
         db.rollback()
         raise
+
+    create_interview_phases(db, db_session.id)
+    return db_session
 
 def delete_user_interview_by_id(db: Session, user_id: str, interview_id: int) -> None:
     interview = get_user_interview_by_id(db, user_id, interview_id)
