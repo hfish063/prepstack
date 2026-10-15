@@ -6,6 +6,7 @@ from sqlmodel import Field, SQLModel
 
 from app.enums import MessageRole
 
+
 class Message(SQLModel, table=True):
     __tablename__ = "messages"
 

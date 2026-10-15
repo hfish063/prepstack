@@ -11,11 +11,24 @@ def get_all_user_interviews(db: Session, user_id: str) -> list[InterviewSession]
     statement = select(InterviewSession).where(InterviewSession.user_id == user_id)
     return db.exec(statement).all()
 
-def get_user_interview_by_id(db: Session, user_id: str, interview_id: int) -> InterviewSession:
-    statement = select(InterviewSession).where(InterviewSession.user_id == user_id, InterviewSession.id == interview_id)
-    return db.exec(statement).first()
 
-def create_user_interview(db: Session, new_interview_session: InterviewSessionCreate, user_id: str) -> InterviewSession:
+def get_user_interview_by_id(
+    db: Session, user_id: str, interview_id: int
+) -> InterviewSession:
+    statement = select(InterviewSession).where(
+        InterviewSession.user_id == user_id, InterviewSession.id == interview_id
+    )
+    interview = db.exec(statement).first()
+
+    if not interview:
+        raise HTTPException(status_code=404, detail="Interview session not found")
+
+    return interview
+
+
+def create_user_interview(
+    db: Session, new_interview_session: InterviewSessionCreate, user_id: str
+) -> InterviewSession:
     db_session = InterviewSession(**new_interview_session.model_dump(), user_id=user_id)
 
     try:
@@ -29,10 +42,14 @@ def create_user_interview(db: Session, new_interview_session: InterviewSessionCr
     create_interview_phases(db, db_session.id)
     return db_session
 
+
 def delete_user_interview_by_id(db: Session, user_id: str, interview_id: int) -> None:
     interview = get_user_interview_by_id(db, user_id, interview_id)
     if not interview:
-        raise HTTPException(status_code=404, detail="Failed to locate interview session with corresponding id.")
+        raise HTTPException(
+            status_code=404,
+            detail="Failed to locate interview session with corresponding id.",
+        )
 
     try:
         db.delete(interview)

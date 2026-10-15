@@ -13,12 +13,9 @@ class InterviewPhase(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     interview_id: int = Field(foreign_key="interview_sessions.id", index=True)
-    coding_problem_id: Optional[int] = None # Optional, for future implementation
+    coding_problem_id: Optional[int] = None  # Optional, for future implementation
     phase_type: PhaseType
-    order_index: int # 0 behavioral 1 conceptual 2 technical
-    status: PhaseStatus 
+    order_index: int  # 0 behavioral 1 conceptual 2 technical
+    status: PhaseStatus
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
-
-
-
