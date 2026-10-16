@@ -14,7 +14,7 @@ def save_message(
     try:
         db.add(db_message)
         db.commit()
-        db.refresh()
+        db.refresh(db_message)
     except SQLAlchemyError:
         db.rollback()
         raise

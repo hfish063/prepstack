@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlmodel import Session, select
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.enums import MessageRole, PhaseStatus, PhaseType
+from app.enums import PhaseStatus, PhaseType
 from app.models.interview_phase import InterviewPhase
 from app.models.interview_session import InterviewSession
 
@@ -39,11 +39,11 @@ def create_interview_phases(db: Session, interview_id: int) -> list[InterviewPha
     return phases
 
 
-def get_phase_for_user(db: Session, phase_id: int, role: MessageRole, user_id: str):
+def get_phase_for_user(db: Session, phase_id: int, user_id: str) -> InterviewPhase:
     statement = (
         select(InterviewPhase)
-        .join(InterviewSession, InterviewPhase.id == InterviewSession.id)
-        .where(InterviewPhase.phase_id == phase_id, InterviewSession.user_id == user_id)
+        .join(InterviewSession, InterviewPhase.interview_id == InterviewSession.id)
+        .where(InterviewPhase.id == phase_id, InterviewSession.user_id == user_id)
     )
     phase = db.exec(statement).first()
 
@@ -51,3 +51,20 @@ def get_phase_for_user(db: Session, phase_id: int, role: MessageRole, user_id: s
         raise HTTPException(status_code=404, detail="Interview phase not found")
 
     return phase
+
+
+def get_phases_for_interview(
+    db: Session, user_id: str, interview_id: int
+) -> list[InterviewPhase]:
+    statement = (
+        select(InterviewPhase)
+        .join(InterviewSession, InterviewPhase.interview_id == InterviewSession.id)
+        .where(InterviewPhase.interview_id == interview_id, InterviewSession.user_id == user_id)
+        .order_by(InterviewPhase.order_index)
+    )
+    phases = db.exec(statement).all()
+
+    if not phases:
+        raise HTTPException(status_code=404, detail="Interview not found")
+
+    return phases

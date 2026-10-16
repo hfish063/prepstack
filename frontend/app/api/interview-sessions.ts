@@ -18,6 +18,19 @@ export interface InterviewSessionCreate {
   description?: string;
 }
 
+export type PhaseType = "behavioral" | "conceptual" | "technical";
+export type PhaseStatus = "pending" | "in_progress" | "completed";
+
+export interface InterviewPhase {
+  id: number;
+  interviewId: number;
+  phaseType: PhaseType;
+  orderIndex: number;
+  status: PhaseStatus;
+  startedAt: string | null;
+  completedAt: string | null;
+}
+
 export async function findAllInterviewsForUser(token: string) {
   const response = await apiFetch(`/interviews/all`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -48,6 +61,30 @@ export async function saveInterview(
   }
 
   return (await response.json()) as InterviewSession;
+}
+
+export async function findInterviewById(token: string, interviewId: number) {
+  const response = await apiFetch(`/interviews/${interviewId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch interview session with id: ${interviewId}`);
+  }
+
+  return (await response.json()) as InterviewSession;
+}
+
+export async function findPhasesForInterview(token: string, interviewId: number) {
+  const response = await apiFetch(`/interviews/${interviewId}/phases`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch phases for interview with id: ${interviewId}`);
+  }
+
+  return (await response.json()) as InterviewPhase[];
 }
 
 export async function deleteInterviewByIdForUser(

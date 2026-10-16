@@ -18,7 +18,7 @@ def process_message(db: Session, phase_id: int, user_id: str, content: str) -> M
     save_message(db, phase_id, MessageRole.USER, content)
 
     # Get message history for phase
-    history = get_phase_messages(db, phase_id, user_id)
+    history = get_phase_messages(db, phase_id)
 
     # Build AI prompt
     # Call OpenAI
@@ -32,12 +32,12 @@ def process_message(db: Session, phase_id: int, user_id: str, content: str) -> M
 
 def build_prompt(
     phase: InterviewPhase, history: list[Message], interview: InterviewSession
-) -> str:
+) -> list[dict]:
     """Builds the OpenAI message list: the phase type's strategy-specific system prompt followed by the phase's prior history."""
-    strategy = get_phase_strategy(phase.phase_type, interview)
+    strategy = get_phase_strategy(phase.phase_type)
     system_prompt = strategy.build_system_prompt(interview)
 
     messages = [{"role": "system", "content": system_prompt}]
-    messages.append({"role": m.role.value, "content": m.content} for m in history)
+    messages.extend({"role": m.role.value, "content": m.content} for m in history)
 
     return messages
