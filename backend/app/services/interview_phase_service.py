@@ -59,7 +59,10 @@ def get_phases_for_interview(
     statement = (
         select(InterviewPhase)
         .join(InterviewSession, InterviewPhase.interview_id == InterviewSession.id)
-        .where(InterviewPhase.interview_id == interview_id, InterviewSession.user_id == user_id)
+        .where(
+            InterviewPhase.interview_id == interview_id,
+            InterviewSession.user_id == user_id,
+        )
         .order_by(InterviewPhase.order_index)
     )
     phases = db.exec(statement).all()
