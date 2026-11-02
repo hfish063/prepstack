@@ -26,6 +26,3 @@ Guidelines:
 - Keep responses conversational and short (2-4 sentences).
 - Do not give feedback, scores, or hints about performance during the conversation.
 - After roughly 4-5 solid question/answer exchanges, close the section naturally rather than asking another question.{background_clause}"""
-
-    def should_advance_phase(self, phase: InterviewPhase, history: list[Message]):
-        pass

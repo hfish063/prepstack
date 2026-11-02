@@ -8,8 +8,3 @@ from app.models.message import Message
 class PhaseStrategy(ABC):
     @abstractmethod
     def build_system_prompt(self, interview: InterviewSession) -> str: ...
-
-    @abstractmethod
-    def should_advance_phase(
-        self, phase: InterviewPhase, history: list[Message]
-    ) -> bool: ...
