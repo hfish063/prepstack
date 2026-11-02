@@ -1,8 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
-import {
-  findInterviewById,
-  findPhasesForInterview,
-} from "@/app/api/interview-sessions";
+import { findInterviewById } from "@/app/api/interview-sessions";
+import { findPhasesForInterview } from "@/app/api/interview-phases";
 import { findMessagesForPhase } from "@/app/api/messages";
 import ChatPanel from "@/components/interview-sessions/chat-panel";
 
