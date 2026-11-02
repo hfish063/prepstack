@@ -30,19 +30,17 @@ export default async function InterviewSessionPage({
     findPhasesForInterview(token, interviewId),
   ]);
 
-  const behavioralPhase = phases.find(
-    (phase) => phase.phaseType === "behavioral",
-  );
+  const currentPhase = phases.find((phase) => phase.status === "in_progress");
 
-  if (!behavioralPhase) {
+  if (!currentPhase) {
     return (
-      <p className="text-sm text-muted-foreground">
-        This interview has no behavioral phase.
+      <p>
+        This interview has already been completed and is set to READONLY mode.
       </p>
     );
   }
 
-  const messages = await findMessagesForPhase(token, behavioralPhase.id);
+  const messages = await findMessagesForPhase(token, currentPhase.id);
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
@@ -63,7 +61,11 @@ export default async function InterviewSessionPage({
         <CompleteInterviewButton interview={interview} />
       </div>
       <div className="min-h-0 flex-1">
-        <ChatPanel phaseId={behavioralPhase.id} initialMessages={messages} />
+        <ChatPanel
+          key={currentPhase.id}
+          phaseId={currentPhase.id}
+          initialMessages={messages}
+        />
       </div>
     </div>
   );

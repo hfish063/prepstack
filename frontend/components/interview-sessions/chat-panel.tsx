@@ -81,7 +81,7 @@ export default function ChatPanel({
 
       <Separator />
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-sm text-destructive px-4">{error}</p>}
 
       <form onSubmit={handleSubmit} className="flex gap-2 p-4">
         <Input
