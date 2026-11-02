@@ -66,7 +66,7 @@ export default function InterviewPhaseIndicators({
 
   return (
     <>
-      <div className="flex flex-row gap-2 items-center">
+      <div className="flex flex-row flex-wrap gap-2 items-center">
         {phases.map((phase) => (
           <div key={phase.id}>
             <Button

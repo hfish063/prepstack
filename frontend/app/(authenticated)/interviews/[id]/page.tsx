@@ -5,6 +5,8 @@ import { findMessagesForPhase } from "@/app/api/messages";
 import ChatPanel from "@/components/interview-sessions/chat-panel";
 import InterviewPhaseIndicators from "@/components/interview-sessions/interview-phase-indicators";
 import CompletePhaseButton from "@/components/interview-sessions/complete-phase-button";
+import { Separator } from "@/components/ui/separator";
+import InterviewConfigurationButton from "@/components/interview-sessions/interview-configuration-button";
 
 export default async function InterviewSessionPage({
   params,
@@ -44,13 +46,17 @@ export default async function InterviewSessionPage({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div>
-        <h1 className="text-lg font-medium">{interview.role}</h1>
-        <p className="text-sm text-muted-foreground">
-          {interview.experienceLevel}
-        </p>
-      </div>
       <div className="flex flex-row gap-2 justify-between items-center">
+        <div>
+          <h1 className="text-lg font-medium">{interview.role}</h1>
+          <p className="text-sm text-muted-foreground">
+            {interview.experienceLevel}
+          </p>
+        </div>
+        <InterviewConfigurationButton interview={interview} />
+      </div>
+      <Separator />
+      <div className="flex flex-row flex-wrap gap-2 justify-between items-center">
         <InterviewPhaseIndicators phases={phases} />
         <CompletePhaseButton
           phase={phases.find((phase) => phase.status === "in_progress")}

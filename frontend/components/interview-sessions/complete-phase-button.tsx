@@ -14,7 +14,7 @@ export default function CompletePhaseButton({
   }
 
   return (
-    <Button variant={"outline"} disabled={phase.status === "completed"}>
+    <Button variant={"outline"} disabled={true}>
       <Check /> Complete Phase
     </Button>
   );

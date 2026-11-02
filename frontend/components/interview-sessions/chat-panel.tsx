@@ -10,6 +10,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { Message, sendMessage } from "@/app/api/messages";
 import InterviewPhaseIndicators from "./interview-phase-indicators";
 import NextPhaseButton from "./complete-phase-button";
+import { Card } from "../ui/card";
+import { Separator } from "../ui/separator";
 
 type ChatPanelProps = {
   phaseId: number;
@@ -65,8 +67,8 @@ export default function ChatPanel({
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
+    <Card className="flex h-full min-h-0 flex-col gap-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
         {messages.map((message) => (
           <ChatBubble key={message.id} message={message} />
         ))}
@@ -79,9 +81,11 @@ export default function ChatPanel({
         <div ref={bottomRef} />
       </div>
 
+      <Separator />
+
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex gap-2 p-4">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -93,7 +97,7 @@ export default function ChatPanel({
           {sending ? <Spinner /> : <ArrowUp />}
         </Button>
       </form>
-    </div>
+    </Card>
   );
 }
 
