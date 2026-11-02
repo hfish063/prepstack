@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from app.enums import InterviewStatus
 from app.schemas.base import CamelModel
 
 
@@ -18,5 +19,6 @@ class InterviewSessionRead(CamelModel):
     topics: str | None
     description: str | None
     user_id: str
+    status: InterviewStatus
     created_at: datetime
     updated_at: datetime

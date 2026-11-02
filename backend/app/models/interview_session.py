@@ -4,6 +4,8 @@ from typing import Optional
 from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, SQLModel
 
+from app.enums import InterviewStatus
+
 
 class InterviewSession(SQLModel, table=True):
     __tablename__ = "interview_sessions"
@@ -14,6 +16,7 @@ class InterviewSession(SQLModel, table=True):
     topics: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None)
     user_id: str = Field(index=True)
+    status: InterviewStatus = Field(default=InterviewStatus.IN_PROGRESS)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True), server_default=func.now()),
