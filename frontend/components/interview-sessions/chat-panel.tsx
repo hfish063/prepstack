@@ -66,7 +66,7 @@ export default function ChatPanel({
 
   return (
     <Card className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4">
         {messages.map((message) => (
           <ChatBubble key={message.id} message={message} />
         ))}
