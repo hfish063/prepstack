@@ -24,8 +24,6 @@ def process_message(db: Session, phase_id: int, user_id: str, content: str) -> M
     # Call OpenAI
     ai_content = generate_response(build_prompt(phase, history, interview))
 
-    # TODO: Determine whether to advance phases
-
     # Save AI response
     return save_message(db, phase_id, MessageRole.ASSISTANT, ai_content)
 
