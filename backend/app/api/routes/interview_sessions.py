@@ -17,7 +17,7 @@ from app.services.interview_session_service import (
 router = APIRouter(prefix="/interviews")
 
 
-@router.get("/all")
+@router.get("/all", response_model=list[InterviewSessionRead])
 def find_all_interview_sessions(
     db: Session = Depends(get_db), auth=Depends(get_current_user)
 ):

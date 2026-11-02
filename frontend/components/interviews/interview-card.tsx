@@ -4,7 +4,15 @@ import {
   InterviewSession,
   InterviewStatus,
 } from "@/app/api/interview-sessions";
-import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import Link from "next/link";
 import ManageInterviewButton from "./manage-interview-button";
 import { CircleCheck, CircleDot, CircleX } from "lucide-react";
@@ -14,25 +22,50 @@ type InterviewCardProps = {
 };
 
 export default function InterviewCard({ interview }: InterviewCardProps) {
+  const topics = interview.topics
+    ? interview.topics
+        .split(",")
+        .map((topic) => topic.trim())
+        .filter(Boolean)
+    : [];
+
   return (
-    <Card key={interview.id} className="relative">
-      <CardHeader className="flex flex-row gap-2 items-center justify-between">
-        <div className="flex flex-col gap-2">
-          <Link
-            href={`/interviews/${interview.id}`}
-            className="after:absolute after:inset-0"
-          >
-            <CardTitle>{interview.role}</CardTitle>
-          </Link>
-          <CardDescription>{interview.topics}</CardDescription>
-        </div>
-        <div className="relative">
-          <InterviewStatusIndicator status={interview.status} />
+    <Card key={interview.id} className="relative h-full">
+      <CardHeader className="flex flex-row items-center justify-between gap-2">
+        <div className="flex flex-row items-center gap-2">
+          <div className="relative z-10">
+            <InterviewStatusIndicator status={interview.status} />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Link
+              href={`/interviews/${interview.id}`}
+              className="after:absolute after:inset-0"
+            >
+              <CardTitle>{interview.role}</CardTitle>
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              {interview.experienceLevel}
+            </p>
+          </div>
         </div>
         <div className="relative z-10">
           <ManageInterviewButton interview={interview} />
         </div>
       </CardHeader>
+
+      <CardContent className="flex flex-1 flex-row flex-wrap gap-2">
+        {topics.map((topic, index) => (
+          <Badge key={index} variant="secondary">
+            {topic}
+          </Badge>
+        ))}
+      </CardContent>
+
+      <CardFooter className="flex flex-row items-center">
+        <span className="text-sm text-muted-foreground">
+          {new Date(interview.createdAt).toLocaleDateString("en-US")}
+        </span>
+      </CardFooter>
     </Card>
   );
 }
@@ -50,8 +83,11 @@ function InterviewStatusIndicator({ status }: InterviewStatusIndicatorProps) {
   }
 
   return (
-    <div className="flex flex-row gap-2 items-center">
-      {icon} {status}
-    </div>
+    <Tooltip>
+      <TooltipTrigger
+        render={<span className="inline-flex items-center">{icon}</span>}
+      />
+      <TooltipContent>{status}</TooltipContent>
+    </Tooltip>
   );
 }
