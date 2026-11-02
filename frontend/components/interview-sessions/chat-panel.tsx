@@ -8,8 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Message, sendMessage } from "@/app/api/messages";
-import InterviewPhaseIndicators from "./interview-phase-indicators";
-import NextPhaseButton from "./complete-phase-button";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
 

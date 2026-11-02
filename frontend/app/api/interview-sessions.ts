@@ -1,5 +1,7 @@
 import apiFetch from "./api";
 
+export type InterviewStatus = "in_progress" | "completed" | "abandoned";
+
 export interface InterviewSession {
   id: number;
   role: string;
@@ -7,6 +9,7 @@ export interface InterviewSession {
   topics: string;
   description: string;
   userId: string;
+  status: InterviewStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -59,6 +62,19 @@ export async function findInterviewById(token: string, interviewId: number) {
     throw new Error(
       `Failed to fetch interview session with id: ${interviewId}`,
     );
+  }
+
+  return (await response.json()) as InterviewSession;
+}
+
+export async function completeInterview(token: string, interviewId: number) {
+  const response = await apiFetch(`/interviews/${interviewId}/complete`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to complete interview with id: ${interviewId}`);
   }
 
   return (await response.json()) as InterviewSession;
