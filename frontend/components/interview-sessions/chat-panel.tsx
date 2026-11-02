@@ -8,13 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Message, sendMessage } from "@/app/api/messages";
+import InterviewPhaseIndicators from "./interview-phase-indicators";
+import NextPhaseButton from "./complete-phase-button";
 
 type ChatPanelProps = {
   phaseId: number;
   initialMessages: Message[];
 };
 
-export default function ChatPanel({ phaseId, initialMessages }: ChatPanelProps) {
+export default function ChatPanel({
+  phaseId,
+  initialMessages,
+}: ChatPanelProps) {
   const { getToken } = useAuth();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -104,7 +109,9 @@ function ChatBubble({ message }: ChatBubbleProps) {
       <div
         className={cn(
           "max-w-[75%] rounded-xl px-3 py-2 text-sm",
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+          isUser
+            ? "bg-primary text-primary-foreground"
+            : "bg-muted text-foreground",
         )}
       >
         {message.content}
