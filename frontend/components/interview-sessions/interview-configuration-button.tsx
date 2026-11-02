@@ -1,6 +1,6 @@
 import { InterviewSession } from "@/app/api/interview-sessions";
 import { Button } from "../ui/button";
-import { Ellipsis, EllipsisVertical } from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 
 type InterviewConfigurationButtonProps = {
   interview: InterviewSession;
