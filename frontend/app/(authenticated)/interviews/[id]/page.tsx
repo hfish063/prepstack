@@ -5,6 +5,8 @@ import { findMessagesForPhase } from "@/app/api/messages";
 import ChatPanel from "@/components/interview-sessions/chat-panel";
 import InterviewPhaseIndicators from "@/components/interview-sessions/interview-phase-indicators";
 import { Separator } from "@/components/ui/separator";
+import CompleteInterviewButton from "@/components/interview-sessions/complete-interview-button";
+import ManageInterviewSessionButton from "@/components/interview-sessions/manage-interview-session-button";
 
 export default async function InterviewSessionPage({
   params,
@@ -44,14 +46,22 @@ export default async function InterviewSessionPage({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div>
-        <h1 className="text-lg font-medium">{interview.role}</h1>
-        <p className="text-sm text-muted-foreground">
-          {interview.experienceLevel}
-        </p>
+      <div className="flex flex-row gap-2 items-center justify-between">
+        <div>
+          <h1 className="text-lg font-medium">{interview.role}</h1>
+          <p className="text-sm text-muted-foreground">
+            {interview.experienceLevel}
+          </p>
+        </div>
+        <ManageInterviewSessionButton interview={interview} />
       </div>
+
       <Separator />
-      <InterviewPhaseIndicators phases={phases} />
+
+      <div className="flex flex-wrap gap-2 items-center justify-between">
+        <InterviewPhaseIndicators phases={phases} />
+        <CompleteInterviewButton interview={interview} />
+      </div>
       <div className="min-h-0 flex-1">
         <ChatPanel phaseId={behavioralPhase.id} initialMessages={messages} />
       </div>
