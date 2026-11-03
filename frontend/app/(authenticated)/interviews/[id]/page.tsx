@@ -1,10 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
-import {
-  findInterviewById,
-  findPhasesForInterview,
-} from "@/app/api/interview-sessions";
+import { findInterviewById } from "@/app/api/interview-sessions";
+import { findPhasesForInterview } from "@/app/api/interview-phases";
 import { findMessagesForPhase } from "@/app/api/messages";
 import ChatPanel from "@/components/interview-sessions/chat-panel";
+import InterviewPhaseIndicators from "@/components/interview-sessions/interview-phase-indicators";
+import { Separator } from "@/components/ui/separator";
+import CompleteInterviewButton from "@/components/interview-sessions/complete-interview-button";
+import ManageInterviewSessionButton from "@/components/interview-sessions/manage-interview-session-button";
 
 export default async function InterviewSessionPage({
   params,
@@ -28,31 +30,40 @@ export default async function InterviewSessionPage({
     findPhasesForInterview(token, interviewId),
   ]);
 
-  const behavioralPhase = phases.find(
-    (phase) => phase.phaseType === "behavioral",
-  );
+  const currentPhase = phases.find((phase) => phase.status === "in_progress");
 
-  if (!behavioralPhase) {
+  if (!currentPhase) {
     return (
-      <p className="text-sm text-muted-foreground">
-        This interview has no behavioral phase.
+      <p>
+        This interview has already been completed and is set to READONLY mode.
       </p>
     );
   }
 
-  const messages = await findMessagesForPhase(token, behavioralPhase.id);
+  const messages = await findMessagesForPhase(token, currentPhase.id);
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div>
-        <h1 className="text-lg font-medium">{interview.role}</h1>
-        <p className="text-sm text-muted-foreground">
-          {interview.experienceLevel}
-        </p>
+      <div className="flex flex-row gap-2 items-center justify-between">
+        <div>
+          <h1 className="text-lg font-medium">{interview.role}</h1>
+          <p className="text-sm text-muted-foreground">
+            {interview.experienceLevel}
+          </p>
+        </div>
+        <ManageInterviewSessionButton interview={interview} />
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-wrap gap-2 items-center justify-between">
+        <InterviewPhaseIndicators phases={phases} />
+        <CompleteInterviewButton interview={interview} />
       </div>
       <div className="min-h-0 flex-1">
         <ChatPanel
-          phaseId={behavioralPhase.id}
+          key={currentPhase.id}
+          phaseId={currentPhase.id}
           initialMessages={messages}
         />
       </div>

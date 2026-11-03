@@ -1,5 +1,7 @@
 from app.models.interview_session import InterviewSession
 from app.services.phase_strategies.strategy import PhaseStrategy
+from app.models.interview_phase import InterviewPhase
+from app.models.message import Message
 
 
 class BehavioralStrategy(PhaseStrategy):

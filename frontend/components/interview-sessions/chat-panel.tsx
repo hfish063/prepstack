@@ -8,13 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Message, sendMessage } from "@/app/api/messages";
+import { Card } from "../ui/card";
+import { Separator } from "../ui/separator";
 
 type ChatPanelProps = {
   phaseId: number;
   initialMessages: Message[];
 };
 
-export default function ChatPanel({ phaseId, initialMessages }: ChatPanelProps) {
+export default function ChatPanel({
+  phaseId,
+  initialMessages,
+}: ChatPanelProps) {
   const { getToken } = useAuth();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -60,8 +65,8 @@ export default function ChatPanel({ phaseId, initialMessages }: ChatPanelProps) 
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
+    <Card className="flex h-full min-h-0 flex-col gap-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4">
         {messages.map((message) => (
           <ChatBubble key={message.id} message={message} />
         ))}
@@ -74,9 +79,11 @@ export default function ChatPanel({ phaseId, initialMessages }: ChatPanelProps) 
         <div ref={bottomRef} />
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      <Separator />
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      {error && <p className="text-sm text-destructive px-4">{error}</p>}
+
+      <form onSubmit={handleSubmit} className="flex gap-2 p-4">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -88,7 +95,7 @@ export default function ChatPanel({ phaseId, initialMessages }: ChatPanelProps) 
           {sending ? <Spinner /> : <ArrowUp />}
         </Button>
       </form>
-    </div>
+    </Card>
   );
 }
 
@@ -104,7 +111,9 @@ function ChatBubble({ message }: ChatBubbleProps) {
       <div
         className={cn(
           "max-w-[75%] rounded-xl px-3 py-2 text-sm",
-          isUser ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+          isUser
+            ? "bg-primary text-primary-foreground"
+            : "bg-muted text-foreground",
         )}
       >
         {message.content}
