@@ -93,16 +93,16 @@ export default function InterviewPhaseIndicators({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Advance phase?</AlertDialogTitle>
+            <AlertDialogTitle>Change phase?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will mark {currentPhase?.phaseType} as complete and move
-              you to {confirmTarget?.phaseType}.
+              This will mark {currentPhase?.phaseType} as complete and move you
+              to {confirmTarget?.phaseType}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmAdvance}>
-              Advance
+              Confirm
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
