@@ -30,6 +30,7 @@ class Difficulty(Enum):
     MEDIUM = "medium"
     HARD = "hard"
 
+
 class SubmissionStatus(Enum):
     PENDING = "pending"
     ACCEPTED = "accepted"

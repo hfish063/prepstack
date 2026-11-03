@@ -6,6 +6,7 @@ from sqlmodel import Field, SQLModel
 
 from app.enums import SubmissionStatus
 
+
 class ProblemSubmission(SQLModel, table=True):
     __tablename__ = "problem_submissions"
     id: Optional[int] = Field(default=None, primary_key=True)

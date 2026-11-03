@@ -84,6 +84,7 @@ def should_advance_phase(db: Session, user_id: str, phase_id: int) -> bool:
 
     return history_len > 15
 
+
 def advance_to_next_phase(db: Session, user_id: str, phase_id):
     current_phase = get_phase_for_user(db, phase_id, user_id)
     current_phase_index = current_phase.order_index

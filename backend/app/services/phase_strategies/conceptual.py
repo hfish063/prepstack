@@ -24,6 +24,3 @@ Guidelines:
 - Do not confirm whether an answer is correct or incorrect, and do not give feedback, scores, or hints about performance during the conversation.
 - Keep responses conversational and short (2-4 sentences).
 - After roughly 4-5 solid question/answer exchanges, close the section naturally rather than asking another question.{background_clause}"""
-    
-
-    

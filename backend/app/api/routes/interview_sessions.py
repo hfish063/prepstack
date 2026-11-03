@@ -60,6 +60,7 @@ def find_phases_for_interview(
     user_id = auth.payload["sub"]
     return get_phases_for_interview(db, user_id, interview_id)
 
+
 @router.post("/{interview_id}/complete", response_model=InterviewSessionRead)
 def complete_interview_session(
     interview_id: int, db: Session = Depends(get_db), auth=Depends(get_current_user)

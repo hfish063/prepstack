@@ -9,7 +9,9 @@ from app.services.interview_phase_service import advance_phase_to_target
 router = APIRouter(prefix="/phases")
 
 
-@router.post("/{phase_id}/advance/{target_phase_index}", response_model=InterviewPhaseRead)
+@router.post(
+    "/{phase_id}/advance/{target_phase_index}", response_model=InterviewPhaseRead
+)
 def advance_phase(
     phase_id: int,
     target_phase_index: int,
