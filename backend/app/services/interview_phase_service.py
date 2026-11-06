@@ -11,7 +11,11 @@ from app.models.interview_session import InterviewSession
 from app.models.problem_example import ProblemExample
 from app.models.problem_language_template import ProblemLanguageTemplate
 from app.models.programming_language import ProgrammingLanguage
+from app.services.coding_problem import get_coding_problem
 from app.services.message_service import get_phase_messages
+from app.services.problem_example import get_examples_for_problem
+from app.services.problem_language_template import get_language_template_for_problem
+from app.services.programming_language import get_available_languages_for_problem
 
 
 def create_interview_phases(db: Session, interview_id: int) -> list[InterviewPhase]:
@@ -158,46 +162,7 @@ def _get_validated_coding_problem_for_phase(
             status_code=404, detail="Phase found, but no coding problem assigned."
         )
 
-    statement = select(CodingProblem).where(CodingProblem.id == phase.coding_problem_id)
-    coding_problem = db.exec(statement).first()
-
-    if not coding_problem:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No problem with id: {phase.coding_problem_id} found for this phase.",
-        )
-
-    if not coding_problem.is_published:
-        raise HTTPException(
-            status_code=409,
-            detail=f"Coding problem with id: {coding_problem.id} is not published.",
-        )
-
-    return coding_problem
-
-
-def _get_available_languages_for_problem(
-    db: Session, coding_problem_id: int
-) -> list[ProgrammingLanguage]:
-    statement = (
-        select(ProgrammingLanguage)
-        .join(
-            ProblemLanguageTemplate,
-            ProblemLanguageTemplate.language_id == ProgrammingLanguage.id,
-        )
-        .where(
-            ProblemLanguageTemplate.problem_id == coding_problem_id,
-            ProgrammingLanguage.is_enabled == True,
-        )
-    )
-    languages = db.exec(statement).all()
-
-    if not languages:
-        raise HTTPException(
-            status_code=404, detail="No available languages found for this problem."
-        )
-
-    return languages
+    return get_coding_problem(db, phase.coding_problem_id)
 
 
 def get_coding_problem_details_for_phase(
@@ -209,13 +174,9 @@ def get_coding_problem_details_for_phase(
 ]:
     coding_problem = _get_validated_coding_problem_for_phase(db, user_id, phase_id)
 
-    # Retrieve example cases for problem
-    statement = select(ProblemExample).where(
-        ProblemExample.problem_id == coding_problem.id
-    )
-    problem_examples = db.exec(statement).all()
+    problem_examples = get_examples_for_problem(db, coding_problem.id)
 
-    languages = _get_available_languages_for_problem(db, coding_problem.id)
+    languages = get_available_languages_for_problem(db, coding_problem.id)
 
     return (coding_problem, problem_examples, languages)
 
@@ -224,7 +185,7 @@ def get_available_languages_for_phase(
     db: Session, user_id: str, phase_id: int
 ) -> list[ProgrammingLanguage]:
     coding_problem = _get_validated_coding_problem_for_phase(db, user_id, phase_id)
-    return _get_available_languages_for_problem(db, coding_problem.id)
+    return get_available_languages_for_problem(db, coding_problem.id)
 
 
 def get_language_template_for_phase(
@@ -232,24 +193,4 @@ def get_language_template_for_phase(
 ) -> ProblemLanguageTemplate:
     problem = _get_validated_coding_problem_for_phase(db, user_id, phase_id)
 
-    statement = (
-        select(ProblemLanguageTemplate)
-        .join(
-            ProgrammingLanguage,
-            ProgrammingLanguage.id == ProblemLanguageTemplate.language_id,
-        )
-        .where(
-            ProblemLanguageTemplate.problem_id == problem.id,
-            ProblemLanguageTemplate.language_id == language_id,
-            ProgrammingLanguage.is_enabled == True,
-        )
-    )
-    template = db.exec(statement).first()
-
-    if not template:
-        raise HTTPException(
-            status_code=404,
-            detail="No available language template found for this phase.",
-        )
-
-    return template
+    return get_language_template_for_problem(db, problem.id, language_id)
