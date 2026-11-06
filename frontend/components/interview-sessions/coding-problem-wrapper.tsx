@@ -4,6 +4,11 @@ import {
 } from "@/app/api/coding-problems";
 import ProblemPanel from "./problem-panel";
 import EditorPanel from "./editor-panel";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../ui/resizable";
 
 type CodingProblemWrapperProps = {
   phaseId: number;
@@ -17,17 +22,21 @@ export default function CodingProblemWrapper({
   languageTemplate,
 }: CodingProblemWrapperProps) {
   return (
-    <div className="flex flex-row gap-4 h-full min-h-0">
-      <div className="w-[50%] min-w-0 h-full min-h-0">
-        <ProblemPanel codingProblem={codingProblem} />
-      </div>
-
-      <div className="w-[50%] min-w-0 h-full min-h-0">
-        <EditorPanel
-          language="python"
-          starterCode={languageTemplate.starterCode}
-        />
-      </div>
-    </div>
+    <ResizablePanelGroup orientation="horizontal">
+      <ResizablePanel defaultSize={"50%"}>
+        <div className="h-full p-4">
+          <ProblemPanel codingProblem={codingProblem} />
+        </div>
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={"50%"}>
+        <div className="h-full p-4">
+          <EditorPanel
+            language="python"
+            starterCode={languageTemplate.starterCode}
+          />
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

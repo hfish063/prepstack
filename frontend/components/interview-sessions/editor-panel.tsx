@@ -20,7 +20,7 @@ export default function EditorPanel({
   starterCode,
 }: EditorPanelProps) {
   return (
-    <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+    <Card className="h-full">
       <CardHeader className="shrink-0">
         <div className="flex flex-row items-center gap-2 font-semibold">
           <CodeXml />
