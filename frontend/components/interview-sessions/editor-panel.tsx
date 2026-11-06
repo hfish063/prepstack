@@ -48,7 +48,7 @@ export default function EditorPanel({
       <Separator />
 
       <CardFooter className="flex justify-end">
-        <Button>
+        <Button className="bg-confirmation text-confirmation-foreground">
           <CloudUpload />
           Submit
         </Button>

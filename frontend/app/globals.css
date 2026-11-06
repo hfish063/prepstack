@@ -46,6 +46,8 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-confirmation: var(--confirmation);
+  --color-confirmation-foreground: var(--confirmation-foreground);
 }
 
 :root {
@@ -81,6 +83,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --confirmation: oklch(69.112% 0.16216 154.842);
+  --confirmation-foreground: oklch(0.985 0 0);
 }
 
 .dark {
