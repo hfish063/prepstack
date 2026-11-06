@@ -20,7 +20,7 @@ class InterviewPhase(SQLModel, table=True):
             index=True,
         )
     )
-    coding_problem_id: Optional[int] = None  # Optional, for future implementation
+    coding_problem_id: Optional[int] = None
     phase_type: PhaseType
     order_index: int  # 0 behavioral 1 conceptual 2 technical
     status: PhaseStatus
