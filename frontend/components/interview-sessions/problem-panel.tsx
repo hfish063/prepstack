@@ -60,15 +60,20 @@ function ProblemExamplesList({ examples }: ProblemExamplesListProps) {
           <Card>
             <CardContent>
               <div>
-                <span className="font-semibold">Input:</span>{" "}
+                <span className="font-semibold">Input:</span>
                 {JSON.stringify(example.input)}
               </div>
               <div>
-                <span className="font-semibold">Output:</span>{" "}
+                <span className="font-semibold">Output:</span>
                 {JSON.stringify(example.expectedOutput)}
               </div>
             </CardContent>
           </Card>
+          {example.explanation && (
+            <div className="flex flex-wrap gap-2">
+              Explanation: <Markdown>{example.explanation}</Markdown>
+            </div>
+          )}
         </div>
       ))}
     </div>
