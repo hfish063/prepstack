@@ -71,7 +71,7 @@ function ProblemExamplesList({ examples }: ProblemExamplesListProps) {
           </Card>
           {example.explanation && (
             <div className="flex flex-wrap gap-2">
-              Explanation: <Markdown>{example.explanation}</Markdown>
+              Explanation: <div>{example.explanation}</div>
             </div>
           )}
         </div>
