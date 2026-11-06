@@ -35,7 +35,7 @@ def create_interview_phases(db: Session, interview_id: int) -> list[InterviewPha
         InterviewPhase(
             interview_id=interview_id,
             # Assign coding problem id for technical portion of interview
-            # coding_problem_id = 1,
+            coding_problem_id = 10,
             phase_type=PhaseType.TECHNICAL,
             order_index=2,
             status=PhaseStatus.PENDING,

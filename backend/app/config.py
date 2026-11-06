@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     CLERK_SECRET_KEY: str
     OPENAI_API_KEY: str
+    JUDGE0_URL: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
