@@ -7,7 +7,7 @@ from app.schemas.coding_problem import CodingProblemRead
 from app.schemas.interview_phase import InterviewPhaseRead
 from app.schemas.problem_language_template import ProblemLanguageTemplateRead
 from app.schemas.programming_language import ProgrammingLanguageRead
-from app.services.interview_phase_service import (
+from app.services.interview_phase import (
     advance_phase_to_target,
     get_coding_problem_details_for_phase,
     get_language_template_for_phase,

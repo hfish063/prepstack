@@ -12,7 +12,7 @@ from app.models.problem_example import ProblemExample
 from app.models.problem_language_template import ProblemLanguageTemplate
 from app.models.programming_language import ProgrammingLanguage
 from app.services.coding_problem import get_coding_problem
-from app.services.message_service import get_phase_messages
+from app.services.message import get_phase_messages
 from app.services.problem_example import get_examples_for_problem
 from app.services.problem_language_template import get_language_template_for_problem
 from app.services.programming_language import get_available_languages_for_problem

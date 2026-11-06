@@ -8,7 +8,7 @@ from app.enums import InterviewStatus, PhaseStatus
 from app.models.interview_phase import InterviewPhase
 from app.models.interview_session import InterviewSession
 from app.schemas.interview_session import InterviewSessionCreate
-from app.services.interview_phase_service import (
+from app.services.interview_phase import (
     create_interview_phases,
     get_phases_for_interview,
 )
