@@ -45,8 +45,10 @@ async def run_against_examples(
     if not examples:
         return []
 
+    # Insert the candidate's code into our driver code to ensure it has an execution point
     source_code = _splice_driver_code(language_template.driver_code, request.source_code)
 
+    # Run source code against the problem's example test cases 
     example_inputs = [json.dumps(example.input) for example in examples]
     tokens = await submit_code_batch(
         deps.client, source_code, language_id=judge0_language_id, inputs=example_inputs
