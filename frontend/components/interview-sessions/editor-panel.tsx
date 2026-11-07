@@ -26,6 +26,7 @@ import { ScrollArea } from "../ui/scroll-area";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
+const DEFAULT_WORD_WRAP = true;
 
 const FONT_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 const TAB_SIZES = [2, 4];
@@ -41,7 +42,7 @@ export default function EditorPanel({
 }: EditorPanelProps) {
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [tabSize, setTabSize] = useState(DEFAULT_TAB_SIZE);
-  const [wordWrapEnabled, setWordWrapEnabled] = useState(true);
+  const [wordWrapEnabled, setWordWrapEnabled] = useState(DEFAULT_WORD_WRAP);
 
   return (
     <Card className="h-full">
