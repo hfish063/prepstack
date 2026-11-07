@@ -261,7 +261,7 @@ type EditorConsoleProps = {
 
 function EditorConsole({ isLoading, status }: EditorConsoleProps) {
   return (
-    <div className="flex flex-col gap-4 h-56">
+    <div className="flex flex-col gap-4 h-1/3">
       <Separator />
 
       <div className="flex items-center gap-1 font-semibold px-4">
