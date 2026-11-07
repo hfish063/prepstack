@@ -1,6 +1,7 @@
 import {
   CodingProblem,
   ProblemLanguageTemplate,
+  ProgrammingLanguage,
 } from "@/app/api/coding-problems";
 import ProblemPanel from "./problem-panel";
 import EditorPanel from "./editor-panel";
@@ -14,12 +15,14 @@ type CodingProblemWrapperProps = {
   phaseId: number;
   codingProblem: CodingProblem;
   languageTemplate: ProblemLanguageTemplate;
+  preferredLanguage: ProgrammingLanguage;
 };
 
 export default function CodingProblemWrapper({
   phaseId,
   codingProblem,
   languageTemplate,
+  preferredLanguage,
 }: CodingProblemWrapperProps) {
   return (
     <ResizablePanelGroup orientation="horizontal">
@@ -32,7 +35,8 @@ export default function CodingProblemWrapper({
       <ResizablePanel defaultSize={"50%"}>
         <div className="h-full p-4">
           <EditorPanel
-            language="python"
+            phaseId={phaseId}
+            language={preferredLanguage}
             starterCode={languageTemplate.starterCode}
           />
         </div>

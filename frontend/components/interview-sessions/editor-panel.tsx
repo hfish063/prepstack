@@ -1,12 +1,21 @@
 "use client";
 
-import { Editor } from "@monaco-editor/react";
+import { Editor, type OnMount } from "@monaco-editor/react";
+import type { editor as MonacoEditor } from "monaco-editor";
 import { Spinner } from "../ui/spinner";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Separator } from "../ui/separator";
-import { ChevronDown, CloudUpload, CodeXml, Settings } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  CloudUpload,
+  CodeXml,
+  Play,
+  Settings,
+  Terminal,
+} from "lucide-react";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +32,9 @@ import {
 } from "../ui/dialog";
 import { Switch } from "../ui/switch";
 import { ScrollArea } from "../ui/scroll-area";
+import { ProgrammingLanguage } from "@/app/api/coding-problems";
+import { runCodeAgainstExamples } from "@/app/api/code-execution";
+import { useAuth } from "@clerk/nextjs";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
@@ -32,17 +44,57 @@ const FONT_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 const TAB_SIZES = [2, 4];
 
 type EditorPanelProps = {
-  language: string;
+  phaseId: number;
+  language: ProgrammingLanguage;
   starterCode: string;
 };
 
 export default function EditorPanel({
+  phaseId,
   language,
   starterCode,
 }: EditorPanelProps) {
+  const { getToken } = useAuth();
+
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [tabSize, setTabSize] = useState(DEFAULT_TAB_SIZE);
   const [wordWrapEnabled, setWordWrapEnabled] = useState(DEFAULT_WORD_WRAP);
+
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [runStatus, setRunStatus] = useState<"accepted" | "failed" | null>(
+    null,
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+
+  const handleEditorMount: OnMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  const handleRunCode = async () => {
+    const sourceCode = editorRef.current?.getValue() ?? "";
+    const token = await getToken();
+    if (!token) return;
+
+    setIsLoading(true);
+
+    try {
+      const results = await runCodeAgainstExamples(token, phaseId, {
+        sourceCode,
+        languageId: language.id,
+      });
+
+      setRunStatus(
+        results.every((result) => result.passed) ? "accepted" : "failed",
+      );
+    } catch {
+      console.error(`Error running code against example cases.`);
+    } finally {
+      setIsConsoleOpen(true);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card className="h-full">
@@ -66,25 +118,44 @@ export default function EditorPanel({
       <CardContent className="min-h-0 flex-1 p-0">
         <Editor
           loading={<Spinner />}
-          language={language}
+          language={language.name.toLowerCase()}
           height="100%"
           defaultValue={starterCode}
+          onMount={handleEditorMount}
           options={{
             fontSize: fontSize,
             tabSize: tabSize,
-            wordWrap: wordWrapEnabled == true ? "on" : "off",
+            wordWrap: wordWrapEnabled ? "on" : "off",
             minimap: { enabled: false },
           }}
         />
       </CardContent>
 
+      {isConsoleOpen && (
+        <EditorConsole isLoading={isLoading} status={runStatus} />
+      )}
       <Separator />
 
-      <CardFooter className="flex justify-end">
-        <Button variant={"confirmation"}>
-          <CloudUpload />
-          Submit
+      <CardFooter className="flex gap-4 justify-between">
+        <Button
+          variant={"ghost"}
+          onClick={() => setIsConsoleOpen(!isConsoleOpen)}
+        >
+          Console {isConsoleOpen ? <ChevronDown /> : <ChevronUp />}
         </Button>
+        <div className="flex flex-row items-center gap-4">
+          <Button
+            variant={"secondary"}
+            onClick={handleRunCode}
+            disabled={isLoading}
+          >
+            {isLoading ? <Spinner /> : <Play />}
+          </Button>
+          <Button variant={"confirmation"} disabled={isLoading}>
+            <CloudUpload />
+            Submit
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
@@ -180,5 +251,39 @@ function EditorPanelConfigurationMenu({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+type EditorConsoleProps = {
+  isLoading: boolean;
+  status: "accepted" | "failed" | null;
+};
+
+function EditorConsole({ isLoading, status }: EditorConsoleProps) {
+  return (
+    <div className="flex flex-col gap-4 h-56">
+      <Separator />
+
+      <div className="flex items-center gap-1 font-semibold px-4">
+        <Terminal />
+        Output
+      </div>
+
+      <Separator />
+
+      {status && !isLoading && (
+        <ScrollArea>
+          <p
+            className={
+              status === "accepted"
+                ? "px-4 text-confirmation"
+                : "px-4 text-destructive"
+            }
+          >
+            {status === "accepted" ? "Accepted" : "Failed"}
+          </p>
+        </ScrollArea>
+      )}
+    </div>
   );
 }

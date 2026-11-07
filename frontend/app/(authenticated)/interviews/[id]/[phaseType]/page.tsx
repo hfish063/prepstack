@@ -73,6 +73,7 @@ export default async function InterviewPhasePage({
       phaseId={currentPhase.id}
       codingProblem={codingProblem}
       languageTemplate={languageTemplate}
+      preferredLanguage={preferredLanguage}
     />
   );
 }
