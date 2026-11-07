@@ -8,7 +8,12 @@ from sqlmodel import Field, SQLModel
 class SubmissionResult(SQLModel, table=True):
     __tablename__ = "submission_results"
     id: Optional[int] = Field(default=None, primary_key=True)
-    submission_id: int = Field(foreign_key="problem_submissions.id")
+    submission_id: int = Field(
+        foreign_key="problem_submissions.id",
+        ondelete="CASCADE",
+        nullable=False,
+        index=True,
+    )
     judge0_token: str
     test_case_id: int = Field(foreign_key="problem_test_cases.id")
     status: str
