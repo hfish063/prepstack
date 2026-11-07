@@ -1,33 +1,18 @@
 import json
 from typing import Any
 
-from fastapi import Depends
-import httpx
 from pydantic import BaseModel
-from sqlmodel import Session
 
-from app.db.database import get_db
 from app.judge0.client import (
     poll_submission_batch,
     submit_code_batch,
 )
-from app.judge0.dependencies import get_judge0_client
-from app.schemas.base import CamelModel
+from app.judge0.dependencies import Judge0ExecutionDeps
 from app.schemas.code_execution import RunCodeRequest
 from app.services.interview_phase import get_phase_for_user
 from app.services.problem_example import get_examples_for_problem
 from app.services.problem_language_template import get_language_template_for_problem
 from app.services.programming_language import get_programming_language
-
-
-class Judge0ExecutionDeps:
-    def __init__(
-        self,
-        db: Session = Depends(get_db),
-        client: httpx.AsyncClient = Depends(get_judge0_client),
-    ):
-        self.db = db
-        self.client = client
 
 
 class ExampleRunResult(BaseModel):
@@ -36,12 +21,6 @@ class ExampleRunResult(BaseModel):
     actual_output: Any
     stderr: str | None = None
     compile_output: str | None = None
-
-
-class ExampleRunResultRead(CamelModel):
-    example_id: int
-    passed: bool
-    actual_output: Any
 
 
 CANDIDATE_CODE_STUB = "##CANDIDATE_CODE##"

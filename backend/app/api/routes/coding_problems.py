@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends
 
 from app.auth.clerk import get_current_user_id
-from app.db.database import get_db
-from app.judge0.dependencies import get_judge0_client
-from app.schemas.code_execution import RunCodeRequest
-from app.services.code_execution import ExampleRunResultRead, Judge0ExecutionDeps, run_against_examples
+from app.judge0.dependencies import Judge0ExecutionDeps
+from app.schemas.code_execution import ExampleRunResultRead, RunCodeRequest
+from app.services.code_execution import run_against_examples
 
 
 router = APIRouter(prefix="/coding-problems")
