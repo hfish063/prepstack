@@ -5,8 +5,8 @@ from app.auth.clerk import get_current_user
 from app.schemas.interview_phase import InterviewPhaseRead
 from app.schemas.interview_session import InterviewSessionCreate, InterviewSessionRead
 from app.db.database import get_db
-from app.services.interview_phase_service import get_phases_for_interview
-from app.services.interview_session_service import (
+from app.services.interview_phase import get_phases_for_interview
+from app.services.interview_session import (
     create_user_interview,
     get_all_user_interviews,
     get_user_interview_by_id,
@@ -59,6 +59,7 @@ def find_phases_for_interview(
 ):
     user_id = auth.payload["sub"]
     return get_phases_for_interview(db, user_id, interview_id)
+
 
 @router.post("/{interview_id}/complete", response_model=InterviewSessionRead)
 def complete_interview_session(

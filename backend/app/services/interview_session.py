@@ -8,7 +8,10 @@ from app.enums import InterviewStatus, PhaseStatus
 from app.models.interview_phase import InterviewPhase
 from app.models.interview_session import InterviewSession
 from app.schemas.interview_session import InterviewSessionCreate
-from app.services.interview_phase_service import create_interview_phases, get_phases_for_interview
+from app.services.interview_phase import (
+    create_interview_phases,
+    get_phases_for_interview,
+)
 
 
 def get_all_user_interviews(db: Session, user_id: str) -> list[InterviewSession]:
@@ -63,7 +66,10 @@ def delete_user_interview_by_id(db: Session, user_id: str, interview_id: int) ->
         db.rollback()
         raise
 
-def mark_interview_complete(db: Session, user_id: str, interview_id: int) -> InterviewSession:
+
+def mark_interview_complete(
+    db: Session, user_id: str, interview_id: int
+) -> InterviewSession:
     interview = get_user_interview_by_id(db, user_id, interview_id)
     _mark_phases_complete(db, user_id, interview_id)
 
@@ -79,7 +85,10 @@ def mark_interview_complete(db: Session, user_id: str, interview_id: int) -> Int
 
     return interview
 
-def _mark_phases_complete(db: Session, user_id: str, interview_id: int) -> list[InterviewPhase]:
+
+def _mark_phases_complete(
+    db: Session, user_id: str, interview_id: int
+) -> list[InterviewPhase]:
     phases = get_phases_for_interview(db, user_id, interview_id)
     now = datetime.now(timezone.utc)
 

@@ -5,9 +5,17 @@ from sqlmodel import Session, select
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.enums import PhaseStatus, PhaseType
+from app.models.coding_problem import CodingProblem
 from app.models.interview_phase import InterviewPhase
 from app.models.interview_session import InterviewSession
-from app.services.message_service import get_phase_messages
+from app.models.problem_example import ProblemExample
+from app.models.problem_language_template import ProblemLanguageTemplate
+from app.models.programming_language import ProgrammingLanguage
+from app.services.coding_problem import get_coding_problem
+from app.services.message import get_phase_messages
+from app.services.problem_example import get_examples_for_problem
+from app.services.problem_language_template import get_language_template_for_problem
+from app.services.programming_language import get_available_languages_for_problem
 
 
 def create_interview_phases(db: Session, interview_id: int) -> list[InterviewPhase]:
@@ -26,6 +34,8 @@ def create_interview_phases(db: Session, interview_id: int) -> list[InterviewPha
         ),
         InterviewPhase(
             interview_id=interview_id,
+            # Assign coding problem id for technical portion of interview
+            coding_problem_id=10,
             phase_type=PhaseType.TECHNICAL,
             order_index=2,
             status=PhaseStatus.PENDING,
@@ -84,6 +94,7 @@ def should_advance_phase(db: Session, user_id: str, phase_id: int) -> bool:
 
     return history_len > 15
 
+
 def advance_to_next_phase(db: Session, user_id: str, phase_id):
     current_phase = get_phase_for_user(db, phase_id, user_id)
     current_phase_index = current_phase.order_index
@@ -140,3 +151,46 @@ def advance_phase_to_target(
 
     db.refresh(target_phase)
     return target_phase
+
+
+def _get_validated_coding_problem_for_phase(
+    db: Session, user_id: str, phase_id: int
+) -> CodingProblem:
+    phase = get_phase_for_user(db, phase_id, user_id)  # Ownership check
+    if not phase.coding_problem_id:
+        raise HTTPException(
+            status_code=404, detail="Phase found, but no coding problem assigned."
+        )
+
+    return get_coding_problem(db, phase.coding_problem_id)
+
+
+def get_coding_problem_details_for_phase(
+    db: Session, user_id: str, phase_id: int
+) -> tuple[
+    CodingProblem,
+    list[ProblemExample],
+    list[ProgrammingLanguage],
+]:
+    coding_problem = _get_validated_coding_problem_for_phase(db, user_id, phase_id)
+
+    problem_examples = get_examples_for_problem(db, coding_problem.id)
+
+    languages = get_available_languages_for_problem(db, coding_problem.id)
+
+    return (coding_problem, problem_examples, languages)
+
+
+def get_available_languages_for_phase(
+    db: Session, user_id: str, phase_id: int
+) -> list[ProgrammingLanguage]:
+    coding_problem = _get_validated_coding_problem_for_phase(db, user_id, phase_id)
+    return get_available_languages_for_problem(db, coding_problem.id)
+
+
+def get_language_template_for_phase(
+    db: Session, user_id: str, phase_id: int, language_id: int
+) -> ProblemLanguageTemplate:
+    problem = _get_validated_coding_problem_for_phase(db, user_id, phase_id)
+
+    return get_language_template_for_problem(db, problem.id, language_id)
