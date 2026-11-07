@@ -1,7 +1,21 @@
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
 from app.models.problem_language_template import ProblemLanguageTemplate
 from app.models.programming_language import ProgrammingLanguage
+
+
+def get_programming_language(db: Session, language_id: int) -> ProgrammingLanguage:
+    statement = select(ProgrammingLanguage).where(ProgrammingLanguage.id == language_id)
+    language = db.exec(statement).first()
+
+    if not language:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No programming language with id: {language_id} found.",
+        )
+
+    return language
 
 
 def get_available_languages_for_problem(
