@@ -22,11 +22,12 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Switch } from "../ui/switch";
+import { ScrollArea } from "../ui/scroll-area";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
 
-const FONT_SIZES = [12, 14, 16];
+const FONT_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 const TAB_SIZES = [2, 4];
 
 type EditorPanelProps = {
@@ -130,16 +131,18 @@ function EditorPanelConfigurationMenu({
               }
             />
             <DropdownMenuContent>
-              <DropdownMenuRadioGroup
-                value={fontSize}
-                onValueChange={onFontSizeChange}
-              >
-                {FONT_SIZES.map((size) => (
-                  <DropdownMenuRadioItem key={size} value={size} closeOnClick>
-                    {size}px
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
+              <ScrollArea className="h-[160px]">
+                <DropdownMenuRadioGroup
+                  value={fontSize}
+                  onValueChange={onFontSizeChange}
+                >
+                  {FONT_SIZES.map((size) => (
+                    <DropdownMenuRadioItem key={size} value={size} closeOnClick>
+                      {size}px
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </ScrollArea>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
