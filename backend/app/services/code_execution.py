@@ -1,19 +1,33 @@
 import json
 from typing import Any
 
+from fastapi import Depends
 import httpx
 from pydantic import BaseModel
 from sqlmodel import Session
 
+from app.db.database import get_db
 from app.judge0.client import (
     poll_submission_batch,
     submit_code_batch,
 )
+from app.judge0.dependencies import get_judge0_client
 from app.schemas.base import CamelModel
+from app.schemas.code_execution import RunCodeRequest
 from app.services.interview_phase import get_phase_for_user
 from app.services.problem_example import get_examples_for_problem
 from app.services.problem_language_template import get_language_template_for_problem
 from app.services.programming_language import get_programming_language
+
+
+class Judge0ExecutionDeps:
+    def __init__(
+        self,
+        db: Session = Depends(get_db),
+        client: httpx.AsyncClient = Depends(get_judge0_client),
+    ):
+        self.db = db
+        self.client = client
 
 
 class ExampleRunResult(BaseModel):
@@ -34,35 +48,33 @@ CANDIDATE_CODE_STUB = "##CANDIDATE_CODE##"
 
 
 async def run_against_examples(
-    db: Session,
+    deps: Judge0ExecutionDeps,
     user_id: str,
-    client: httpx.AsyncClient,
     phase_id: int,
-    candidate_code: str,
-    language_id: int,
+    request: RunCodeRequest,
 ) -> list[ExampleRunResult]:
-    phase = get_phase_for_user(db, phase_id, user_id)
-    language = get_programming_language(db, language_id)
+    phase = get_phase_for_user(deps.db, phase_id, user_id)
+    language = get_programming_language(deps.db, request.language_id)
     language_template = get_language_template_for_problem(
-        db, phase.coding_problem_id, language.id
+        deps.db, phase.coding_problem_id, language.id
     )
 
     problem_id = phase.coding_problem_id
     judge0_language_id = language.judge0_language_id
 
-    examples = get_examples_for_problem(db, problem_id)
+    examples = get_examples_for_problem(deps.db, problem_id)
     if not examples:
         return []
 
-    source_code = _splice_driver_code(language_template.driver_code, candidate_code)
+    source_code = _splice_driver_code(language_template.driver_code, request.source_code)
 
     example_inputs = [json.dumps(example.input) for example in examples]
     tokens = await submit_code_batch(
-        client, source_code, language_id=judge0_language_id, inputs=example_inputs
+        deps.client, source_code, language_id=judge0_language_id, inputs=example_inputs
     )
     token_to_example = dict(zip(tokens, examples))
 
-    submissions = await poll_submission_batch(client, tokens)
+    submissions = await poll_submission_batch(deps.client, tokens)
 
     results = []
     for submission in submissions:
