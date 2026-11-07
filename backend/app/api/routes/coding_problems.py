@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
+import httpx
 from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
 from app.db.database import get_db
+from app.judge0.dependencies import get_judge0_client
 from app.schemas.base import CamelModel
 from app.services.code_execution import ExampleRunResultRead, run_against_examples
 
@@ -21,10 +23,12 @@ async def run_code(
     run_code_request: RunCodeRequest,
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
+    client: httpx.AsyncClient = Depends(get_judge0_client)
 ) -> list[ExampleRunResultRead]:
     return await run_against_examples(
         db,
         user_id,
+        client,
         phase_id,
         run_code_request.source_code,
         run_code_request.language_id,

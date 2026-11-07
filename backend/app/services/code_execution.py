@@ -1,10 +1,14 @@
 import json
-from typing import Any, Optional
+from typing import Any
 
+import httpx
 from pydantic import BaseModel
 from sqlmodel import Session
 
-from app.judge0.client import poll_submission, submit_code
+from app.judge0.client import (
+    poll_submission_batch,
+    submit_code_batch,
+)
 from app.schemas.base import CamelModel
 from app.services.interview_phase import get_phase_for_user
 from app.services.problem_example import get_examples_for_problem
@@ -30,7 +34,7 @@ CANDIDATE_CODE_STUB = "##CANDIDATE_CODE##"
 
 
 async def run_against_examples(
-    db: Session, user_id: str, phase_id: int, candidate_code: str, language_id: int
+    db: Session, user_id: str, client: httpx.AsyncClient, phase_id: int, candidate_code: str, language_id: int
 ) -> list[ExampleRunResult]:
     phase = get_phase_for_user(db, phase_id, user_id)
     language = get_programming_language(db, language_id)
@@ -47,36 +51,39 @@ async def run_against_examples(
 
     source_code = _splice_driver_code(language_template.driver_code, candidate_code)
 
-    results = []
-    for example in examples:
-        input = example.input
-        token = await submit_code(
-            source_code, stdin=json.dumps(input), language_id=judge0_language_id
-        )
+    example_inputs = [json.dumps(example.input) for example in examples]
+    tokens = await submit_code_batch(
+        client, source_code, language_id=judge0_language_id, inputs=example_inputs
+    )
+    token_to_example = dict(zip(tokens, examples))
 
-        result = await poll_submission(token)
+    submissions = await poll_submission_batch(client, tokens)
+
+    results = []
+    for submission in submissions:
+        example = token_to_example[submission.token]
 
         # Check for runtime and compile errors
-        if result.stderr or result.stdout is None:
+        if submission.stderr or submission.stdout is None:
             results.append(
                 ExampleRunResult(
                     example_id=example.id,
                     passed=False,
                     actual_output=None,
-                    stderr=result.stderr,
-                    compile_output=result.compile_output,
+                    stderr=submission.stderr,
+                    compile_output=submission.compile_output,
                 )
             )
         else:
-            output = json.loads(result.stdout)
+            output = json.loads(submission.stdout)
             passed = output == example.expected_output
             results.append(
                 ExampleRunResult(
                     example_id=example.id,
                     passed=passed,
                     actual_output=output,
-                    stderr=result.stderr,
-                    compile_output=result.compile_output,
+                    stderr=submission.stderr,
+                    compile_output=submission.compile_output,
                 )
             )
 

@@ -1,6 +1,12 @@
 from fastapi import APIRouter
 
-from app.api.routes import coding_problems, health_check, interview_sessions, messages, interview_phases
+from app.api.routes import (
+    coding_problems,
+    health_check,
+    interview_sessions,
+    messages,
+    interview_phases,
+)
 
 router = APIRouter(prefix="/api")
 router.include_router(health_check.router)
