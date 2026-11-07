@@ -1,18 +1,12 @@
+import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import {
-  findInterviewById,
-  findPhasesForInterview,
-} from "@/app/api/interview-sessions";
-import { findMessagesForPhase } from "@/app/api/messages";
-import ChatPanel from "@/components/interview-sessions/chat-panel";
+import { findPhasesForInterview } from "@/app/api/interview-phases";
 
 export default async function InterviewSessionPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await auth.protect();
-
   const { id } = await params;
   const interviewId = Number(id);
 
@@ -20,42 +14,20 @@ export default async function InterviewSessionPage({
   const token = await getToken();
 
   if (!token) {
-    return;
+    return null;
   }
 
-  const [interview, phases] = await Promise.all([
-    findInterviewById(token, interviewId),
-    findPhasesForInterview(token, interviewId),
-  ]);
+  const phases = await findPhasesForInterview(token, interviewId);
+  const currentPhase = phases.find((phase) => phase.status === "in_progress");
 
-  const behavioralPhase = phases.find(
-    (phase) => phase.phaseType === "behavioral",
-  );
-
-  if (!behavioralPhase) {
+  if (!currentPhase) {
     return (
       <p className="text-sm text-muted-foreground">
-        This interview has no behavioral phase.
+        This interview has already been completed and is set to read-only
+        mode.
       </p>
     );
   }
 
-  const messages = await findMessagesForPhase(token, behavioralPhase.id);
-
-  return (
-    <div className="flex h-full min-h-0 flex-col gap-4">
-      <div>
-        <h1 className="text-lg font-medium">{interview.role}</h1>
-        <p className="text-sm text-muted-foreground">
-          {interview.experienceLevel}
-        </p>
-      </div>
-      <div className="min-h-0 flex-1">
-        <ChatPanel
-          phaseId={behavioralPhase.id}
-          initialMessages={messages}
-        />
-      </div>
-    </div>
-  );
+  redirect(`/interviews/${interviewId}/${currentPhase.phaseType}`);
 }

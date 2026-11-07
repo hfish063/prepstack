@@ -4,9 +4,9 @@ from sqlmodel import Session
 from app.auth.clerk import get_current_user
 from app.db.database import get_db
 from app.schemas.message import MessageCreate, MessageRead
-from app.services.interview_phase_service import get_phase_for_user
-from app.services.interview_service import process_message
-from app.services.message_service import get_phase_messages
+from app.services.interview_phase import get_phase_for_user
+from app.services.interview import process_message
+from app.services.message import get_phase_messages
 
 router = APIRouter(prefix="/messages")
 

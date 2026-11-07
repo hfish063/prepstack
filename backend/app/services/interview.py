@@ -4,10 +4,10 @@ from app.enums import MessageRole
 from app.models.message import Message
 from app.models.interview_phase import InterviewPhase
 from app.models.interview_session import InterviewSession
-from app.services.interview_phase_service import get_phase_for_user
-from app.services.interview_session_service import get_user_interview_by_id
-from app.services.message_service import get_phase_messages, save_message
-from app.services.openai_service import generate_response
+from app.services.interview_phase import get_phase_for_user
+from app.services.interview_session import get_user_interview_by_id
+from app.services.message import get_phase_messages, save_message
+from app.openai.client import generate_response
 from app.services.phase_strategies.factory import get_phase_strategy
 
 
@@ -23,8 +23,6 @@ def process_message(db: Session, phase_id: int, user_id: str, content: str) -> M
     # Build AI prompt
     # Call OpenAI
     ai_content = generate_response(build_prompt(phase, history, interview))
-
-    # TODO: Determine whether to advance phases
 
     # Save AI response
     return save_message(db, phase_id, MessageRole.ASSISTANT, ai_content)

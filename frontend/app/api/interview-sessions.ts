@@ -1,5 +1,7 @@
 import apiFetch from "./api";
 
+export type InterviewStatus = "in_progress" | "completed" | "abandoned";
+
 export interface InterviewSession {
   id: number;
   role: string;
@@ -7,6 +9,7 @@ export interface InterviewSession {
   topics: string;
   description: string;
   userId: string;
+  status: InterviewStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -16,19 +19,6 @@ export interface InterviewSessionCreate {
   experienceLevel: string;
   topics?: string;
   description?: string;
-}
-
-export type PhaseType = "behavioral" | "conceptual" | "technical";
-export type PhaseStatus = "pending" | "in_progress" | "completed";
-
-export interface InterviewPhase {
-  id: number;
-  interviewId: number;
-  phaseType: PhaseType;
-  orderIndex: number;
-  status: PhaseStatus;
-  startedAt: string | null;
-  completedAt: string | null;
 }
 
 export async function findAllInterviewsForUser(token: string) {
@@ -69,22 +59,25 @@ export async function findInterviewById(token: string, interviewId: number) {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch interview session with id: ${interviewId}`);
+    throw new Error(
+      `Failed to fetch interview session with id: ${interviewId}`,
+    );
   }
 
   return (await response.json()) as InterviewSession;
 }
 
-export async function findPhasesForInterview(token: string, interviewId: number) {
-  const response = await apiFetch(`/interviews/${interviewId}/phases`, {
+export async function completeInterview(token: string, interviewId: number) {
+  const response = await apiFetch(`/interviews/${interviewId}/complete`, {
+    method: "POST",
     headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch phases for interview with id: ${interviewId}`);
+    throw new Error(`Failed to complete interview with id: ${interviewId}`);
   }
 
-  return (await response.json()) as InterviewPhase[];
+  return (await response.json()) as InterviewSession;
 }
 
 export async function deleteInterviewByIdForUser(

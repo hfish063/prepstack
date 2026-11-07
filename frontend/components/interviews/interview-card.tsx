@@ -1,96 +1,93 @@
 "use client";
 
 import {
-  deleteInterviewByIdForUser,
   InterviewSession,
+  InterviewStatus,
 } from "@/app/api/interview-sessions";
-import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { EllipsisVertical, Trash } from "lucide-react";
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { Spinner } from "../ui/spinner";
-import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import Link from "next/link";
+import ManageInterviewButton from "./manage-interview-button";
+import { CircleCheck, CircleDot, CircleX } from "lucide-react";
 
 type InterviewCardProps = {
   interview: InterviewSession;
 };
 
 export default function InterviewCard({ interview }: InterviewCardProps) {
+  const topics = interview.topics
+    ? interview.topics
+        .split(",")
+        .map((topic) => topic.trim())
+        .filter(Boolean)
+    : [];
+
   return (
-    <Card key={interview.id} className="relative">
-      <CardHeader className="flex flex-row gap-2 items-center justify-between">
-        <div className="flex flex-col gap-2">
-          <Link
-            href={`/interviews/${interview.id}`}
-            className="after:absolute after:inset-0"
-          >
-            <CardTitle>{interview.role}</CardTitle>
-          </Link>
-          <CardDescription>{interview.topics}</CardDescription>
+    <Card key={interview.id} className="relative h-full">
+      <CardHeader className="flex flex-row items-center justify-between gap-2">
+        <div className="flex flex-row items-center gap-2">
+          <div className="relative z-10">
+            <InterviewStatusIndicator status={interview.status} />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Link
+              href={`/interviews/${interview.id}`}
+              className="after:absolute after:inset-0"
+            >
+              <CardTitle>{interview.role}</CardTitle>
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              {interview.experienceLevel}
+            </p>
+          </div>
         </div>
         <div className="relative z-10">
           <ManageInterviewButton interview={interview} />
         </div>
       </CardHeader>
+
+      <CardContent className="flex flex-1 flex-row flex-wrap gap-2">
+        {topics.map((topic, index) => (
+          <Badge key={index} variant="secondary">
+            {topic}
+          </Badge>
+        ))}
+      </CardContent>
+
+      <CardFooter className="flex flex-row items-center">
+        <span className="text-sm text-muted-foreground">
+          {new Date(interview.createdAt).toLocaleDateString("en-US")}
+        </span>
+      </CardFooter>
     </Card>
   );
 }
-
-type ManageInterviewButtonProps = {
-  interview: InterviewSession;
+type InterviewStatusIndicatorProps = {
+  status: InterviewStatus;
 };
 
-function ManageInterviewButton({ interview }: ManageInterviewButtonProps) {
-  const { getToken } = useAuth();
-  const router = useRouter();
-  const [isDeleting, setIsDeleting] = useState(false);
+function InterviewStatusIndicator({ status }: InterviewStatusIndicatorProps) {
+  let icon = <CircleDot />;
 
-  async function handleDelete() {
-    setIsDeleting(true);
-
-    try {
-      const token = await getToken();
-      if (!token) throw new Error("Unauthorized");
-
-      await deleteInterviewByIdForUser(token, interview.id);
-
-      router.refresh();
-    } catch {
-      console.error(
-        `Error deleting interview session with id: ${interview.id}`,
-      );
-    } finally {
-      setIsDeleting(false);
-    }
+  if (status === "completed") {
+    icon = <CircleCheck />;
+  } else if (status === "abandoned") {
+    icon = <CircleX />;
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button variant={"ghost"} size={"icon"} disabled={isDeleting}>
-            <EllipsisVertical />
-          </Button>
-        }
+    <Tooltip>
+      <TooltipTrigger
+        render={<span className="inline-flex items-center">{icon}</span>}
       />
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={handleDelete}
-          disabled={isDeleting}
-        >
-          <Trash />
-          {isDeleting ? <Spinner /> : "Delete"}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      <TooltipContent>{status}</TooltipContent>
+    </Tooltip>
   );
 }

@@ -1,5 +1,5 @@
 from clerk_backend_api import AuthenticateRequestOptions, Clerk
-from fastapi import HTTPException, Request
+from fastapi import Depends, HTTPException, Request
 
 from app.config import get_settings
 
@@ -17,3 +17,7 @@ def get_current_user(request: Request):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     return state
+
+
+def get_current_user_id(auth=Depends(get_current_user)) -> str:
+    return auth.payload["sub"]
