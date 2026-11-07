@@ -4,7 +4,6 @@ from fastapi import HTTPException
 import httpx
 from pydantic import TypeAdapter
 
-from app.config import get_settings
 from app.judge0.response import Judge0Response
 
 MAX_POLL_ATTEMPTS = 15
