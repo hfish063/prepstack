@@ -35,7 +35,9 @@ async def submit_code_batch(
     return [result["token"] for result in data]
 
 
-async def poll_submission_batch(client: httpx.AsyncClient, tokens: list[str]) -> list[Judge0Response]:
+async def poll_submission_batch(
+    client: httpx.AsyncClient, tokens: list[str]
+) -> list[Judge0Response]:
     for _ in range(MAX_POLL_ATTEMPTS):
         submissions = await _get_submission_batch(client, tokens)
 
@@ -53,7 +55,9 @@ async def poll_submission_batch(client: httpx.AsyncClient, tokens: list[str]) ->
     )
 
 
-async def _get_submission_batch(client: httpx.AsyncClient, tokens: list[str]) -> list[Judge0Response]:
+async def _get_submission_batch(
+    client: httpx.AsyncClient, tokens: list[str]
+) -> list[Judge0Response]:
     response = await client.get(
         f"/submissions/batch", params={"tokens": ",".join(tokens)}
     )

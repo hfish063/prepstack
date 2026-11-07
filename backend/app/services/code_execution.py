@@ -34,7 +34,12 @@ CANDIDATE_CODE_STUB = "##CANDIDATE_CODE##"
 
 
 async def run_against_examples(
-    db: Session, user_id: str, client: httpx.AsyncClient, phase_id: int, candidate_code: str, language_id: int
+    db: Session,
+    user_id: str,
+    client: httpx.AsyncClient,
+    phase_id: int,
+    candidate_code: str,
+    language_id: int,
 ) -> list[ExampleRunResult]:
     phase = get_phase_for_user(db, phase_id, user_id)
     language = get_programming_language(db, language_id)

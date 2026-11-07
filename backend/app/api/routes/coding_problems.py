@@ -23,7 +23,7 @@ async def run_code(
     run_code_request: RunCodeRequest,
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
-    client: httpx.AsyncClient = Depends(get_judge0_client)
+    client: httpx.AsyncClient = Depends(get_judge0_client),
 ) -> list[ExampleRunResultRead]:
     return await run_against_examples(
         db,
