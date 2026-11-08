@@ -51,8 +51,8 @@ const DEFAULT_WORD_WRAP = true;
 const FONT_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 const TAB_SIZES = [2, 4];
 
-const EDITOR_PANEL_SIZE = 70;
-const CONSOLE_PANEL_SIZE = 30;
+const EDITOR_PANEL_SIZE = 50;
+const CONSOLE_PANEL_SIZE = 50;
 
 type EditorPanelProps = {
   phaseId: number;

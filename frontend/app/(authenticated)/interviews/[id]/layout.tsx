@@ -32,22 +32,25 @@ export default async function InterviewLayout({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex flex-row items-center justify-between gap-2">
+      <div className="flex flex-row justify-between gap-2">
         <div>
           <h1 className="text-lg font-medium">{interview.role}</h1>
           <p className="text-sm text-muted-foreground">
             {interview.experienceLevel}
           </p>
         </div>
-        <ManageInterviewSessionButton interview={interview} />
+        <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <InterviewPhaseIndicators phases={phases} />
+          </div>
+          <div className="flex flex-row gap-2">
+            <CompleteInterviewButton interview={interview} />
+            <ManageInterviewSessionButton interview={interview} />
+          </div>
+        </div>
       </div>
 
       <Separator />
-
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <InterviewPhaseIndicators phases={phases} />
-        <CompleteInterviewButton interview={interview} />
-      </div>
 
       <div className="min-h-0 flex-1">{children}</div>
     </div>
