@@ -48,6 +48,8 @@
   --radius-4xl: calc(var(--radius) * 2.6);
   --color-confirmation: var(--confirmation);
   --color-confirmation-foreground: var(--confirmation-foreground);
+  --color-pending: var(--pending);
+  --color-pending-foreground: var(--pending-foreground);
 }
 
 :root {
@@ -85,6 +87,8 @@
   --sidebar-ring: oklch(0.708 0 0);
   --confirmation: oklch(69.112% 0.16216 154.842);
   --confirmation-foreground: oklch(0.985 0 0);
+  --pending: oklch(69.112% 0.16216 55);
+  --pending-foreground: oklch(0.985 0 0);
 }
 
 .dark {
