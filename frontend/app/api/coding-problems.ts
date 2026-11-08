@@ -21,8 +21,6 @@ export interface CodingProblem {
   title: string;
   prompt: string;
   difficulty: Difficulty;
-  timeLimitMs: number;
-  memoryLimitKb: number;
   examples: ProblemExample[];
   languages: ProgrammingLanguage[];
   createdAt: string;

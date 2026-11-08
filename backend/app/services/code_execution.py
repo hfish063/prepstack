@@ -10,8 +10,8 @@ from app.judge0.client import (
 from app.judge0.dependencies import Judge0ExecutionDeps
 from app.schemas.code_execution import RunCodeRequest
 from app.services.interview_phase import get_phase_for_user
-from app.services.problem_example import get_examples_for_problem
 from app.services.problem_language_template import get_language_template_for_problem
+from app.services.problem_test_case import get_example_cases_for_problem
 from app.services.programming_language import get_programming_language
 
 
@@ -41,14 +41,17 @@ async def run_against_examples(
     problem_id = phase.coding_problem_id
     judge0_language_id = language.judge0_language_id
 
-    examples = get_examples_for_problem(deps.db, problem_id)
+    # examples = get_examples_for_problem(deps.db, problem_id)
+    examples = get_example_cases_for_problem(deps.db, problem_id)
     if not examples:
         return []
 
     # Insert the candidate's code into our driver code to ensure it has an execution point
-    source_code = _splice_driver_code(language_template.driver_code, request.source_code)
+    source_code = _splice_driver_code(
+        language_template.driver_code, request.source_code
+    )
 
-    # Run source code against the problem's example test cases 
+    # Run source code against the problem's example test cases
     example_inputs = [json.dumps(example.input) for example in examples]
     tokens = await submit_code_batch(
         deps.client, source_code, language_id=judge0_language_id, inputs=example_inputs

@@ -11,8 +11,6 @@ class CodingProblemRead(CamelModel):
     title: str
     prompt: str
     difficulty: Difficulty
-    time_limit_ms: int
-    memory_limit_kb: int
     examples: list[ProblemExampleRead]
     languages: list[
         ProgrammingLanguageRead

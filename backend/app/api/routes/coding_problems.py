@@ -5,7 +5,6 @@ from app.judge0.dependencies import Judge0ExecutionDeps
 from app.schemas.code_execution import ExampleRunResultRead, RunCodeRequest
 from app.services.code_execution import run_against_examples
 
-
 router = APIRouter(prefix="/coding-problems")
 
 

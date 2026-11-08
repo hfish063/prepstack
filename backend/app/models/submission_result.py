@@ -21,8 +21,6 @@ class SubmissionResult(SQLModel, table=True):
     stdout: str
     stderr: str
     compile_output: str
-    execution_time_ms: float
-    memory_used_kb: int
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True), server_default=func.now()),

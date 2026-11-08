@@ -8,13 +8,13 @@ from app.enums import PhaseStatus, PhaseType
 from app.models.coding_problem import CodingProblem
 from app.models.interview_phase import InterviewPhase
 from app.models.interview_session import InterviewSession
-from app.models.problem_example import ProblemExample
 from app.models.problem_language_template import ProblemLanguageTemplate
+from app.models.problem_test_case import ProblemTestCase
 from app.models.programming_language import ProgrammingLanguage
 from app.services.coding_problem import get_coding_problem
 from app.services.message import get_phase_messages
-from app.services.problem_example import get_examples_for_problem
 from app.services.problem_language_template import get_language_template_for_problem
+from app.services.problem_test_case import get_example_cases_for_problem
 from app.services.programming_language import get_available_languages_for_problem
 
 
@@ -169,12 +169,12 @@ def get_coding_problem_details_for_phase(
     db: Session, user_id: str, phase_id: int
 ) -> tuple[
     CodingProblem,
-    list[ProblemExample],
+    list[ProblemTestCase],
     list[ProgrammingLanguage],
 ]:
     coding_problem = _get_validated_coding_problem_for_phase(db, user_id, phase_id)
 
-    problem_examples = get_examples_for_problem(db, coding_problem.id)
+    problem_examples = get_example_cases_for_problem(db, coding_problem.id)
 
     languages = get_available_languages_for_problem(db, coding_problem.id)
 
