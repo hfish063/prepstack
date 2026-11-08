@@ -38,6 +38,7 @@ export default function CodingProblemWrapper({
             phaseId={phaseId}
             language={preferredLanguage}
             starterCode={languageTemplate.starterCode}
+            examples={codingProblem.examples}
           />
         </div>
       </ResizablePanel>
