@@ -12,5 +12,5 @@ class ExampleRunResultRead(CamelModel):
     example_id: int
     passed: bool
     stderr: str | None = None
-    compile_output = str | None = None
+    compile_output: str | None = None
     actual_output: Any
