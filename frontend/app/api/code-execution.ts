@@ -8,6 +8,8 @@ export interface RunCodeRequest {
 export interface ExampleRunResultRead {
   exampleId: number;
   passed: boolean;
+  stderr: string | null;
+  compileOutput: string | null;
   actualOutput: string;
 }
 
