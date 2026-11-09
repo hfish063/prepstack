@@ -14,7 +14,6 @@ class SubmissionResult(SQLModel, table=True):
         nullable=False,
         index=True,
     )
-    judge0_token: str
     test_case_id: int = Field(foreign_key="problem_test_cases.id")
     status: str
     passed: bool

@@ -21,3 +21,13 @@ async def run_code(
         phase_id,
         run_code_request,
     )
+
+
+@router.post("/{phase_id}/submit")
+async def submit_code(
+    phase_id: int,
+    run_code_request: RunCodeRequest,
+    deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
+    user_id=Depends(get_current_user_id),
+):
+    pass

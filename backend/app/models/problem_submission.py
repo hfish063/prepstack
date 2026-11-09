@@ -21,7 +21,7 @@ class ProblemSubmission(SQLModel, table=True):
     )
     source_code: str
     status: SubmissionStatus
-    passed_test_cases: int
+    passed_test_cases: Optional[int] = None
     total_test_cases: int
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
