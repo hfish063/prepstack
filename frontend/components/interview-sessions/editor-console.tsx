@@ -38,7 +38,7 @@ export default function EditorConsole({
   const exampleResults: ExampleResult[] = results
     .map((result) => {
       const example = examples.find(
-        (example) => example.id === result.exampleId,
+        (example) => example.id === result.testCaseId,
       );
       return example
         ? {
@@ -46,7 +46,7 @@ export default function EditorConsole({
             passed: result.passed,
             stderr: result.stderr,
             compileOutput: result.compileOutput,
-            actualOutput: result.actualOutput,
+            actualOutput: result.output,
           }
         : null;
     })
