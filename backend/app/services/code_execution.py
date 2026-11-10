@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,9 +10,10 @@ from app.judge0.client import (
 )
 from app.judge0.dependencies import Judge0ExecutionDeps
 from app.models.problem_test_case import ProblemTestCase
+from app.schemas.base import CamelModel
 from app.schemas.code_execution import RunCodeRequest
 from app.models.problem_submission import ProblemSubmission
-from app.schemas.problem_submission import SubmissionResultRead
+from app.schemas.problem_submission import ProblemSubmissionRead, SubmissionResultRead
 from app.services.interview_phase import get_phase_for_user
 from app.services.problem_language_template import get_language_template_for_problem
 from app.services.problem_test_case import (
@@ -54,7 +55,7 @@ async def run_against_examples(
 
 async def submit_candidate_code(
     deps: Judge0ExecutionDeps, user_id: str, phase_id: str, request: RunCodeRequest
-) -> ProblemSubmission:
+) -> ProblemSubmissionRead:
     phase = get_phase_for_user(deps.db, phase_id, user_id)
     template = get_language_template_for_problem(
         deps.db, phase.coding_problem_id, request.language_id
@@ -69,6 +70,7 @@ async def submit_candidate_code(
     source_code = _splice_driver_code(template.driver_code, request.source_code)
 
     results = await _execute_code(deps, source_code, request.language_id, test_cases)
+    stderr, compile_err = _get_submission_errors(results)
 
     submission = ProblemSubmission(
         user_id=user_id,
@@ -89,7 +91,14 @@ async def submit_candidate_code(
 
     deps.db.refresh(submission)
 
-    return submission
+    passed_cases = sum(1 for result in results if result.passed == True)
+    return ProblemSubmissionRead(
+        accepted=submission.accepted,
+        total_test_cases=len(test_cases),
+        passed_test_cases=passed_cases,
+        stderr=stderr,
+        compile_output=compile_err
+    )
 
 
 def _splice_driver_code(driver_code: str, candidate_code: str) -> str:
@@ -133,5 +142,13 @@ async def _execute_code(
     return results
 
 
-def _outputs_match(expected: str, actual: Any):
+def _outputs_match(expected: str, actual: Any) -> bool:
     return expected == actual
+
+
+def _get_submission_errors(results: list[SubmissionResultRead]) -> tuple[str | None, str | None]:
+    for result in results:
+        if result.stderr or result.compile_output:
+            return (result.stderr, result.compile_output)
+
+    return (None, None)
