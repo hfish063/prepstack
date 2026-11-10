@@ -81,7 +81,8 @@ export default function EditorPanel({
 
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [executionResults, setExecutionResults] = useState<ExecutionResult>();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmissionLoading, setIsSubmissionLoading] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
 
@@ -98,7 +99,7 @@ export default function EditorPanel({
     const token = await getToken();
     if (!token) return;
 
-    setIsLoading(true);
+    setIsRunning(true);
 
     try {
       const results = await runCodeAgainstExamples(token, phaseId, {
@@ -111,7 +112,7 @@ export default function EditorPanel({
       console.error(`Error running code against example cases.`);
     } finally {
       setIsConsoleOpen(true);
-      setIsLoading(false);
+      setIsRunning(false);
     }
   };
 
@@ -120,7 +121,7 @@ export default function EditorPanel({
     const token = await getToken();
     if (!token) return;
 
-    setIsLoading(true);
+    setIsSubmissionLoading(true);
 
     try {
       const submission = await submitCandidateCode(token, phaseId, {
@@ -133,7 +134,7 @@ export default function EditorPanel({
       console.error("Code submission request failed");
     } finally {
       setIsConsoleOpen(true);
-      setIsLoading(false);
+      setIsSubmissionLoading(false);
     }
   };
 
@@ -187,7 +188,7 @@ export default function EditorPanel({
               <ResizablePanel defaultSize={CONSOLE_PANEL_SIZE}>
                 {executionResults && (
                   <EditorConsole
-                    isLoading={isLoading}
+                    isLoading={isSubmissionLoading || isRunning}
                     executionResults={executionResults}
                   />
                 )}
@@ -207,16 +208,16 @@ export default function EditorPanel({
           <Button
             variant={"secondary"}
             onClick={handleRunCode}
-            disabled={isLoading}
+            disabled={isRunning || isSubmissionLoading}
           >
-            {isLoading ? <Spinner /> : <Play />}
+            {isRunning ? <Spinner /> : <Play />}
           </Button>
           <Button
             variant={"confirmation"}
             onClick={handleSubmitCode}
-            disabled={isLoading}
+            disabled={isRunning || isSubmissionLoading}
           >
-            <CloudUpload />
+            {isSubmissionLoading ? <Spinner /> : <CloudUpload />}
             Submit
           </Button>
         </div>
