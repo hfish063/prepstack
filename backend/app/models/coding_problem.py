@@ -13,8 +13,6 @@ class CodingProblem(SQLModel, table=True):
     title: str
     prompt: str
     difficulty: Difficulty
-    time_limit_ms: int
-    memory_limit_kb: int
     is_published: bool
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),

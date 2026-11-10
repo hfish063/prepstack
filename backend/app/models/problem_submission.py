@@ -4,8 +4,6 @@ from typing import Optional
 from sqlalchemy import Column, DateTime, func
 from sqlmodel import Field, SQLModel
 
-from app.enums import SubmissionStatus
-
 
 class ProblemSubmission(SQLModel, table=True):
     __tablename__ = "problem_submissions"
@@ -20,9 +18,7 @@ class ProblemSubmission(SQLModel, table=True):
         index=True,
     )
     source_code: str
-    status: SubmissionStatus
-    passed_test_cases: int
-    total_test_cases: int
+    accepted: bool = False
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True), server_default=func.now()),

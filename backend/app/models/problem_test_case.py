@@ -12,3 +12,5 @@ class ProblemTestCase(SQLModel, table=True):
     input: dict = Field(sa_column=Column(JSONB, nullable=False))
     expected_output: Any = Field(sa_column=Column(JSONB, nullable=False))
     ordinal: int
+    hidden: bool = Field(default=True)
+    explanation: Optional[str] = None

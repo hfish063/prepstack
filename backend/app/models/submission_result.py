@@ -14,15 +14,11 @@ class SubmissionResult(SQLModel, table=True):
         nullable=False,
         index=True,
     )
-    judge0_token: str
     test_case_id: int = Field(foreign_key="problem_test_cases.id")
-    status: str
     passed: bool
-    stdout: str
-    stderr: str
-    compile_output: str
-    execution_time_ms: float
-    memory_used_kb: int
+    stdout: Optional[str] = None
+    stderr: Optional[str] = None
+    compile_output: Optional[str] = None
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True), server_default=func.now()),

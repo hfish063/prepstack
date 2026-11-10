@@ -23,8 +23,7 @@ export default async function InterviewSessionPage({
   if (!currentPhase) {
     return (
       <p className="text-sm text-muted-foreground">
-        This interview has already been completed and is set to read-only
-        mode.
+        This interview has already been completed and is set to read-only mode.
       </p>
     );
   }

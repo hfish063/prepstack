@@ -117,12 +117,12 @@ type InterviewPhaseIndicatorIconProps = {
 function InterviewPhaseIndicatorIcon({
   phase,
 }: InterviewPhaseIndicatorIconProps) {
-  let icon = <Circle />;
+  let icon = <Circle className="text-muted-foreground" />;
 
   if (phase.status === "completed") {
-    icon = <CircleCheck />;
+    icon = <CircleCheck className="text-confirmation" />;
   } else if (phase.status === "in_progress") {
-    icon = <CircleDot />;
+    icon = <CircleDot className="text-pending" />;
   }
 
   return icon;

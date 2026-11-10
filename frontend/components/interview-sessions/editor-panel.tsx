@@ -12,7 +12,6 @@ import {
   CodeXml,
   Play,
   Settings,
-  Terminal,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { useRef, useState } from "react";
@@ -32,9 +31,20 @@ import {
 } from "../ui/dialog";
 import { Switch } from "../ui/switch";
 import { ScrollArea } from "../ui/scroll-area";
-import { ProgrammingLanguage } from "@/app/api/coding-problems";
-import { runCodeAgainstExamples } from "@/app/api/code-execution";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../ui/resizable";
+import { ProblemExample, ProgrammingLanguage } from "@/app/api/coding-problems";
+import {
+  ExampleRunResultRead,
+  ProblemSubmissionRead,
+  runCodeAgainstExamples,
+  submitCandidateCode,
+} from "@/app/api/code-execution";
 import { useAuth } from "@clerk/nextjs";
+import EditorConsole from "./editor-console";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
@@ -43,16 +53,25 @@ const DEFAULT_WORD_WRAP = true;
 const FONT_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 const TAB_SIZES = [2, 4];
 
+const EDITOR_PANEL_SIZE = 50;
+const CONSOLE_PANEL_SIZE = 50;
+
+export type ExecutionResult =
+  | { type: "run"; data: ExampleRunResultRead[]; examples: ProblemExample[] }
+  | { type: "submission"; data: ProblemSubmissionRead };
+
 type EditorPanelProps = {
   phaseId: number;
   language: ProgrammingLanguage;
   starterCode: string;
+  examples: ProblemExample[];
 };
 
 export default function EditorPanel({
   phaseId,
   language,
   starterCode,
+  examples,
 }: EditorPanelProps) {
   const { getToken } = useAuth();
 
@@ -61,10 +80,9 @@ export default function EditorPanel({
   const [wordWrapEnabled, setWordWrapEnabled] = useState(DEFAULT_WORD_WRAP);
 
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-  const [runStatus, setRunStatus] = useState<"accepted" | "failed" | null>(
-    null,
-  );
-  const [isLoading, setIsLoading] = useState(false);
+  const [executionResults, setExecutionResults] = useState<ExecutionResult>();
+  const [isSubmissionLoading, setIsSubmissionLoading] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
 
@@ -72,12 +90,16 @@ export default function EditorPanel({
     editorRef.current = editor;
   };
 
+  const handleToggleConsole = () => {
+    setIsConsoleOpen(!isConsoleOpen);
+  };
+
   const handleRunCode = async () => {
     const sourceCode = editorRef.current?.getValue() ?? "";
     const token = await getToken();
     if (!token) return;
 
-    setIsLoading(true);
+    setIsRunning(true);
 
     try {
       const results = await runCodeAgainstExamples(token, phaseId, {
@@ -85,20 +107,40 @@ export default function EditorPanel({
         languageId: language.id,
       });
 
-      setRunStatus(
-        results.every((result) => result.passed) ? "accepted" : "failed",
-      );
+      setExecutionResults({ type: "run", data: results, examples: examples });
     } catch {
       console.error(`Error running code against example cases.`);
     } finally {
       setIsConsoleOpen(true);
-      setIsLoading(false);
+      setIsRunning(false);
+    }
+  };
+
+  const handleSubmitCode = async () => {
+    const sourceCode = editorRef.current?.getValue() ?? "";
+    const token = await getToken();
+    if (!token) return;
+
+    setIsSubmissionLoading(true);
+
+    try {
+      const submission = await submitCandidateCode(token, phaseId, {
+        sourceCode,
+        languageId: language.id,
+      });
+
+      setExecutionResults({ type: "submission", data: submission });
+    } catch {
+      console.error("Code submission request failed");
+    } finally {
+      setIsConsoleOpen(true);
+      setIsSubmissionLoading(false);
     }
   };
 
   return (
-    <Card className="h-full">
-      <CardHeader className="flex flex-row gap-4 items-center justify-between shrink-0">
+    <Card className="h-full gap-0 p-0">
+      <CardHeader className="flex flex-row gap-4 py-2 items-center justify-between shrink-0">
         <div className="flex flex-row items-center gap-2 font-semibold">
           <CodeXml />
           Code
@@ -116,43 +158,66 @@ export default function EditorPanel({
       <Separator />
 
       <CardContent className="min-h-0 flex-1 p-0">
-        <Editor
-          loading={<Spinner />}
-          language={language.name.toLowerCase()}
-          height="100%"
-          defaultValue={starterCode}
-          onMount={handleEditorMount}
-          options={{
-            fontSize: fontSize,
-            tabSize: tabSize,
-            wordWrap: wordWrapEnabled ? "on" : "off",
-            minimap: { enabled: false },
-          }}
-        />
+        <ResizablePanelGroup orientation="vertical">
+          <ResizablePanel
+            defaultSize={
+              isConsoleOpen
+                ? EDITOR_PANEL_SIZE
+                : EDITOR_PANEL_SIZE + CONSOLE_PANEL_SIZE
+            }
+            style={{ overflow: "hidden" }}
+          >
+            <Editor
+              className="pt-4"
+              loading={<Spinner />}
+              language={language.name.toLowerCase()}
+              height="100%"
+              defaultValue={starterCode}
+              onMount={handleEditorMount}
+              options={{
+                fontSize: fontSize,
+                tabSize: tabSize,
+                wordWrap: wordWrapEnabled ? "on" : "off",
+                minimap: { enabled: false },
+              }}
+            />
+          </ResizablePanel>
+          {isConsoleOpen && (
+            <>
+              <ResizableHandle className="mb-2" withHandle />
+              <ResizablePanel defaultSize={CONSOLE_PANEL_SIZE}>
+                {executionResults && (
+                  <EditorConsole
+                    isLoading={isSubmissionLoading || isRunning}
+                    executionResults={executionResults}
+                  />
+                )}
+              </ResizablePanel>
+            </>
+          )}
+        </ResizablePanelGroup>
       </CardContent>
 
-      {isConsoleOpen && (
-        <EditorConsole isLoading={isLoading} status={runStatus} />
-      )}
       <Separator />
 
-      <CardFooter className="flex gap-4 justify-between">
-        <Button
-          variant={"ghost"}
-          onClick={() => setIsConsoleOpen(!isConsoleOpen)}
-        >
+      <CardFooter className="flex gap-4 py-2 justify-between">
+        <Button variant={"ghost"} onClick={handleToggleConsole}>
           Console {isConsoleOpen ? <ChevronDown /> : <ChevronUp />}
         </Button>
         <div className="flex flex-row items-center gap-4">
           <Button
             variant={"secondary"}
             onClick={handleRunCode}
-            disabled={isLoading}
+            disabled={isRunning || isSubmissionLoading}
           >
-            {isLoading ? <Spinner /> : <Play />}
+            {isRunning ? <Spinner /> : <Play />}
           </Button>
-          <Button variant={"confirmation"} disabled={isLoading}>
-            <CloudUpload />
+          <Button
+            variant={"confirmation"}
+            onClick={handleSubmitCode}
+            disabled={isRunning || isSubmissionLoading}
+          >
+            {isSubmissionLoading ? <Spinner /> : <CloudUpload />}
             Submit
           </Button>
         </div>
@@ -251,39 +316,5 @@ function EditorPanelConfigurationMenu({
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-type EditorConsoleProps = {
-  isLoading: boolean;
-  status: "accepted" | "failed" | null;
-};
-
-function EditorConsole({ isLoading, status }: EditorConsoleProps) {
-  return (
-    <div className="flex flex-col gap-4 h-1/3">
-      <Separator />
-
-      <div className="flex items-center gap-1 font-semibold px-4">
-        <Terminal />
-        Output
-      </div>
-
-      <Separator />
-
-      {status && !isLoading && (
-        <ScrollArea>
-          <p
-            className={
-              status === "accepted"
-                ? "px-4 text-confirmation"
-                : "px-4 text-destructive"
-            }
-          >
-            {status === "accepted" ? "Accepted" : "Failed"}
-          </p>
-        </ScrollArea>
-      )}
-    </div>
   );
 }

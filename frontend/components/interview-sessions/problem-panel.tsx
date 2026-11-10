@@ -12,8 +12,8 @@ type ProblemPanelProps = {
 
 export default function ProblemPanel({ codingProblem }: ProblemPanelProps) {
   return (
-    <Card className="h-full gap-0 pb-0">
-      <CardHeader className="px-6 pb-6">
+    <Card className="h-full gap-0 p-0">
+      <CardHeader className="px-6 py-3.5">
         <div className="flex flex-row gap-2 items-center font-semibold">
           <FileText />
           Question
@@ -22,7 +22,7 @@ export default function ProblemPanel({ codingProblem }: ProblemPanelProps) {
       <Separator />
       <CardContent className="min-h-0 flex-1 p-0">
         <ScrollArea className="h-full">
-          <div className="flex flex-col gap-4 px-6 my-6 text-sm/8">
+          <div className="flex flex-col gap-4 px-6 py-6 text-sm/8">
             <div className="text-2xl font-bold">{codingProblem.title}</div>
             <Badge>{codingProblem.difficulty}</Badge>
             <Markdown

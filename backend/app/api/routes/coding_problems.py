@@ -1,16 +1,10 @@
 from fastapi import APIRouter, Depends
-from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
-from app.db.database import get_db
-from app.schemas.base import CamelModel
-from app.services.code_execution import ExampleRunResultRead, run_against_examples
-
-
-class RunCodeRequest(CamelModel):
-    source_code: str
-    language_id: int
-
+from app.judge0.dependencies import Judge0ExecutionDeps
+from app.schemas.code_execution import RunCodeRequest
+from app.schemas.problem_submission import ProblemSubmissionRead, SubmissionResultRead
+from app.services.code_execution import run_against_examples, submit_candidate_code
 
 router = APIRouter(prefix="/coding-problems")
 
@@ -19,13 +13,22 @@ router = APIRouter(prefix="/coding-problems")
 async def run_code(
     phase_id: int,
     run_code_request: RunCodeRequest,
-    db: Session = Depends(get_db),
+    deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
     user_id=Depends(get_current_user_id),
-) -> list[ExampleRunResultRead]:
+) -> list[SubmissionResultRead]:
     return await run_against_examples(
-        db,
+        deps,
         user_id,
         phase_id,
-        run_code_request.source_code,
-        run_code_request.language_id,
+        run_code_request,
     )
+
+
+@router.post("/{phase_id}/submit", response_model=ProblemSubmissionRead)
+async def submit_code(
+    phase_id: int,
+    run_code_request: RunCodeRequest,
+    deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
+    user_id=Depends(get_current_user_id),
+) -> ProblemSubmissionRead:
+    return await submit_candidate_code(deps, user_id, phase_id, run_code_request)
