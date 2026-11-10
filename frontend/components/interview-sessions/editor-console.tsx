@@ -6,6 +6,10 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ProblemExample } from "@/app/api/coding-problems";
 import { ExecutionResult } from "./editor-panel";
+import {
+  ExampleRunResultRead,
+  ProblemSubmissionRead,
+} from "@/app/api/code-execution";
 
 type ExampleResult = {
   example: ProblemExample;
@@ -24,35 +28,54 @@ export default function EditorConsole({
   isLoading,
   executionResults,
 }: EditorConsoleProps) {
-  if (executionResults.type == "submission") {
-    const submission = executionResults.data;
+  if (isLoading) return;
 
-    return (
-      <div className="flex flex-col gap-4 p-4">
-        <div className="flex flex-row justify-between items-center">
-          {submission.accepted ? (
-            <p className="text-lg text-confirmation">Accepted</p>
-          ) : (
-            <p className="text-lg text-destructive">Failed</p>
-          )}
-          <p>{`Passed test cases: ${submission.passedTestCases} / ${submission.totalTestCases}`}</p>
-        </div>
-        {submission.accepted && (
-          <p>You have successfully completed this problem!</p>
-        )}
-        {(submission.stderr || submission.compileOutput) && (
-          <ErrorDisplay
-            stderr={submission.stderr}
-            compileOutput={submission.compileOutput}
-          />
-        )}
-      </div>
-    );
+  if (executionResults.type == "submission") {
+    return <SubmissionContent submission={executionResults.data} />;
   }
 
-  const runResults = executionResults.data;
-  const examples = executionResults.examples;
+  return (
+    <RunResultContent
+      runResults={executionResults.data}
+      examples={executionResults.examples}
+    />
+  );
+}
 
+type SubmissionContentProps = {
+  submission: ProblemSubmissionRead;
+};
+
+function SubmissionContent({ submission }: SubmissionContentProps) {
+  return (
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-row justify-between items-center">
+        {submission.accepted ? (
+          <p className="text-lg text-confirmation">Accepted</p>
+        ) : (
+          <p className="text-lg text-destructive">Failed</p>
+        )}
+        <p>{`Passed test cases: ${submission.passedTestCases} / ${submission.totalTestCases}`}</p>
+      </div>
+      {submission.accepted && (
+        <p>You have successfully completed this problem!</p>
+      )}
+      {(submission.stderr || submission.compileOutput) && (
+        <ErrorDisplay
+          stderr={submission.stderr}
+          compileOutput={submission.compileOutput}
+        />
+      )}
+    </div>
+  );
+}
+
+type RunResultContentProps = {
+  runResults: ExampleRunResultRead[];
+  examples: ProblemExample[];
+};
+
+function RunResultContent({ runResults, examples }: RunResultContentProps) {
   const status =
     runResults.length > 0
       ? runResults.every((result) => result.passed)
@@ -87,7 +110,7 @@ export default function EditorConsole({
       </div>
       <Separator />
 
-      {status && !isLoading && (
+      {status && (
         <ScrollArea className="flex-1 min-h-0">
           <div className="flex flex-row gap-4 px-4 pt-4 justify-between items-center">
             <p
