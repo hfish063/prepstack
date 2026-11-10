@@ -5,7 +5,7 @@ import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ProblemExample } from "@/app/api/coding-problems";
-import { ExampleRunResultRead } from "@/app/api/code-execution";
+import { ExecutionResult } from "./editor-panel";
 
 type ExampleResult = {
   example: ProblemExample;
@@ -17,25 +17,52 @@ type ExampleResult = {
 
 type EditorConsoleProps = {
   isLoading: boolean;
-  results: ExampleRunResultRead[];
-  examples: ProblemExample[];
+  executionResults: ExecutionResult;
 };
 
 export default function EditorConsole({
   isLoading,
-  results,
-  examples,
+  executionResults,
 }: EditorConsoleProps) {
+  if (executionResults.type == "submission") {
+    const submission = executionResults.data;
+
+    return (
+      <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-row justify-between items-center">
+          {submission.accepted ? (
+            <p className="text-lg text-confirmation">Accepted</p>
+          ) : (
+            <p className="text-lg text-destructive">Failed</p>
+          )}
+          <p>{`Passed test cases: ${submission.passedTestCases} / ${submission.totalTestCases}`}</p>
+        </div>
+        {submission.accepted && (
+          <p>You have successfully completed this problem!</p>
+        )}
+        {(submission.stderr || submission.compileOutput) && (
+          <ErrorDisplay
+            stderr={submission.stderr}
+            compileOutput={submission.compileOutput}
+          />
+        )}
+      </div>
+    );
+  }
+
+  const runResults = executionResults.data;
+  const examples = executionResults.examples;
+
   const status =
-    results.length > 0
-      ? results.every((result) => result.passed)
+    runResults.length > 0
+      ? runResults.every((result) => result.passed)
         ? "accepted"
         : "failed"
       : null;
 
-  const passed = results.filter((result) => result.passed);
+  const passed = runResults.filter((result) => result.passed);
 
-  const exampleResults: ExampleResult[] = results
+  const exampleResults: ExampleResult[] = runResults
     .map((result) => {
       const example = examples.find(
         (example) => example.id === result.testCaseId,

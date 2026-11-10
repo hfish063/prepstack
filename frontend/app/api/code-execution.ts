@@ -8,17 +8,17 @@ export interface RunCodeRequest {
 export interface ExampleRunResultRead {
   testCaseId: number;
   passed: boolean;
-  stderr?: string | null;
-  compileOutput?: string | null;
+  stderr: string | null;
+  compileOutput: string | null;
   output: string;
 }
 
 export interface ProblemSubmissionRead {
   accepted: boolean;
   totalTestCases: number;
-  passedTestCases?: number | null;
-  stderr?: string | null;
-  compileOutput?: string | null;
+  passedTestCases: number | null;
+  stderr: string | null;
+  compileOutput: string | null;
 }
 
 export async function runCodeAgainstExamples(

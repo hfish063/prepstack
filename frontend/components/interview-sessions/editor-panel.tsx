@@ -39,7 +39,9 @@ import {
 import { ProblemExample, ProgrammingLanguage } from "@/app/api/coding-problems";
 import {
   ExampleRunResultRead,
+  ProblemSubmissionRead,
   runCodeAgainstExamples,
+  submitCandidateCode,
 } from "@/app/api/code-execution";
 import { useAuth } from "@clerk/nextjs";
 import EditorConsole from "./editor-console";
@@ -53,6 +55,10 @@ const TAB_SIZES = [2, 4];
 
 const EDITOR_PANEL_SIZE = 50;
 const CONSOLE_PANEL_SIZE = 50;
+
+export type ExecutionResult =
+  | { type: "run"; data: ExampleRunResultRead[]; examples: ProblemExample[] }
+  | { type: "submission"; data: ProblemSubmissionRead };
 
 type EditorPanelProps = {
   phaseId: number;
@@ -74,7 +80,7 @@ export default function EditorPanel({
   const [wordWrapEnabled, setWordWrapEnabled] = useState(DEFAULT_WORD_WRAP);
 
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-  const [runResults, setRunResults] = useState<ExampleRunResultRead[]>([]);
+  const [executionResults, setExecutionResults] = useState<ExecutionResult>();
   const [isLoading, setIsLoading] = useState(false);
 
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
@@ -100,9 +106,31 @@ export default function EditorPanel({
         languageId: language.id,
       });
 
-      setRunResults(results);
+      setExecutionResults({ type: "run", data: results, examples: examples });
     } catch {
       console.error(`Error running code against example cases.`);
+    } finally {
+      setIsConsoleOpen(true);
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmitCode = async () => {
+    const sourceCode = editorRef.current?.getValue() ?? "";
+    const token = await getToken();
+    if (!token) return;
+
+    setIsLoading(true);
+
+    try {
+      const submission = await submitCandidateCode(token, phaseId, {
+        sourceCode,
+        languageId: language.id,
+      });
+
+      setExecutionResults({ type: "submission", data: submission });
+    } catch {
+      console.error("Code submission request failed");
     } finally {
       setIsConsoleOpen(true);
       setIsLoading(false);
@@ -157,11 +185,12 @@ export default function EditorPanel({
             <>
               <ResizableHandle className="mb-2" withHandle />
               <ResizablePanel defaultSize={CONSOLE_PANEL_SIZE}>
-                <EditorConsole
-                  isLoading={isLoading}
-                  results={runResults}
-                  examples={examples}
-                />
+                {executionResults && (
+                  <EditorConsole
+                    isLoading={isLoading}
+                    executionResults={executionResults}
+                  />
+                )}
               </ResizablePanel>
             </>
           )}
@@ -182,7 +211,11 @@ export default function EditorPanel({
           >
             {isLoading ? <Spinner /> : <Play />}
           </Button>
-          <Button variant={"confirmation"} disabled={isLoading}>
+          <Button
+            variant={"confirmation"}
+            onClick={handleSubmitCode}
+            disabled={isLoading}
+          >
             <CloudUpload />
             Submit
           </Button>
