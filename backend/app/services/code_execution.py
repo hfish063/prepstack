@@ -1,5 +1,5 @@
 import json
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,7 +10,6 @@ from app.judge0.client import (
 )
 from app.judge0.dependencies import Judge0ExecutionDeps
 from app.models.problem_test_case import ProblemTestCase
-from app.schemas.base import CamelModel
 from app.schemas.code_execution import RunCodeRequest
 from app.models.problem_submission import ProblemSubmission
 from app.schemas.problem_submission import ProblemSubmissionRead, SubmissionResultRead
@@ -97,7 +96,7 @@ async def submit_candidate_code(
         total_test_cases=len(test_cases),
         passed_test_cases=passed_cases,
         stderr=stderr,
-        compile_output=compile_err
+        compile_output=compile_err,
     )
 
 
@@ -146,7 +145,9 @@ def _outputs_match(expected: str, actual: Any) -> bool:
     return expected == actual
 
 
-def _get_submission_errors(results: list[SubmissionResultRead]) -> tuple[str | None, str | None]:
+def _get_submission_errors(
+    results: list[SubmissionResultRead],
+) -> tuple[str | None, str | None]:
     for result in results:
         if result.stderr or result.compile_output:
             return (result.stderr, result.compile_output)
