@@ -13,7 +13,7 @@ IN_PROGRESS_STATUSES = {1, 2}  # 1 (In Queue), 2 (Processing)
 _batch_adapter = TypeAdapter(list[Judge0Response])
 
 
-async def submit_code_batch(
+async def create_submission_batch(
     client: httpx.AsyncClient, source_code: str, language_id: int, inputs: list[str]
 ) -> list[str]:
     if not inputs:
