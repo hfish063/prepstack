@@ -3,16 +3,16 @@ from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
-from app.interviews.flows import complete_interview, create_interview_with_phases
+from app.interviews.sessions.flows import complete_interview, create_interview_with_phases
 from app.interviews.notes.router import router as notes_router
-from app.interviews.schemas import InterviewSessionCreate, InterviewSessionRead
-from app.interviews.service import (
+from app.interviews.sessions.schemas import InterviewSessionCreate, InterviewSessionRead
+from app.interviews.sessions.service import (
     delete,
     get_all,
     get,
 )
-from app.phases.schemas import InterviewPhaseRead
-from app.phases.service import get_phases_for_interview
+from app.interviews.phases.schemas import InterviewPhaseRead
+from app.interviews.phases.service import get_phases_for_interview
 
 router = APIRouter(prefix="/interviews")
 router.include_router(notes_router)

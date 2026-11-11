@@ -4,8 +4,8 @@ from sqlmodel import Session
 from app.auth.clerk import get_current_user_id
 from app.coding_problems.flows import get_coding_problem_details
 from app.database.database import get_db
-from app.phases.schemas import InterviewPhaseRead
-from app.phases.service import advance_phase_to_target, get_coding_problem_id_for_phase
+from app.interviews.phases.schemas import InterviewPhaseRead
+from app.interviews.phases.service import advance_phase_to_target, get_coding_problem_id_for_phase
 from app.coding_problems.schemas import CodingProblemRead
 from app.language_templates.schemas import ProblemLanguageTemplateRead
 from app.language_templates.service import get_language_template_for_problem

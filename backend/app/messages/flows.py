@@ -1,14 +1,14 @@
 from sqlmodel import Session
 
 from app.enums import MessageRole
-from app.interviews import service as interviews_service
-from app.interviews.models import InterviewSession
+from app.interviews.sessions import service as interviews_service
+from app.interviews.sessions.models import InterviewSession
 from app.messages import service as messages_service
 from app.messages.models import Message
 from app.openai.client import generate_response
-from app.phases import service as phases_service
-from app.phases.models import InterviewPhase
-from app.phases.strategies.factory import get_phase_strategy
+from app.interviews.phases import service as phases_service
+from app.interviews.phases.models import InterviewPhase
+from app.interviews.phases.strategies.factory import get_phase_strategy
 
 
 def process_message(db: Session, phase_id: int, user_id: str, content: str) -> Message:

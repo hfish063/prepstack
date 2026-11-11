@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
 
-from app.interviews.models import InterviewSession
+from app.interviews.sessions.models import InterviewSession
 from app.interviews.notes.models import InterviewSessionNotes
 from app.interviews.notes.schemas import (
     InterviewSessionNotesCreate,

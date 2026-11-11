@@ -6,7 +6,7 @@ from app.database.database import get_db
 from app.messages.flows import process_message
 from app.messages.schemas import MessageCreate, MessageRead
 from app.messages.service import get_phase_messages
-from app.phases.service import get_phase_for_user
+from app.interviews.phases.service import get_phase_for_user
 
 router = APIRouter(prefix="/messages")
 

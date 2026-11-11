@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from app.interviews.models import InterviewSession
-from app.phases.models import InterviewPhase
+from app.interviews.sessions.models import InterviewSession
+from app.interviews.phases.models import InterviewPhase
 from app.messages.models import Message
 
 

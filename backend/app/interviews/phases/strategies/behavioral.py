@@ -1,5 +1,5 @@
-from app.interviews.models import InterviewSession
-from app.phases.strategies.strategy import PhaseStrategy
+from app.interviews.sessions.models import InterviewSession
+from app.interviews.phases.strategies.strategy import PhaseStrategy
 from app.messages.models import Message
 
 

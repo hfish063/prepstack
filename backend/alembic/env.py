@@ -11,11 +11,11 @@ from app.config import get_settings
 # Import every domain's models module so its tables register on
 # SQLModel.metadata before autogenerate inspects it.
 import app.coding_problems.models
-import app.interviews.models
+import app.interviews.sessions.models
 import app.interviews.notes.models
 import app.language_templates.models
 import app.messages.models
-import app.phases.models
+import app.interviews.phases.models
 import app.programming_languages.models
 import app.submissions.models
 import app.test_cases.models

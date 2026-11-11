@@ -23,7 +23,7 @@ from app.judge0.client import (
 from app.judge0.dependencies import Judge0ExecutionDeps
 from app.submissions import service as submissions_service
 from app.submissions.schemas import ProblemSubmissionRead, SubmissionResultRead
-from app.phases.service import get_phase_for_user
+from app.interviews.phases.service import get_phase_for_user
 
 CANDIDATE_CODE_STUB = "##CANDIDATE_CODE##"
 

@@ -2,9 +2,9 @@ from fastapi import APIRouter
 
 
 from app.health_check import router as health_check
-from app.interviews import router as interview_sessions
+from app.interviews.sessions import router as interview_sessions
 from app.messages import router as messages
-from app.phases import router as interview_phases
+from app.interviews.phases import router as interview_phases
 from app.coding_problems import router as coding_problems
 
 router = APIRouter(prefix="/api")

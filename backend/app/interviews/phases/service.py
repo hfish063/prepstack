@@ -5,8 +5,8 @@ from sqlmodel import Session, select
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.enums import PhaseStatus, PhaseType
-from app.interviews.models import InterviewSession
-from app.phases.models import InterviewPhase
+from app.interviews.sessions.models import InterviewSession
+from app.interviews.phases.models import InterviewPhase
 
 
 def create_interview_phases(db: Session, interview_id: int) -> list[InterviewPhase]:

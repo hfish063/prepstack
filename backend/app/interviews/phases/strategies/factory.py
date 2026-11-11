@@ -1,7 +1,7 @@
 from app.enums import PhaseType
-from app.phases.strategies.behavioral import BehavioralStrategy
-from app.phases.strategies.conceptual import ConceptualStrategy
-from app.phases.strategies.strategy import PhaseStrategy
+from app.interviews.phases.strategies.behavioral import BehavioralStrategy
+from app.interviews.phases.strategies.conceptual import ConceptualStrategy
+from app.interviews.phases.strategies.strategy import PhaseStrategy
 
 
 def get_phase_strategy(phase_type: PhaseType) -> PhaseStrategy:

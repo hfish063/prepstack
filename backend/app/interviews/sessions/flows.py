@@ -1,9 +1,9 @@
 from sqlmodel import Session
 
-from app.interviews import service as interviews_service
-from app.interviews.models import InterviewSession
-from app.interviews.schemas import InterviewSessionCreate
-from app.phases import service as phases_service
+from app.interviews.sessions import service as interviews_service
+from app.interviews.sessions.models import InterviewSession
+from app.interviews.sessions.schemas import InterviewSessionCreate
+from app.interviews.phases import service as phases_service
 
 
 def create_interview_with_phases(

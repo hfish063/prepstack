@@ -2,8 +2,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, select
 
 from app.enums import InterviewStatus
-from app.interviews.models import InterviewSession
-from app.interviews.schemas import InterviewSessionCreate
+from app.interviews.sessions.models import InterviewSession
+from app.interviews.sessions.schemas import InterviewSessionCreate
 
 
 def mark_interview_complete(
