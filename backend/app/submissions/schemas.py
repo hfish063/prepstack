@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Optional
 
 from app.schemas import CamelModel
@@ -17,3 +18,14 @@ class SubmissionResultRead(CamelModel):
     output: Any
     stderr: Optional[str] = None
     compile_output: Optional[str] = None
+
+
+class ProblemSubmissionHistoryRead(CamelModel):
+    id: int
+    problem_id: int
+    language_id: int
+    phase_id: int
+    source_code: str
+    accepted: bool
+    created_at: datetime
+    updated_at: datetime

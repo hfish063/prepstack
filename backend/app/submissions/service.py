@@ -1,7 +1,23 @@
 from sqlalchemy.exc import SQLAlchemyError
-from sqlmodel import Session
+from sqlmodel import Session, select
 
+from app.coding_problems.exceptions import InvalidPhaseTypeError
+from app.enums import PhaseType
+from app.interviews.phases.models import InterviewPhase
 from app.submissions.models import ProblemSubmission
+
+
+def get_all_submissions(db: Session, phase: InterviewPhase) -> list[ProblemSubmission]:
+    if phase.phase_type != PhaseType.TECHNICAL:
+        raise InvalidPhaseTypeError(
+            "This interview phase does not support code execution."
+        )
+
+    return db.exec(
+        select(ProblemSubmission)
+        .where(ProblemSubmission.phase_id == phase.id)
+        .order_by(ProblemSubmission.created_at)
+    ).all()
 
 
 def create_submission(
