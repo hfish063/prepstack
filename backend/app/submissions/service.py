@@ -1,5 +1,5 @@
 from sqlalchemy.exc import SQLAlchemyError
-from sqlmodel import Session, select
+from sqlmodel import Session, delete, select
 
 from app.coding_problems.exceptions import InvalidPhaseTypeError
 from app.enums import PhaseType
@@ -48,3 +48,17 @@ def create_submission(
 
     db.refresh(submission)
     return submission
+
+
+def delete_all_submissions(db: Session, phase: InterviewPhase) -> None:
+    if phase.phase_type != PhaseType.TECHNICAL:
+        raise InvalidPhaseTypeError("Submissions do not exist for this interview type.")
+
+    statement = delete(ProblemSubmission).where(ProblemSubmission.phase_id == phase.id)
+
+    try:
+        db.exec(statement)
+        db.commit()
+    except SQLAlchemyError:
+        db.rollback()
+        raise

@@ -25,7 +25,7 @@ from app.submissions.schemas import (
     ProblemSubmissionRead,
     SubmissionResultRead,
 )
-from app.submissions.service import get_all_submissions
+from app.submissions.service import delete_all_submissions, get_all_submissions
 
 router = APIRouter(prefix="/coding-problems")
 
@@ -136,6 +136,30 @@ def get_problem_submissions(
 
     try:
         return get_all_submissions(db, phase)
+    except InvalidPhaseTypeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(e)
+        )
+
+
+@router.delete(
+    "/{phase_id}/submissions/delete/all",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_problem_submissions(
+    phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
+):
+    phase = get_phase_for_user(db, phase_id, user_id)
+
+    if not phase:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Could not find phase for user.",
+        )
+
+    try:
+        return delete_all_submissions(db, phase)
     except InvalidPhaseTypeError as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(e)
