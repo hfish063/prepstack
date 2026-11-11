@@ -5,7 +5,7 @@ from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
 from app.messages.flows import process_message
 from app.messages.schemas import MessageCreate, MessageRead
-from app.messages.service import get_phase_messages
+from app.messages.service import get_all
 from app.interviews.phases.service import get_phase_for_user
 
 router = APIRouter(prefix="/messages")
@@ -22,9 +22,8 @@ def send_message(
 
 
 @router.get("/{phase_id}", response_model=list[MessageRead])
-def find_phase_messages(
+def find_all_phase_messages(
     phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
 ):
-    get_phase_for_user(db, phase_id, user_id)  # Ownership check, raises 404
-
-    return get_phase_messages(db, phase_id)
+    phase = get_phase_for_user(db, phase_id, user_id)  # Ownership check, raises 404
+    return get_all(db, phase)

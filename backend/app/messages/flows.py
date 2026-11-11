@@ -17,17 +17,17 @@ def process_message(db: Session, phase_id: int, user_id: str, content: str) -> M
         db, phase_id, user_id
     )  # Verify user ownership
     interview = interviews_service.get(db, user_id, phase.interview_id)
-    messages_service.save_message(db, phase_id, MessageRole.USER, content)
+    messages_service.save(db, phase_id, MessageRole.USER, content)
 
     # Get message history for phase
-    history = messages_service.get_phase_messages(db, phase_id)
+    history = messages_service.get_all(db, phase_id)
 
     # Build AI prompt
     # Call OpenAI
     ai_content = generate_response(build_prompt(phase, history, interview))
 
     # Save AI response
-    return messages_service.save_message(
+    return messages_service.save(
         db, phase_id, MessageRole.ASSISTANT, ai_content
     )
 
