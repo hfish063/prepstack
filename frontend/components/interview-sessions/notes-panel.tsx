@@ -146,7 +146,6 @@ export default function NotesPanel({ interviewId }: NotesPanelProps) {
           setNotes(e.target.value);
         }}
       />
-      <Separator />
       <div className="flex flex-wrap gap-4">
         <p className="text-sm text-muted-foreground">{`${characters} / ${MAX_NOTE_CHARACTERS} characters`}</p>
         <p className="text-sm text-muted-foreground">{`${words} words`}</p>
