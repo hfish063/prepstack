@@ -20,7 +20,7 @@ def process_message(db: Session, phase_id: int, user_id: str, content: str) -> M
     messages_service.save(db, phase_id, MessageRole.USER, content)
 
     # Get message history for phase
-    history = messages_service.get_all(db, phase_id)
+    history = messages_service.get_all_by_phase(db, phase_id)
 
     # Build AI prompt
     # Call OpenAI

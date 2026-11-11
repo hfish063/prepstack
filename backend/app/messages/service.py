@@ -22,7 +22,7 @@ def save(
     return db_message
 
 
-def get_all(db: Session, phase: InterviewPhase) -> list[Message]:
+def get_all_by_phase(db: Session, phase: InterviewPhase) -> list[Message]:
     phase_id = phase.id
     statement = select(Message).where(Message.phase_id == phase_id)
     return db.exec(statement).all()
