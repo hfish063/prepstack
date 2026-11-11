@@ -1,12 +1,17 @@
 from sqlmodel import Session
 
 from app.enums import PhaseType
+from app.exceptions import ResourceNotFoundError
 from app.interviews.phases import service as phases_service
 from app.interviews.phases.models import InterviewPhase
 
 
 def advance_to_next_phase(db: Session, user_id: str, phase_id: int) -> InterviewPhase:
     current_phase = phases_service.get_phase_for_user(db, phase_id, user_id)
+
+    if not current_phase:
+        raise ResourceNotFoundError()
+
     current_phase_index = current_phase.order_index
 
     # Don't advance past Technical (final) phase

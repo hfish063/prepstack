@@ -14,7 +14,7 @@ def get_current_user(request: Request):
     )
 
     if not state.is_signed_in:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+        raise HTTPException(status_code=401, detail="Unauthorized, request denied.")
 
     return state
 

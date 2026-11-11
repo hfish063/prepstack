@@ -36,7 +36,7 @@ export async function findCodingProblemForPhase(
   token: string,
   phaseId: number,
 ) {
-  const response = await apiFetch(`/phases/${phaseId}/coding-problem`, {
+  const response = await apiFetch(`/coding-problems/${phaseId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -55,7 +55,7 @@ export async function findLanguageTemplateForPhase(
   languageId: number,
 ) {
   const response = await apiFetch(
-    `/phases/${phaseId}/coding-problem/template?language_id=${languageId}`,
+    `/coding-problems/${phaseId}/template?language_id=${languageId}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
 

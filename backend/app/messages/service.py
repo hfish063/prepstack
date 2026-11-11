@@ -6,9 +6,7 @@ from app.interviews.phases.models import InterviewPhase
 from app.messages.models import Message
 
 
-def save(
-    db: Session, phase_id: int, role: MessageRole, content: str
-) -> Message:
+def save(db: Session, phase_id: int, role: MessageRole, content: str) -> Message:
     db_message = Message(phase_id=phase_id, role=role, content=content)
 
     try:

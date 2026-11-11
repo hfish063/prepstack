@@ -10,9 +10,11 @@ from app.interviews.phases.models import InterviewPhase
 from app.interviews.phases.strategies.factory import get_phase_strategy
 
 
-def process_message(db: Session, phase: InterviewPhase, user_id: str, content: str) -> Message:
+def process_message(
+    db: Session, phase: InterviewPhase, user_id: str, content: str
+) -> Message:
     """Persists the user's message, generates and persists the AI's reply, and returns the assistant message.
-    
+
     Assumes the supplied phase has already been authorized.
     """
     phase_id = phase.id
@@ -20,16 +22,14 @@ def process_message(db: Session, phase: InterviewPhase, user_id: str, content: s
     messages_service.save(db, phase_id, MessageRole.USER, content)
 
     # Get message history for phase
-    history = messages_service.get_all_by_phase(db, phase_id)
+    history = messages_service.get_all_by_phase(db, phase)
 
     # Build AI prompt
     # Call OpenAI
     ai_content = generate_response(build_prompt(phase, history, interview))
 
     # Save AI response
-    return messages_service.save(
-        db, phase_id, MessageRole.ASSISTANT, ai_content
-    )
+    return messages_service.save(db, phase_id, MessageRole.ASSISTANT, ai_content)
 
 
 def build_prompt(

@@ -1,11 +1,14 @@
 import json
 from typing import Any
 
-from fastapi import HTTPException
 from sqlmodel import Session
 
+from app.coding_problems.models import CodingProblem
+from app.exceptions import ResourceNotFoundError
+from app.coding_problems.exceptions import (
+    NoTestCasesConfiguredError,
+)
 from app.coding_problems.schemas import CodingProblemRead, RunCodeRequest
-from app.coding_problems.service import get_coding_problem
 from app.language_templates.service import get_language_template_for_problem
 from app.programming_languages.service import (
     get_available_languages_for_problem,
@@ -28,10 +31,11 @@ from app.interviews.phases.service import get_phase_for_user
 CANDIDATE_CODE_STUB = "##CANDIDATE_CODE##"
 
 
-def get_coding_problem_details(db: Session, problem_id: int) -> CodingProblemRead:
-    problem = get_coding_problem(db, problem_id)
-    examples = get_example_cases_for_problem(db, problem_id)
-    languages = get_available_languages_for_problem(db, problem_id)
+def get_coding_problem_details(
+    db: Session, problem: CodingProblem
+) -> CodingProblemRead:
+    examples = get_example_cases_for_problem(db, problem.id)
+    languages = get_available_languages_for_problem(db, problem.id)
 
     return CodingProblemRead(
         **problem.model_dump(), examples=examples, languages=languages
@@ -44,22 +48,26 @@ async def run_against_examples(
     phase_id: int,
     request: RunCodeRequest,
 ) -> list[SubmissionResultRead]:
-    phase = get_phase_for_user(deps.db, phase_id, user_id)
-    language_id = request.language_id
-    language_template = get_language_template_for_problem(
-        deps.db, phase.coding_problem_id, language_id
-    )
+    """Runs candidate code against the non-hidden (example) test cases
 
+    Ephemeral process, results are not persisted to the database at any stage.
+    """
+    phase = get_phase_for_user(deps.db, phase_id, user_id)
+
+    if not phase:
+        raise ResourceNotFoundError("Could not find phase for this user.")
+
+    language_id = request.language_id
     problem_id = phase.coding_problem_id
+
+    template = _get_language_template(deps.db, problem_id, language_id)
 
     examples = get_example_cases_for_problem(deps.db, problem_id)
     if not examples:
         return []
 
     # Insert the candidate's code into our driver code to ensure it has an execution point
-    source_code = _splice_driver_code(
-        language_template.driver_code, request.source_code
-    )
+    source_code = _splice_driver_code(template.driver_code, request.source_code)
 
     results = await _execute_code(deps, source_code, language_id, examples)
 
@@ -67,18 +75,22 @@ async def run_against_examples(
 
 
 async def submit_candidate_code(
-    deps: Judge0ExecutionDeps, user_id: str, phase_id: str, request: RunCodeRequest
+    deps: Judge0ExecutionDeps, user_id: str, phase_id: int, request: RunCodeRequest
 ) -> ProblemSubmissionRead:
+    """Runs candidate code against all test cases for the problem."""
     phase = get_phase_for_user(deps.db, phase_id, user_id)
-    template = get_language_template_for_problem(
+
+    if not phase:
+        raise ResourceNotFoundError("Could not find phase for this user.")
+
+    template = _get_language_template(
         deps.db, phase.coding_problem_id, request.language_id
     )
+
     test_cases = get_test_cases_for_problem(deps.db, phase.coding_problem_id)
 
     if not test_cases:
-        raise HTTPException(
-            status_code=400, detail="This problem has no test cases configured."
-        )
+        raise NoTestCasesConfiguredError("This problem has no test cases configured.")
 
     source_code = _splice_driver_code(template.driver_code, request.source_code)
 
@@ -105,7 +117,21 @@ async def submit_candidate_code(
     )
 
 
+def _get_language_template(db: Session, problem_id, language_id):
+    template = get_language_template_for_problem(db, problem_id, language_id)
+
+    if not template:
+        raise ResourceNotFoundError(
+            "This problem has no language templates configured."
+        )
+
+    return template
+
+
 def _splice_driver_code(driver_code: str, candidate_code: str) -> str:
+    if CANDIDATE_CODE_STUB not in driver_code:
+        raise ValueError("Driver code is missing the candidate code placeholder.")
+
     return driver_code.replace(CANDIDATE_CODE_STUB, candidate_code)
 
 
@@ -119,18 +145,30 @@ async def _execute_code(
         return []
 
     language = get_programming_language(deps.db, language_id)
-    judge0_language_id = language.judge0_language_id
+
     expected_inputs = [json.dumps(case.input) for case in test_cases]
 
     tokens = await create_submission_batch(
-        deps.client, source_code, judge0_language_id, expected_inputs
+        deps.client, source_code, language.judge0_language_id, expected_inputs
     )
+
     judge0_results = await poll_submission_batch(deps.client, tokens)
+
+    if len(judge0_results) != len(test_cases):
+        raise RuntimeError(
+            "Judge0 returned an unexpected number of submission results."
+        )
 
     results = []
     for test_case, result in zip(test_cases, judge0_results):
-        stdout = result.stdout
-        actual_output = json.loads(result.stdout) if stdout else None
+        actual_output = None
+
+        if result.stdout:
+            try:
+                actual_output = json.loads(result.stdout)
+            except json.JSONDecodeError:
+                pass
+
         passed = _outputs_match(test_case.expected_output, actual_output)
 
         results.append(

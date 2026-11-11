@@ -3,7 +3,10 @@ from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
-from app.interviews.sessions.flows import complete_interview, create_interview_with_phases
+from app.interviews.sessions.flows import (
+    complete_interview,
+    create_interview_with_phases,
+)
 from app.interviews.notes.router import router as notes_router
 from app.interviews.sessions.schemas import InterviewSessionCreate, InterviewSessionRead
 from app.interviews.sessions.service import (
