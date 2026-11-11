@@ -70,6 +70,7 @@ export default async function InterviewPhasePage({
   return (
     <CodingProblemWrapper
       key={currentPhase.id}
+      interviewId={interviewId}
       phaseId={currentPhase.id}
       codingProblem={codingProblem}
       languageTemplate={languageTemplate}

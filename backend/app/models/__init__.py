@@ -7,3 +7,4 @@ from app.models.programming_language import ProgrammingLanguage
 from app.models.problem_language_template import ProblemLanguageTemplate
 from app.models.problem_submission import ProblemSubmission
 from app.models.submission_result import SubmissionResult
+from app.models.interview_session_notes import InterviewSessionNotes

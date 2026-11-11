@@ -3,15 +3,16 @@ import {
   ProblemLanguageTemplate,
   ProgrammingLanguage,
 } from "@/app/api/coding-problems";
-import ProblemPanel from "./problem-panel";
 import EditorPanel from "./editor-panel";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "../ui/resizable";
+import CodingProblemTabs from "./coding-problem-tabs";
 
 type CodingProblemWrapperProps = {
+  interviewId: number;
   phaseId: number;
   codingProblem: CodingProblem;
   languageTemplate: ProblemLanguageTemplate;
@@ -19,6 +20,7 @@ type CodingProblemWrapperProps = {
 };
 
 export default function CodingProblemWrapper({
+  interviewId,
   phaseId,
   codingProblem,
   languageTemplate,
@@ -28,7 +30,10 @@ export default function CodingProblemWrapper({
     <ResizablePanelGroup orientation="horizontal">
       <ResizablePanel defaultSize={"50%"}>
         <div className="h-full p-4">
-          <ProblemPanel codingProblem={codingProblem} />
+          <CodingProblemTabs
+            interviewId={interviewId}
+            codingProblem={codingProblem}
+          />
         </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
