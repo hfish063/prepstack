@@ -18,7 +18,8 @@ def send_message(
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    return process_message(db, phase_id, user_id, payload.content)
+    phase = get_phase_for_user(db, phase_id, user_id)  # Ownership check, raises 404
+    return process_message(db, phase, user_id, payload.content)
 
 
 @router.get("/{phase_id}", response_model=list[MessageRead])

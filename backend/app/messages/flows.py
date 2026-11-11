@@ -6,16 +6,16 @@ from app.interviews.sessions.models import InterviewSession
 from app.messages import service as messages_service
 from app.messages.models import Message
 from app.openai.client import generate_response
-from app.interviews.phases import service as phases_service
 from app.interviews.phases.models import InterviewPhase
 from app.interviews.phases.strategies.factory import get_phase_strategy
 
 
-def process_message(db: Session, phase_id: int, user_id: str, content: str) -> Message:
-    """Verifies phase ownership, persists the user's message, generates and persists the AI's reply, and returns the assistant message."""
-    phase = phases_service.get_phase_for_user(
-        db, phase_id, user_id
-    )  # Verify user ownership
+def process_message(db: Session, phase: InterviewPhase, user_id: str, content: str) -> Message:
+    """Persists the user's message, generates and persists the AI's reply, and returns the assistant message.
+    
+    Assumes the supplied phase has already been authorized.
+    """
+    phase_id = phase.id
     interview = interviews_service.get(db, user_id, phase.interview_id)
     messages_service.save(db, phase_id, MessageRole.USER, content)
 
