@@ -1,17 +1,8 @@
 from sqlmodel import Session
 
 from app.enums import PhaseType
-from app.messages import service as messages_service
 from app.interviews.phases import service as phases_service
 from app.interviews.phases.models import InterviewPhase
-
-ADVANCE_BREAKPOINT = 15  # Attempt to trigger a phase transition if user's message count reaches breakpoint for an interview session
-
-
-def should_advance_phase(db: Session, user_id: str, phase_id: int) -> bool:
-    history_len = len(messages_service.get_phase_messages(db, phase_id))
-
-    return history_len > 15
 
 
 def advance_to_next_phase(db: Session, user_id: str, phase_id: int) -> InterviewPhase:
