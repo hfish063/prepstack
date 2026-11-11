@@ -4,15 +4,18 @@ import { Separator } from "../ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import QuestionPanel from "./question-panel";
 import NotesPanel from "./notes-panel";
-import { BookText, FileText } from "lucide-react";
+import { BookText, FileText, History } from "lucide-react";
+import SubmissionsPanel from "./submissions-panel";
 
 type CodingProblemTabsProps = {
   interviewId: number;
+  phaseId: number;
   codingProblem: CodingProblem;
 };
 
 export default function CodingProblemTabs({
   interviewId,
+  phaseId,
   codingProblem,
 }: CodingProblemTabsProps) {
   return (
@@ -26,6 +29,12 @@ export default function CodingProblemTabs({
                 Question
               </div>
             </TabsTrigger>
+            <TabsTrigger value="submissions">
+              <div className="flex flex-row items-center gap-2 font-semibold">
+                <History />
+                Submissions
+              </div>
+            </TabsTrigger>
             <TabsTrigger value="notes">
               <div className="flex flex-row items-center gap-2 font-semibold">
                 <BookText />
@@ -37,6 +46,9 @@ export default function CodingProblemTabs({
         <Separator />
         <TabsContent value="question" className="min-h-0 flex-1">
           <QuestionPanel codingProblem={codingProblem} />
+        </TabsContent>
+        <TabsContent value="submissions" className="min-h-0 flex-1">
+          <SubmissionsPanel phaseId={phaseId} />
         </TabsContent>
         <TabsContent value="notes" className="min-h-0 flex-1 p-6">
           <NotesPanel interviewId={interviewId} />

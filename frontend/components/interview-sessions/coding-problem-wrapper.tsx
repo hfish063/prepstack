@@ -32,6 +32,7 @@ export default function CodingProblemWrapper({
         <div className="h-full p-4">
           <CodingProblemTabs
             interviewId={interviewId}
+            phaseId={phaseId}
             codingProblem={codingProblem}
           />
         </div>

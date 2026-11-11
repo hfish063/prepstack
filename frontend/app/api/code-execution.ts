@@ -21,6 +21,17 @@ export interface ProblemSubmissionRead {
   compileOutput: string | null;
 }
 
+export interface ProblemSubmissionHistoryRead {
+  id: number;
+  problemId: number;
+  languageId: number;
+  phaseId: number;
+  sourceCode: string;
+  accepted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function runCodeAgainstExamples(
   token: string,
   phaseId: number,
@@ -61,4 +72,15 @@ export async function submitCandidateCode(
   }
 
   return (await response.json()) as ProblemSubmissionRead;
+}
+
+export async function getProblemSubmissions(token: string, phaseId: number) {
+  const response = await apiFetch(`/coding-problems/${phaseId}/submissions`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return (await response.json()) as ProblemSubmissionHistoryRead[];
 }
