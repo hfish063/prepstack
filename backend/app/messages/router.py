@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
-from app.db.database import get_db
+from app.database.database import get_db
 from app.messages.flows import process_message
 from app.messages.schemas import MessageCreate, MessageRead
 from app.messages.service import get_phase_messages

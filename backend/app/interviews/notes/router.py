@@ -3,7 +3,7 @@ from sqlmodel import Session
 from starlette import status
 
 from app.auth.clerk import get_current_user_id
-from app.db.database import get_db
+from app.database.database import get_db
 from app.interviews.notes.service import get, save, update, delete
 from app.interviews.notes.schemas import (
     InterviewSessionNotesCreate,
