@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.lifespan import lifespan
-from app.api import api
+from app import api
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(api.router)

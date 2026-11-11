@@ -7,7 +7,18 @@ from alembic import context
 from sqlmodel import SQLModel
 
 from app.config import get_settings
-import app.models
+
+# Import every domain's models module so its tables register on
+# SQLModel.metadata before autogenerate inspects it.
+import app.coding_problems.models
+import app.interviews.models
+import app.interviews.notes.models
+import app.language_templates.models
+import app.messages.models
+import app.phases.models
+import app.programming_languages.models
+import app.submissions.models
+import app.test_cases.models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
