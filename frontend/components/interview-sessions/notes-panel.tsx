@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
 import { Textarea } from "../ui/textarea";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
@@ -133,22 +132,20 @@ export default function NotesPanel({ interviewId }: NotesPanelProps) {
         </Button>
       </div>
       <Separator />
-      <ScrollArea className="flex-1 min-h-0">
-        <Textarea
-          placeholder="Type your notes here."
-          className="h-full"
-          value={notes ?? ""}
-          onChange={(e) => {
-            if (e.target.value.length > MAX_NOTE_CHARACTERS) {
-              return;
-            } else if (e.target.value.trim() != notes?.trim()) {
-              setHasDiff(true);
-            }
+      <Textarea
+        placeholder="Type your notes here."
+        className="h-full"
+        value={notes ?? ""}
+        onChange={(e) => {
+          if (e.target.value.length > MAX_NOTE_CHARACTERS) {
+            return;
+          } else if (e.target.value.trim() != notes?.trim()) {
+            setHasDiff(true);
+          }
 
-            setNotes(e.target.value);
-          }}
-        />
-      </ScrollArea>
+          setNotes(e.target.value);
+        }}
+      />
       <Separator />
       <div className="flex flex-wrap gap-4">
         <p className="text-sm text-muted-foreground">{`${characters} / ${MAX_NOTE_CHARACTERS} characters`}</p>
