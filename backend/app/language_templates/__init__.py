@@ -1,0 +1,1 @@
+from app.language_templates.models import ProblemLanguageTemplate

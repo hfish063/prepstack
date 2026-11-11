@@ -2,7 +2,7 @@ from fastapi import Depends, Request
 import httpx
 from sqlmodel import Session
 
-from app.db.database import get_db
+from app.database.database import get_db
 
 
 def get_judge0_client(request: Request) -> httpx.AsyncClient:
