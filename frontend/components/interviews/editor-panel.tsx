@@ -45,6 +45,7 @@ import {
 } from "@/app/api/code-execution";
 import { useAuth } from "@clerk/nextjs";
 import EditorConsole from "./editor-console";
+import { useTheme } from "@wrksz/themes/client";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
@@ -74,6 +75,8 @@ export default function EditorPanel({
   examples,
 }: EditorPanelProps) {
   const { getToken } = useAuth();
+
+  const { theme } = useTheme();
 
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [tabSize, setTabSize] = useState(DEFAULT_TAB_SIZE);
@@ -168,7 +171,7 @@ export default function EditorPanel({
             style={{ overflow: "hidden" }}
           >
             <Editor
-              className="pt-4"
+              theme={theme === "dark" ? "vs-dark" : "light"}
               loading={<Spinner />}
               language={language.name.toLowerCase()}
               height="100%"
