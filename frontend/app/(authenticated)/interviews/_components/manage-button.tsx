@@ -10,10 +10,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { Spinner } from "../ui/spinner";
+} from "../../../../components/ui/dropdown-menu";
+import { Spinner } from "../../../../components/ui/spinner";
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
+import { Button } from "../../../../components/ui/button";
 
 type ManageInterviewButtonProps = {
   interview: InterviewSession;

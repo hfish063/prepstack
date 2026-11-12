@@ -1,5 +1,5 @@
 import { InterviewSession } from "@/app/api/interview-sessions";
-import InterviewCard from "./interview-card";
+import InterviewCard from "@/app/(authenticated)/interviews/_components/card";
 
 type InterviewListProps = {
   interviews: InterviewSession[];

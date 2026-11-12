@@ -10,12 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { Field, FieldGroup, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+} from "@/components/ui/dialog";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import { saveInterview } from "@/app/api/interview-sessions";
 
 export default function CreateInterviewDialog() {

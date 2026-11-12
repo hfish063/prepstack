@@ -1,6 +1,6 @@
 import { findAllInterviewsForUser } from "@/app/api/interview-sessions";
-import CreateInterviewDialog from "@/components/interviews/create-interview-dialog";
-import InterviewList from "@/components/interviews/interview-list";
+import CreateInterviewDialog from "./_components/create-dialog";
+import InterviewList from "./_components/list";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function Interviews() {

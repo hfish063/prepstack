@@ -4,11 +4,11 @@ import {
   completeInterview,
   InterviewSession,
 } from "@/app/api/interview-sessions";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 type CompleteInterviewButtonProps = {
   interview: InterviewSession;

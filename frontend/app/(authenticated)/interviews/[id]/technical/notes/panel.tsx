@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Button } from "../ui/button";
-import { Textarea } from "../ui/textarea";
-import { Separator } from "../ui/separator";
-import { Spinner } from "../ui/spinner";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import {
   deleteNotesForInterview,
   findNotesForInterview,
@@ -113,7 +113,7 @@ export default function NotesPanel({ interviewId }: NotesPanelProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full">
+    <div className="flex flex-col p-6 gap-4 h-full">
       <div className="flex flex-row gap-2 justify-end items-center">
         <Button
           className="w-16"

@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { findInterviewById } from "@/app/api/interview-sessions";
 import { findPhasesForInterview } from "@/app/api/interview-phases";
-import InterviewPhaseIndicators from "@/components/interview-sessions/interview-phase-indicators";
-import CompleteInterviewButton from "@/components/interview-sessions/complete-interview-button";
-import ManageInterviewSessionButton from "@/components/interview-sessions/manage-interview-session-button";
+import InterviewPhaseIndicators from "./_components/phase-indicators";
+import CompleteInterviewButton from "./_components/complete-button";
+import ManageInterviewSessionButton from "./_components/manage-session-button";
 import { Separator } from "@/components/ui/separator";
 
 export default async function InterviewLayout({
