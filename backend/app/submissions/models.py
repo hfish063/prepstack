@@ -2,7 +2,9 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import Column, DateTime, func
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.programming_languages.models import ProgrammingLanguage
 
 
 class ProblemSubmission(SQLModel, table=True):
@@ -27,6 +29,7 @@ class ProblemSubmission(SQLModel, table=True):
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True), server_default=func.now()),
     )
+    language: ProgrammingLanguage = Relationship()
 
 
 class SubmissionResult(SQLModel, table=True):

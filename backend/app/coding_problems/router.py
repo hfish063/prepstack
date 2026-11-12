@@ -6,6 +6,7 @@ from app.exceptions import ResourceNotFoundError
 from app.auth.clerk import get_current_user_id
 from app.interviews.phases.service import get_phase_for_user
 from app.coding_problems.exceptions import (
+    InvalidPhaseTypeError,
     NoTestCasesConfiguredError,
 )
 from app.coding_problems.flows import (
@@ -19,7 +20,12 @@ from app.database.database import get_db
 from app.judge0.dependencies import Judge0ExecutionDeps
 from app.language_templates.schemas import ProblemLanguageTemplateRead
 from app.language_templates.service import get_language_template_for_problem
-from app.submissions.schemas import ProblemSubmissionRead, SubmissionResultRead
+from app.submissions.schemas import (
+    ProblemSubmissionHistoryRead,
+    ProblemSubmissionRead,
+    SubmissionResultRead,
+)
+from app.submissions.service import delete_all_submissions, get_all_submissions
 
 router = APIRouter(prefix="/coding-problems")
 
@@ -112,3 +118,49 @@ def get_coding_problem_language_template(
         )
 
     return template
+
+
+@router.get(
+    "/{phase_id}/submissions", response_model=list[ProblemSubmissionHistoryRead]
+)
+def get_problem_submissions(
+    phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
+):
+    phase = get_phase_for_user(db, phase_id, user_id)
+
+    if not phase:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Could not find phase for user.",
+        )
+
+    try:
+        return get_all_submissions(db, phase)
+    except InvalidPhaseTypeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(e)
+        )
+
+
+@router.delete(
+    "/{phase_id}/submissions/delete/all",
+    response_model=None,
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_problem_submissions(
+    phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
+):
+    phase = get_phase_for_user(db, phase_id, user_id)
+
+    if not phase:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Could not find phase for user.",
+        )
+
+    try:
+        return delete_all_submissions(db, phase)
+    except InvalidPhaseTypeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(e)
+        )

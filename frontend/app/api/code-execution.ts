@@ -1,4 +1,5 @@
 import apiFetch from "./api";
+import { ProgrammingLanguageRead } from "./coding-problems";
 
 export interface RunCodeRequest {
   sourceCode: string;
@@ -19,6 +20,18 @@ export interface ProblemSubmissionRead {
   passedTestCases: number | null;
   stderr: string | null;
   compileOutput: string | null;
+}
+
+export interface ProblemSubmissionHistoryRead {
+  id: number;
+  problemId: number;
+  languageId: number;
+  language: ProgrammingLanguageRead;
+  phaseId: number;
+  sourceCode: string;
+  accepted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export async function runCodeAgainstExamples(
@@ -61,4 +74,35 @@ export async function submitCandidateCode(
   }
 
   return (await response.json()) as ProblemSubmissionRead;
+}
+
+export async function getProblemSubmissions(token: string, phaseId: number) {
+  const response = await apiFetch(`/coding-problems/${phaseId}/submissions`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  return (await response.json()) as ProblemSubmissionHistoryRead[];
+}
+
+export async function deleteAllProblemSubmissions(
+  token: string,
+  phaseId: number,
+) {
+  const response = await apiFetch(
+    `/coding-problems/${phaseId}/submissions/delete/all`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to delete problem submissions");
+  }
 }
