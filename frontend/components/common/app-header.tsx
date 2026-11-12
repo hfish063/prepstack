@@ -6,7 +6,7 @@ import ThemeToggle from "./theme-toggle";
 export default function AppHeader() {
   return (
     <header>
-      <div className="flex flex-row items-center justify-between gap-4 p-1.5">
+      <div className="flex flex-row items-center justify-between gap-4 p-2">
         <SidebarTrigger />
         <div className="flex flex-row gap-4 items-center">
           <ThemeToggle />
