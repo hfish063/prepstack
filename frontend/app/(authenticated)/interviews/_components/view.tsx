@@ -1,0 +1,35 @@
+"use client";
+
+import { InterviewSession } from "@/app/api/interview-sessions";
+import CreateInterviewDialog from "./create-dialog";
+import InterviewList from "./list";
+import InterviewTable from "./table";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Grid3X3, List } from "lucide-react";
+
+type InterviewsViewProps = { interviews: InterviewSession[] };
+
+export default function InterviewsView({ interviews }: InterviewsViewProps) {
+  const [listView, setListView] = useState(false);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-row justify-between items-center gap-4">
+        <CreateInterviewDialog />
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          onClick={() => setListView(!listView)}
+        >
+          {listView ? <List /> : <Grid3X3 />}
+        </Button>
+      </div>
+      {listView ? (
+        <InterviewList interviews={interviews} />
+      ) : (
+        <InterviewTable interviews={interviews} />
+      )}
+    </div>
+  );
+}
