@@ -11,6 +11,9 @@ import {
 } from "@/components/ui/table";
 import ManageInterviewButton from "./manage-button";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { SquareArrowRightEnter } from "lucide-react";
+import Link from "next/link";
 
 type InterviewTableProps = {
   interviews: InterviewSession[];
@@ -40,7 +43,14 @@ export default function InterviewTable({ interviews }: InterviewTableProps) {
               <TableCell>{interview.experienceLevel}</TableCell>
               <TableCell>{interview.topics ?? ""}</TableCell>
               <TableCell>
-                <ManageInterviewButton interview={interview} />
+                <div className="flex gap-2">
+                  <Button variant={"ghost"} size={"icon"}>
+                    <Link href={`/interviews/${interview.id}`}>
+                      <SquareArrowRightEnter />
+                    </Link>
+                  </Button>
+                  <ManageInterviewButton interview={interview} />
+                </div>
               </TableCell>
             </TableRow>
           ))}
