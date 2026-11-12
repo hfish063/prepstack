@@ -2,7 +2,7 @@
 
 import { InterviewSession } from "@/app/api/interview-sessions";
 import CreateInterviewDialog from "./create-dialog";
-import InterviewList from "./list";
+import InterviewGrid from "./grid";
 import InterviewTable from "./table";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ export default function InterviewsView({ interviews }: InterviewsViewProps) {
       {listView ? (
         <InterviewTable interviews={interviews} />
       ) : (
-        <InterviewList interviews={interviews} />
+        <InterviewGrid interviews={interviews} />
       )}
     </div>
   );
