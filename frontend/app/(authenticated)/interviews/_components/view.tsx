@@ -26,9 +26,9 @@ export default function InterviewsView({ interviews }: InterviewsViewProps) {
         </Button>
       </div>
       {listView ? (
-        <InterviewList interviews={interviews} />
-      ) : (
         <InterviewTable interviews={interviews} />
+      ) : (
+        <InterviewList interviews={interviews} />
       )}
     </div>
   );
