@@ -1,4 +1,5 @@
 import apiFetch from "./api";
+import { ProgrammingLanguageRead } from "./coding-problems";
 
 export interface RunCodeRequest {
   sourceCode: string;
@@ -25,6 +26,7 @@ export interface ProblemSubmissionHistoryRead {
   id: number;
   problemId: number;
   languageId: number;
+  language: ProgrammingLanguageRead;
   phaseId: number;
   sourceCode: string;
   accepted: boolean;

@@ -8,6 +8,11 @@ export interface ProgrammingLanguage {
   extension: string;
 }
 
+export interface ProgrammingLanguageRead {
+  name: string;
+  extension: string;
+}
+
 export interface ProblemExample {
   id: number;
   input: Record<string, unknown>;

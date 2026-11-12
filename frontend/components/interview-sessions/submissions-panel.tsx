@@ -116,7 +116,7 @@ export default function SubmissionsPanel({ phaseId }: SubmissionPanelProps) {
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell>{submission.languageId}</TableCell>
+                    <TableCell>{submission.language.name}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
