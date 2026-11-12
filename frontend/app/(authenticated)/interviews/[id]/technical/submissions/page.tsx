@@ -1,6 +1,7 @@
 import { findPhasesForInterview } from "@/app/api/interview-phases";
 import SubmissionsPanel from "./panel";
 import { auth } from "@clerk/nextjs/server";
+import { getProblemSubmissions } from "@/app/api/code-execution";
 
 export default async function SubmissionsPage({
   params,
@@ -25,5 +26,7 @@ export default async function SubmissionsPage({
     );
   }
 
-  return <SubmissionsPanel phaseId={currentPhase.id} />;
+  const submissions = await getProblemSubmissions(token, currentPhase.id);
+
+  return <SubmissionsPanel submissions={submissions} />;
 }
