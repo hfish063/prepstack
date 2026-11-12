@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,57 +9,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useAuth } from "@clerk/nextjs";
-import {
-  deleteAllProblemSubmissions,
-  getProblemSubmissions,
-  ProblemSubmissionHistoryRead,
-} from "@/app/api/code-execution";
+import { ProblemSubmissionHistoryRead } from "@/app/api/code-execution";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
 
 type SubmissionPanelProps = {
-  phaseId: number;
+  submissions: ProblemSubmissionHistoryRead[];
 };
 
-export default function SubmissionsPanel({ phaseId }: SubmissionPanelProps) {
-  const { getToken } = useAuth();
+export default function SubmissionsPanel({
+  submissions,
+}: SubmissionPanelProps) {
+  const router = useRouter();
 
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const [submissions, setSubmissions] = useState<
-    ProblemSubmissionHistoryRead[]
-  >([]);
-
-  useEffect(() => {
-    const loadSubmissions = async () => {
-      const token = await getToken();
-      if (!token) return;
-
-      try {
-        const submissions = await getProblemSubmissions(token, phaseId);
-        setSubmissions(submissions);
-      } catch {
-        console.error("Failed to retrieve submissions history");
-      }
-    };
-
-    loadSubmissions();
-  }, [phaseId, getToken]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
 
     try {
-      const token = await getToken();
-      if (!token) return;
-
-      await deleteAllProblemSubmissions(token, phaseId);
-
-      setSubmissions([]);
+      router.refresh();
     } catch {
       console.error("Failed to clear submissions history");
     } finally {
