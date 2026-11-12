@@ -14,6 +14,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SquareArrowRightEnter } from "lucide-react";
 import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type InterviewTableProps = {
   interviews: InterviewSession[];
@@ -44,11 +49,18 @@ export default function InterviewTable({ interviews }: InterviewTableProps) {
               <TableCell>{interview.topics ?? ""}</TableCell>
               <TableCell>
                 <div className="flex gap-2">
-                  <Button variant={"ghost"} size={"icon"}>
-                    <Link href={`/interviews/${interview.id}`}>
-                      <SquareArrowRightEnter />
-                    </Link>
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Link href={`/interviews/${interview.id}`}>
+                          <Button variant={"ghost"} size={"icon"}>
+                            <SquareArrowRightEnter />
+                          </Button>
+                        </Link>
+                      }
+                    />
+                    <TooltipContent>Launch</TooltipContent>
+                  </Tooltip>
                   <ManageInterviewButton interview={interview} />
                 </div>
               </TableCell>
