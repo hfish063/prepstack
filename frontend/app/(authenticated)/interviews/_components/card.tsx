@@ -34,7 +34,7 @@ export default function InterviewCard({ interview }: InterviewCardProps) {
     : [];
 
   return (
-    <Card key={interview.id} className="relative h-full">
+    <Card key={interview.id} className="relative h-full hover:bg-muted/50">
       <CardHeader className="flex flex-row items-center justify-between gap-2">
         <div className="flex flex-row items-center gap-2">
           <div className="relative z-10">
