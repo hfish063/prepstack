@@ -63,6 +63,8 @@ export default function SubmissionsPanel({ phaseId }: SubmissionPanelProps) {
       if (!token) return;
 
       await deleteAllProblemSubmissions(token, phaseId);
+
+      setSubmissions([]);
     } catch {
       console.error("Failed to clear submissions history");
     } finally {
