@@ -28,7 +28,6 @@ type SubmissionPanelProps = {
 export default function SubmissionsPanel({ phaseId }: SubmissionPanelProps) {
   const { getToken } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [submissions, setSubmissions] = useState<
@@ -40,15 +39,11 @@ export default function SubmissionsPanel({ phaseId }: SubmissionPanelProps) {
       const token = await getToken();
       if (!token) return;
 
-      setIsLoading(true);
-
       try {
         const submissions = await getProblemSubmissions(token, phaseId);
         setSubmissions(submissions);
       } catch {
         console.error("Failed to retrieve submissions history");
-      } finally {
-        setIsLoading(false);
       }
     };
 
