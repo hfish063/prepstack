@@ -1,7 +1,7 @@
 "use client";
 
 import { BookText, FileText, History } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList } from "@/components/ui/tabs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
