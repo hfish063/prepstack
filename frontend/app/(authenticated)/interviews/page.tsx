@@ -1,7 +1,6 @@
 import { findAllInterviewsForUser } from "@/app/api/interview-sessions";
-import CreateInterviewDialog from "./_components/create-dialog";
-import InterviewList from "./_components/list";
 import { auth } from "@clerk/nextjs/server";
+import InterviewsView from "./_components/view";
 
 export default async function Interviews() {
   await auth.protect();
@@ -15,10 +14,5 @@ export default async function Interviews() {
 
   const interviews = await findAllInterviewsForUser(token);
 
-  return (
-    <div className="flex flex-col gap-4">
-      <CreateInterviewDialog />
-      <InterviewList interviews={interviews} />
-    </div>
-  );
+  return <InterviewsView interviews={interviews} />;
 }
