@@ -4,14 +4,14 @@ import {
   deleteInterviewByIdForUser,
   InterviewSession,
 } from "@/app/api/interview-sessions";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { EllipsisVertical, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,9 +21,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 

@@ -10,11 +10,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import { Badge } from "../ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+} from "../../../../components/ui/card";
+import { Badge } from "../../../../components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../../../../components/ui/tooltip";
 import Link from "next/link";
-import ManageInterviewButton from "./manage-interview-button";
+import ManageInterviewButton from "./manage-button";
 import { CircleCheck, CircleDot, CircleX } from "lucide-react";
 
 type InterviewCardProps = {

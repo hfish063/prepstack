@@ -1,8 +1,8 @@
 import { CodingProblem, ProblemExample } from "@/app/api/coding-problems";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Markdown from "react-markdown";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type ProblemPanelProps = {
   codingProblem: CodingProblem;

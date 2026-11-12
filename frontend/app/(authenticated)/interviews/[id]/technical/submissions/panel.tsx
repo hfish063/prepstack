@@ -8,18 +8,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "@/components/ui/table";
 import { useAuth } from "@clerk/nextjs";
 import {
   deleteAllProblemSubmissions,
   getProblemSubmissions,
   ProblemSubmissionHistoryRead,
 } from "@/app/api/code-execution";
-import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
-import { Card } from "../ui/card";
-import { Separator } from "../ui/separator";
-import { Spinner } from "../ui/spinner";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 
 type SubmissionPanelProps = {
   phaseId: number;

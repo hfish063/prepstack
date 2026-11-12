@@ -13,9 +13,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
-import { Button } from "../ui/button";
-import { Spinner } from "../ui/spinner";
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { InterviewPhase, advancePhase } from "@/app/api/interview-phases";
 
 type InterviewPhaseIndicatorsProps = {
