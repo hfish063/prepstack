@@ -84,3 +84,23 @@ export async function getProblemSubmissions(token: string, phaseId: number) {
 
   return (await response.json()) as ProblemSubmissionHistoryRead[];
 }
+
+export async function deleteAllProblemSubmissions(
+  token: string,
+  phaseId: number,
+) {
+  const response = await apiFetch(
+    `/coding-problems/${phaseId}/submissions/delete/all`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to delete problem submissions");
+  }
+}
