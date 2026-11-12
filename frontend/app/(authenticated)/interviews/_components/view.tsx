@@ -22,7 +22,7 @@ export default function InterviewsView({ interviews }: InterviewsViewProps) {
           size={"icon"}
           onClick={() => setListView(!listView)}
         >
-          {listView ? <List /> : <Grid3X3 />}
+          {listView ? <Grid3X3 /> : <List />}
         </Button>
       </div>
       {listView ? (
