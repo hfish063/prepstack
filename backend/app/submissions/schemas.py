@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Any, Optional
 
+from app.programming_languages.schemas import ProgrammingLanguageRead
 from app.schemas import CamelModel
 
 
@@ -24,6 +25,7 @@ class ProblemSubmissionHistoryRead(CamelModel):
     id: int
     problem_id: int
     language_id: int
+    language: ProgrammingLanguageRead
     phase_id: int
     source_code: str
     accepted: bool
