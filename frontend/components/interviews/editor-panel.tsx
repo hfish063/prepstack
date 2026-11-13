@@ -14,7 +14,7 @@ import {
   Settings,
 } from "lucide-react";
 import { Button } from "../ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,6 +44,7 @@ import {
 import EditorConsole from "./editor-console";
 import { useTheme } from "@wrksz/themes/client";
 import { useCode } from "@/hooks/use-code";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
@@ -74,6 +75,9 @@ export default function EditorPanel({
 }: EditorPanelProps) {
   const { runCode, submitCode } = useCode();
 
+  const { getItem, setItem } = useLocalStorage<string>();
+  const storageKey = `editor-${phaseId}-${language.id}`;
+
   const { theme } = useTheme();
 
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
@@ -85,10 +89,14 @@ export default function EditorPanel({
   const [isSubmissionLoading, setIsSubmissionLoading] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
 
-  const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+  const codeRef = useRef(starterCode);
 
   const handleEditorMount: OnMount = (editor) => {
-    editorRef.current = editor;
+    const savedCode = getItem(storageKey);
+    const initialCode = savedCode ?? starterCode;
+
+    editor.setValue(initialCode);
+    codeRef.current = initialCode;
   };
 
   const handleToggleConsole = () => {
@@ -96,7 +104,7 @@ export default function EditorPanel({
   };
 
   const handleRunCode = async () => {
-    const sourceCode = editorRef.current?.getValue() ?? "";
+    const sourceCode = codeRef.current ?? "";
     setIsRunning(true);
 
     try {
@@ -111,11 +119,12 @@ export default function EditorPanel({
     } finally {
       setIsConsoleOpen(true);
       setIsRunning(false);
+      setItem(storageKey, sourceCode);
     }
   };
 
   const handleSubmitCode = async () => {
-    const sourceCode = editorRef.current?.getValue() ?? "";
+    const sourceCode = codeRef.current ?? "";
 
     setIsSubmissionLoading(true);
 
@@ -168,7 +177,7 @@ export default function EditorPanel({
               loading={<Spinner />}
               language={language.name.toLowerCase()}
               height="100%"
-              defaultValue={starterCode}
+              onChange={(value) => (codeRef.current = value ?? "")}
               onMount={handleEditorMount}
               options={{
                 fontSize: fontSize,
