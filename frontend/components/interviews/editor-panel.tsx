@@ -11,6 +11,7 @@ import {
   CloudUpload,
   CodeXml,
   Play,
+  RotateCcw,
   Settings,
 } from "lucide-react";
 import { Button } from "../ui/button";
@@ -44,6 +45,10 @@ import {
 import EditorConsole from "./editor-console";
 import { useTheme } from "@wrksz/themes/client";
 import { useCode } from "@/hooks/use-code";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { toast } from "../ui/toast";
+import { useDebouncedCallback } from "use-debounce";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
@@ -52,8 +57,10 @@ const DEFAULT_WORD_WRAP = true;
 const FONT_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 const TAB_SIZES = [2, 4];
 
-const EDITOR_PANEL_SIZE = 50;
-const CONSOLE_PANEL_SIZE = 50;
+const EDITOR_PANEL_SIZE_PERCENT = 50;
+const CONSOLE_PANEL_SIZE_PERCENT = 50;
+
+const DEBOUNCE_DELAY_MS = 500; // Sets the delay until candidate code will be saved in local storage
 
 export type ExecutionResult =
   | { type: "run"; data: ExampleRunResultRead[]; examples: ProblemExample[] }
@@ -74,8 +81,13 @@ export default function EditorPanel({
 }: EditorPanelProps) {
   const { runCode, submitCode } = useCode();
 
+  // Helper hooks for saving candidate code to local storage
+  const { getItem, setItem, removeItem } = useLocalStorage<string>();
+  const storageKey = `editor-${phaseId}-${language.id}`;
+
   const { theme } = useTheme();
 
+  // Monaco editor configuration variables
   const [fontSize, setFontSize] = useState(DEFAULT_FONT_SIZE);
   const [tabSize, setTabSize] = useState(DEFAULT_TAB_SIZE);
   const [wordWrapEnabled, setWordWrapEnabled] = useState(DEFAULT_WORD_WRAP);
@@ -86,9 +98,38 @@ export default function EditorPanel({
   const [isRunning, setIsRunning] = useState(false);
 
   const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+  const codeRef = useRef(starterCode);
+
+  const debouncedSave = useDebouncedCallback((code) => {
+    setItem(storageKey, code);
+  }, DEBOUNCE_DELAY_MS);
 
   const handleEditorMount: OnMount = (editor) => {
     editorRef.current = editor;
+
+    const savedCode = getItem(storageKey);
+    const initialCode = savedCode ?? starterCode;
+
+    editor.setValue(initialCode);
+    codeRef.current = initialCode;
+  };
+
+  const handleEditorChange = (value?: string) => {
+    const currentCode = value ?? "";
+
+    codeRef.current = currentCode;
+
+    if (codeRef.current !== starterCode) {
+      debouncedSave(currentCode);
+    } else {
+      removeItem(storageKey);
+    }
+  };
+
+  const handleEditorReset = () => {
+    codeRef.current = starterCode;
+    removeItem(storageKey);
+    editorRef.current?.setValue(starterCode);
   };
 
   const handleToggleConsole = () => {
@@ -96,7 +137,7 @@ export default function EditorPanel({
   };
 
   const handleRunCode = async () => {
-    const sourceCode = editorRef.current?.getValue() ?? "";
+    const sourceCode = codeRef.current ?? "";
     setIsRunning(true);
 
     try {
@@ -106,8 +147,13 @@ export default function EditorPanel({
       });
 
       setExecutionResults({ type: "run", data: results, examples: examples });
-    } catch {
-      console.error(`Error running code against example cases.`);
+    } catch (e) {
+      console.error(`Error running code against example cases.`, e);
+      setExecutionResults(undefined);
+      toast.add({
+        type: "error",
+        description: "Error running code. Please try again.",
+      });
     } finally {
       setIsConsoleOpen(true);
       setIsRunning(false);
@@ -115,7 +161,7 @@ export default function EditorPanel({
   };
 
   const handleSubmitCode = async () => {
-    const sourceCode = editorRef.current?.getValue() ?? "";
+    const sourceCode = codeRef.current ?? "";
 
     setIsSubmissionLoading(true);
 
@@ -126,8 +172,13 @@ export default function EditorPanel({
       });
 
       setExecutionResults({ type: "submission", data: submission });
-    } catch {
-      console.error("Code submission request failed");
+    } catch (e) {
+      console.error("Error submitting candidate code.", e);
+      setExecutionResults(undefined);
+      toast.add({
+        type: "error",
+        description: "Error submitting code. Please try again.",
+      });
     } finally {
       setIsConsoleOpen(true);
       setIsSubmissionLoading(false);
@@ -141,14 +192,31 @@ export default function EditorPanel({
           <CodeXml />
           Code
         </div>
-        <EditorPanelConfigurationMenu
-          fontSize={fontSize}
-          tabSize={tabSize}
-          wordWrapEnabled={wordWrapEnabled}
-          onFontSizeChange={setFontSize}
-          onTabSizeChange={setTabSize}
-          onWordWrapChange={setWordWrapEnabled}
-        />
+        <div className="flex flex-row">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant={"ghost"}
+                  size={"icon"}
+                  onClick={handleEditorReset}
+                  aria-label="Reset code"
+                >
+                  <RotateCcw />
+                </Button>
+              }
+            />
+            <TooltipContent>Reset Code</TooltipContent>
+          </Tooltip>
+          <EditorPanelConfigurationMenu
+            fontSize={fontSize}
+            tabSize={tabSize}
+            wordWrapEnabled={wordWrapEnabled}
+            onFontSizeChange={setFontSize}
+            onTabSizeChange={setTabSize}
+            onWordWrapChange={setWordWrapEnabled}
+          />
+        </div>
       </CardHeader>
 
       <Separator />
@@ -158,17 +226,18 @@ export default function EditorPanel({
           <ResizablePanel
             defaultSize={
               isConsoleOpen
-                ? EDITOR_PANEL_SIZE
-                : EDITOR_PANEL_SIZE + CONSOLE_PANEL_SIZE
+                ? EDITOR_PANEL_SIZE_PERCENT
+                : EDITOR_PANEL_SIZE_PERCENT + CONSOLE_PANEL_SIZE_PERCENT
             }
             style={{ overflow: "hidden" }}
           >
             <Editor
+              key={storageKey}
               theme={theme === "dark" ? "vs-dark" : "light"}
               loading={<Spinner />}
               language={language.name.toLowerCase()}
               height="100%"
-              defaultValue={starterCode}
+              onChange={handleEditorChange}
               onMount={handleEditorMount}
               options={{
                 fontSize: fontSize,
@@ -181,7 +250,7 @@ export default function EditorPanel({
           {isConsoleOpen && (
             <>
               <ResizableHandle className="mb-2" withHandle />
-              <ResizablePanel defaultSize={CONSOLE_PANEL_SIZE}>
+              <ResizablePanel defaultSize={CONSOLE_PANEL_SIZE_PERCENT}>
                 {executionResults && (
                   <EditorConsole
                     isLoading={isSubmissionLoading || isRunning}
@@ -205,6 +274,7 @@ export default function EditorPanel({
             variant={"secondary"}
             onClick={handleRunCode}
             disabled={isRunning || isSubmissionLoading}
+            aria-label="Run code"
           >
             {isRunning ? <Spinner /> : <Play />}
           </Button>
