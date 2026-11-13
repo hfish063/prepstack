@@ -57,8 +57,8 @@ const DEFAULT_WORD_WRAP = true;
 const FONT_SIZES = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 const TAB_SIZES = [2, 4];
 
-const EDITOR_PANEL_SIZE = 50;
-const CONSOLE_PANEL_SIZE = 50;
+const EDITOR_PANEL_SIZE_PERCENT = 50;
+const CONSOLE_PANEL_SIZE_PERCENT = 50;
 
 const DEBOUNCE_DELAY_MS = 500; // Sets the delay until candidate code will be saved in local storage
 
@@ -226,8 +226,8 @@ export default function EditorPanel({
           <ResizablePanel
             defaultSize={
               isConsoleOpen
-                ? EDITOR_PANEL_SIZE
-                : EDITOR_PANEL_SIZE + CONSOLE_PANEL_SIZE
+                ? EDITOR_PANEL_SIZE_PERCENT
+                : EDITOR_PANEL_SIZE_PERCENT + CONSOLE_PANEL_SIZE_PERCENT
             }
             style={{ overflow: "hidden" }}
           >
@@ -250,7 +250,7 @@ export default function EditorPanel({
           {isConsoleOpen && (
             <>
               <ResizableHandle className="mb-2" withHandle />
-              <ResizablePanel defaultSize={CONSOLE_PANEL_SIZE}>
+              <ResizablePanel defaultSize={CONSOLE_PANEL_SIZE_PERCENT}>
                 {executionResults && (
                   <EditorConsole
                     isLoading={isSubmissionLoading || isRunning}
