@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
 import { findInterviewById } from "@/app/api/interview-sessions";
 import { findPhasesForInterview } from "@/app/api/interview-phases";
 import InterviewPhaseIndicators from "./_components/phase-indicators";
 import CompleteInterviewButton from "./_components/complete-button";
 import ManageInterviewSessionButton from "./_components/manage-session-button";
 import { Separator } from "@/components/ui/separator";
+import { getServerAuthToken } from "@/lib/auth";
 
 export default async function InterviewLayout({
   children,
@@ -13,17 +13,10 @@ export default async function InterviewLayout({
   children: React.ReactNode;
   params: Promise<{ id: string }>;
 }) {
-  await auth.protect();
-
   const { id } = await params;
   const interviewId = Number(id);
 
-  const { getToken } = await auth();
-  const token = await getToken();
-
-  if (!token) {
-    return null;
-  }
+  const token = await getServerAuthToken();
 
   const [interview, phases] = await Promise.all([
     findInterviewById(token, interviewId),

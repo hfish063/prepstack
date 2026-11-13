@@ -1,81 +1,46 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  deleteNotesForInterview,
-  findNotesForInterview,
-  saveNotesForInterview,
-  updateNotesForInterview,
-} from "@/app/api/interview-session-notes";
+import { InterviewSessionNotes } from "@/app/api/interview-session-notes";
+import { useNotes } from "@/hooks/use-notes";
 
 const MAX_NOTE_CHARACTERS = 5000;
 
 type NotesPanelProps = {
   interviewId: number;
+  notes: InterviewSessionNotes | null;
 };
 
-export default function NotesPanel({ interviewId }: NotesPanelProps) {
-  const { getToken } = useAuth();
+export default function NotesPanel({ interviewId, notes }: NotesPanelProps) {
+  const { deleteNotes, saveNotes, updateNotes } = useNotes();
 
-  const [notes, setNotes] = useState<string | null>(null);
+  const [content, setContent] = useState<string | null>(notes?.text ?? null);
   const [hasExistingNotes, setHasExistingNotes] = useState(false);
   const [hasDiff, setHasDiff] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const characters = notes?.length ?? 0;
-  const trimmedNotes = notes?.trim() ?? "";
+  const characters = content?.length ?? 0;
+  const trimmedNotes = content?.trim() ?? "";
   const words = trimmedNotes.length > 0 ? trimmedNotes.split(/\s+/).length : 0;
 
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    let isCancelled = false;
-
-    const loadNotes = async () => {
-      const token = await getToken();
-      if (!token) return;
-
-      try {
-        const existingNotes = await findNotesForInterview(token, interviewId);
-        if (isCancelled) return;
-
-        setNotes(existingNotes?.text ?? null);
-        setHasExistingNotes(existingNotes != null);
-      } catch {
-        console.error("Failed to fetch interview notes.");
-      } finally {
-        if (!isCancelled) setIsLoading(false);
-      }
-    };
-
-    loadNotes();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [interviewId, getToken]);
-
   const handleSave = async () => {
-    if (notes == null) return;
-
-    const token = await getToken();
-    if (!token) return;
+    if (content == null) return;
 
     setIsSaving(true);
 
     try {
       // First-time note creation, hits (save) endpoint
       if (!hasExistingNotes) {
-        await saveNotesForInterview(token, interviewId, { text: notes });
+        await saveNotes(interviewId, { text: content });
         setHasExistingNotes(true);
         setHasDiff(false);
       } else {
-        await updateNotesForInterview(token, interviewId, { text: notes });
+        await updateNotes(interviewId, { text: content });
         setHasDiff(false);
       }
     } catch {
@@ -88,15 +53,12 @@ export default function NotesPanel({ interviewId }: NotesPanelProps) {
   const handleDelete = async () => {
     if (notes == null) return;
 
-    const token = await getToken();
-    if (!token) return;
-
     setIsDeleting(true);
 
     try {
-      await deleteNotesForInterview(token, interviewId);
+      await deleteNotes(interviewId);
       setHasExistingNotes(false);
-      setNotes(null);
+      setContent(null);
     } catch {
       console.error("Failed to delete interview notes.");
     } finally {
@@ -104,20 +66,14 @@ export default function NotesPanel({ interviewId }: NotesPanelProps) {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Spinner />
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col p-6 gap-4 h-full">
       <div className="flex flex-row gap-2 justify-end items-center">
         <Button
           className="w-16"
-          disabled={notes == null || notes.length < 1 || isSaving || !hasDiff}
+          disabled={
+            content == null || content.length < 1 || isSaving || !hasDiff
+          }
           onClick={handleSave}
         >
           {isSaving ? <Spinner /> : "Save"}
@@ -135,15 +91,15 @@ export default function NotesPanel({ interviewId }: NotesPanelProps) {
       <Textarea
         placeholder="Type your notes here."
         className="h-full"
-        value={notes ?? ""}
+        value={content ?? ""}
         onChange={(e) => {
           if (e.target.value.length > MAX_NOTE_CHARACTERS) {
             return;
-          } else if (e.target.value.trim() != notes?.trim()) {
+          } else if (e.target.value.trim() != content?.trim()) {
             setHasDiff(true);
           }
 
-          setNotes(e.target.value);
+          setContent(e.target.value);
         }}
       />
       <div className="flex flex-wrap gap-4">

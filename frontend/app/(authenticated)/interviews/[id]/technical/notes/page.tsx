@@ -1,5 +1,6 @@
+import { getServerAuthToken } from "@/lib/auth";
 import NotesPanel from "./panel";
-import { auth } from "@clerk/nextjs/server";
+import { findNotesForInterview } from "@/app/api/interview-session-notes";
 
 export default async function NotesPage({
   params,
@@ -9,9 +10,9 @@ export default async function NotesPage({
   const { id } = await params;
   const interviewId = Number(id);
 
-  const { getToken } = await auth();
-  const token = await getToken();
-  if (!token) return;
+  const token = await getServerAuthToken();
 
-  return <NotesPanel interviewId={interviewId} />;
+  const interviewNotes = await findNotesForInterview(token, interviewId);
+
+  return <NotesPanel interviewId={interviewId} notes={interviewNotes} />;
 }

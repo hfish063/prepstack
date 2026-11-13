@@ -40,12 +40,10 @@ import { ProblemExample, ProgrammingLanguage } from "@/app/api/coding-problems";
 import {
   ExampleRunResultRead,
   ProblemSubmissionRead,
-  runCodeAgainstExamples,
-  submitCandidateCode,
 } from "@/app/api/code-execution";
-import { useAuth } from "@clerk/nextjs";
 import EditorConsole from "./editor-console";
 import { useTheme } from "@wrksz/themes/client";
+import { useCode } from "@/hooks/use-code";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
@@ -74,7 +72,7 @@ export default function EditorPanel({
   starterCode,
   examples,
 }: EditorPanelProps) {
-  const { getToken } = useAuth();
+  const { runCode, submitCode } = useCode();
 
   const { theme } = useTheme();
 
@@ -99,14 +97,11 @@ export default function EditorPanel({
 
   const handleRunCode = async () => {
     const sourceCode = editorRef.current?.getValue() ?? "";
-    const token = await getToken();
-    if (!token) return;
-
     setIsRunning(true);
 
     try {
-      const results = await runCodeAgainstExamples(token, phaseId, {
-        sourceCode,
+      const results = await runCode(phaseId, {
+        sourceCode: sourceCode,
         languageId: language.id,
       });
 
@@ -121,13 +116,11 @@ export default function EditorPanel({
 
   const handleSubmitCode = async () => {
     const sourceCode = editorRef.current?.getValue() ?? "";
-    const token = await getToken();
-    if (!token) return;
 
     setIsSubmissionLoading(true);
 
     try {
-      const submission = await submitCandidateCode(token, phaseId, {
+      const submission = await submitCode(phaseId, {
         sourceCode,
         languageId: language.id,
       });

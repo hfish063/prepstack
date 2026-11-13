@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Circle, CircleCheck, CircleDot } from "lucide-react";
@@ -16,7 +15,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { InterviewPhase, advancePhase } from "@/app/api/interview-phases";
+import { InterviewPhase } from "@/app/api/interview-phases";
+import { usePhases } from "@/hooks/use-phases";
 
 type InterviewPhaseIndicatorsProps = {
   phases: InterviewPhase[];
@@ -25,7 +25,8 @@ type InterviewPhaseIndicatorsProps = {
 export default function InterviewPhaseIndicators({
   phases,
 }: InterviewPhaseIndicatorsProps) {
-  const { getToken } = useAuth();
+  const { advancePhase } = usePhases();
+
   const router = useRouter();
   const [advancingTo, setAdvancingTo] = useState<number | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<InterviewPhase | null>(
@@ -52,13 +53,10 @@ export default function InterviewPhaseIndicators({
     setAdvancingTo(targetPhase.id);
 
     try {
-      const token = await getToken();
-      if (!token) throw new Error("Unauthenticated");
-
-      await advancePhase(token, currentPhase.id, targetPhase.orderIndex);
+      await advancePhase(currentPhase.id, targetPhase.orderIndex);
       router.refresh();
     } catch {
-      console.error(`Failed to advance to phase with id: ${targetPhase.id}`);
+      console.error(`Failed to advance to: ${targetPhase.phaseType} phase`);
     } finally {
       setAdvancingTo(null);
     }

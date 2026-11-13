@@ -1,7 +1,7 @@
 import { findPhasesForInterview, PhaseType } from "@/app/api/interview-phases";
 import { findMessagesForPhase } from "@/app/api/messages";
 import ChatPanel from "@/components/interviews/chat-panel";
-import { auth } from "@clerk/nextjs/server";
+import { getServerAuthToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 const PAGE_PHASE: PhaseType = "conceptual";
@@ -14,10 +14,7 @@ export default async function ConceptualPhasePage({
   const { id } = await params;
   const interviewId = Number(id);
 
-  const { getToken } = await auth();
-  const token = await getToken();
-
-  if (!token) return;
+  const token = await getServerAuthToken();
 
   const phases = await findPhasesForInterview(token, interviewId);
   const currentPhase = phases.find((phase) => phase.status === "in_progress");

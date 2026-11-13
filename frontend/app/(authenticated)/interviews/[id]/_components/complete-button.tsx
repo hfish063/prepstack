@@ -1,14 +1,12 @@
 "use client";
 
-import {
-  completeInterview,
-  InterviewSession,
-} from "@/app/api/interview-sessions";
+import { InterviewSession } from "@/app/api/interview-sessions";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { useInterviews } from "@/hooks/use-interviews";
+import { useRouter } from "next/navigation";
 
 type CompleteInterviewButtonProps = {
   interview: InterviewSession;
@@ -17,16 +15,17 @@ type CompleteInterviewButtonProps = {
 export default function CompleteInterviewButton({
   interview,
 }: CompleteInterviewButtonProps) {
-  const { getToken } = useAuth();
+  const { completeInterview } = useInterviews();
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   async function handleCompleteInterview() {
     setIsLoading(true);
     try {
-      const token = await getToken();
-      if (!token) throw new Error("Unauthorized");
-
-      await completeInterview(token, interview.id);
+      await completeInterview(interview.id);
+      router.refresh();
     } catch {
       console.error(`Error completing interview with id: ${interview.id}`);
     } finally {

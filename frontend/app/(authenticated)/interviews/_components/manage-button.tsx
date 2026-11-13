@@ -1,8 +1,4 @@
-import {
-  deleteInterviewByIdForUser,
-  InterviewSession,
-} from "@/app/api/interview-sessions";
-import { useAuth } from "@clerk/nextjs";
+import { InterviewSession } from "@/app/api/interview-sessions";
 import { EllipsisVertical, Trash } from "lucide-react";
 import { useState } from "react";
 import {
@@ -14,6 +10,7 @@ import {
 import { Spinner } from "../../../../components/ui/spinner";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../../components/ui/button";
+import { useInterviews } from "@/hooks/use-interviews";
 
 type ManageInterviewButtonProps = {
   interview: InterviewSession;
@@ -22,7 +19,8 @@ type ManageInterviewButtonProps = {
 export default function ManageInterviewButton({
   interview,
 }: ManageInterviewButtonProps) {
-  const { getToken } = useAuth();
+  const { deleteInterview } = useInterviews();
+
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -30,10 +28,7 @@ export default function ManageInterviewButton({
     setIsDeleting(true);
 
     try {
-      const token = await getToken();
-      if (!token) throw new Error("Unauthorized");
-
-      await deleteInterviewByIdForUser(token, interview.id);
+      await deleteInterview(interview.id);
 
       router.refresh();
     } catch {

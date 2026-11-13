@@ -16,15 +16,20 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
+import { useSubmissions } from "@/hooks/use-submissions";
 
 type SubmissionPanelProps = {
+  phaseId: number;
   submissions: ProblemSubmissionHistoryRead[];
 };
 
 export default function SubmissionsPanel({
+  phaseId,
   submissions,
 }: SubmissionPanelProps) {
   const router = useRouter();
+
+  const { deleteSubmissions } = useSubmissions();
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -32,6 +37,7 @@ export default function SubmissionsPanel({
     setIsDeleting(true);
 
     try {
+      await deleteSubmissions(phaseId);
       router.refresh();
     } catch {
       console.error("Failed to clear submissions history");
