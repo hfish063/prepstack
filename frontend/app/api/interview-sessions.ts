@@ -67,7 +67,10 @@ export async function findInterviewById(token: string, interviewId: number) {
   return (await response.json()) as InterviewSession;
 }
 
-export async function completeInterview(token: string, interviewId: number) {
+export async function markInterviewComplete(
+  token: string,
+  interviewId: number,
+) {
   const response = await apiFetch(`/interviews/${interviewId}/complete`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },

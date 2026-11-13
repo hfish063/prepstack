@@ -1,7 +1,7 @@
 import { findCodingProblemForPhase } from "@/app/api/coding-problems";
 import { findPhasesForInterview } from "@/app/api/interview-phases";
 import QuestionPanel from "./panel";
-import { auth } from "@clerk/nextjs/server";
+import { getServerAuthToken } from "@/lib/auth";
 
 export default async function QuestionPage({
   params,
@@ -11,9 +11,7 @@ export default async function QuestionPage({
   const { id } = await params;
   const interviewId = Number(id);
 
-  const { getToken } = await auth();
-  const token = await getToken();
-  if (!token) return;
+  const token = await getServerAuthToken();
 
   const phases = await findPhasesForInterview(token, interviewId);
   const currentPhase = phases.find((phase) => phase.status === "in_progress");

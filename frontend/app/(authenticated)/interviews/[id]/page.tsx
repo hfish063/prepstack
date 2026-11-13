@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
 import { findPhasesForInterview } from "@/app/api/interview-phases";
+import { getServerAuthToken } from "@/lib/auth";
 
 export default async function InterviewSessionPage({
   params,
@@ -10,12 +10,7 @@ export default async function InterviewSessionPage({
   const { id } = await params;
   const interviewId = Number(id);
 
-  const { getToken } = await auth();
-  const token = await getToken();
-
-  if (!token) {
-    return null;
-  }
+  const token = await getServerAuthToken();
 
   const phases = await findPhasesForInterview(token, interviewId);
   const currentPhase = phases.find((phase) => phase.status === "in_progress");

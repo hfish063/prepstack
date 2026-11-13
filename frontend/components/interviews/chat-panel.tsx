@@ -1,15 +1,15 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { Message, sendMessage } from "@/app/api/messages";
+import { Message } from "@/app/api/messages";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
+import { useMessages } from "@/hooks/use-messages";
 
 type ChatPanelProps = {
   phaseId: number;
@@ -20,7 +20,7 @@ export default function ChatPanel({
   phaseId,
   initialMessages,
 }: ChatPanelProps) {
-  const { getToken } = useAuth();
+  const { sendMessage } = useMessages();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -52,10 +52,7 @@ export default function ChatPanel({
     ]);
 
     try {
-      const token = await getToken();
-      if (!token) throw new Error("Unauthenticated");
-
-      const assistantMessage = await sendMessage(token, phaseId, content);
+      const assistantMessage = await sendMessage(phaseId, content);
       setMessages((prev) => [...prev, assistantMessage]);
     } catch {
       setError("Something went wrong sending your message. Please try again.");
