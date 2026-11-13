@@ -5,9 +5,12 @@ from app.interviews.sessions import service as interviews_service
 from app.interviews.sessions.models import InterviewSession
 from app.messages import service as messages_service
 from app.messages.models import Message
-from app.openai.client import generate_response
+from app.openai.client import MODEL, generate_response
 from app.interviews.phases.models import InterviewPhase
 from app.interviews.phases.strategies.factory import get_phase_strategy
+from app.openai.manager import OpenAIContextManager
+
+context_manager = OpenAIContextManager(model=MODEL)
 
 
 def process_message(
@@ -36,6 +39,8 @@ def build_prompt(
     phase: InterviewPhase, history: list[Message], interview: InterviewSession
 ) -> list[dict]:
     """Builds the OpenAI message list: the phase type's strategy-specific system prompt followed by the phase's prior history."""
+    history = context_manager.select_history(history)
+
     strategy = get_phase_strategy(phase.phase_type)
     system_prompt = strategy.build_system_prompt(interview)
 
