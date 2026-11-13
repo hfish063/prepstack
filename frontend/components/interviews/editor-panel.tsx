@@ -48,6 +48,7 @@ import { useCode } from "@/hooks/use-code";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { toast } from "../ui/toast";
 import { useDebouncedCallback } from "use-debounce";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const DEFAULT_FONT_SIZE = 14;
 const DEFAULT_TAB_SIZE = 4;
@@ -192,14 +193,21 @@ export default function EditorPanel({
           Code
         </div>
         <div className="flex flex-row">
-          <Button
-            variant={"ghost"}
-            size={"icon"}
-            onClick={handleEditorReset}
-            aria-label="Reset code"
-          >
-            <RotateCcw />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant={"ghost"}
+                  size={"icon"}
+                  onClick={handleEditorReset}
+                  aria-label="Reset code"
+                >
+                  <RotateCcw />
+                </Button>
+              }
+            />
+            <TooltipContent>Reset Code</TooltipContent>
+          </Tooltip>
           <EditorPanelConfigurationMenu
             fontSize={fontSize}
             tabSize={tabSize}
