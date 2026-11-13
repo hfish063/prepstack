@@ -3,6 +3,7 @@ import AppSidebar from "@/components/common/app-sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import AppHeader from "@/components/common/app-header";
 import ProtectedRouteProvider from "@/components/providers/protected-route";
+import { Toaster } from "@/components/ui/toast";
 
 export default function AuthenticatedLayout({
   children,
@@ -19,6 +20,7 @@ export default function AuthenticatedLayout({
             <div className="flex-1 min-h-0 overflow-auto p-4">{children}</div>
           </TooltipProvider>
         </main>
+        <Toaster />
       </SidebarProvider>
     </ProtectedRouteProvider>
   );
