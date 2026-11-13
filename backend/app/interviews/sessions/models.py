@@ -11,10 +11,10 @@ class InterviewSession(SQLModel, table=True):
     __tablename__ = "interview_sessions"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    role: str
+    role: str = Field(max_length=100)
     experience_level: str
-    topics: Optional[str] = Field(default=None)
-    description: Optional[str] = Field(default=None)
+    topics: Optional[str] = Field(default=None, max_length=300)
+    description: Optional[str] = Field(default=None, max_length=2000)
     user_id: str = Field(index=True)
     status: InterviewStatus = Field(default=InterviewStatus.IN_PROGRESS)
     created_at: datetime = Field(
