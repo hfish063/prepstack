@@ -22,7 +22,7 @@ def get(db: Session, phase: InterviewPhase, question_id: int):
 
 def get_all(db: Session, phase: InterviewPhase) -> list[InterviewQuestion]:
     return db.exec(
-        select(InterviewQuestion).where(InterviewQuestion.phase_id == phase.id)
+        select(InterviewQuestion).where(InterviewQuestion.phase_id == phase.id).order_by(InterviewQuestion.ordinal)
     ).all()
 
 
