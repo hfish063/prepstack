@@ -1,10 +1,10 @@
 from datetime import datetime, timezone
 
-from fastapi import HTTPException
 from sqlmodel import Session, select
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.enums import PhaseStatus, PhaseType
+from app.exceptions import ResourceNotFoundError, ResourceConflictError
+from app.enums import InterviewStatus, PhaseStatus, PhaseType
 from app.interviews.sessions.models import InterviewSession
 from app.interviews.phases.models import InterviewPhase
 
@@ -18,6 +18,31 @@ def get_phase_for_user(
         .where(InterviewPhase.id == phase_id, InterviewSession.user_id == user_id)
     )
     return db.exec(statement).one_or_none()
+
+
+def get_mutable_phase_for_user(db: Session, phase_id: int, user_id: str):
+    """Retrieve phase for in-progress interviews.
+
+    Completed interviews are read-only, and cannot be modified.
+    """
+    statement = (
+        select(InterviewPhase, InterviewSession.status)
+        .join(InterviewSession, InterviewPhase.interview_id == InterviewSession.id)
+        .where(InterviewPhase.id == phase_id, InterviewSession.user_id == user_id)
+    )
+    row = db.exec(statement).one_or_none()
+
+    if not row:
+        raise ResourceNotFoundError("Interview phase with this id does not exist.")
+
+    phase, interview_status = row
+
+    if interview_status == InterviewStatus.COMPLETED:
+        raise ResourceConflictError(
+            "This interview has already been completed and can no longer be modified."
+        )
+
+    return phase
 
 
 def get_phases_for_interview(
@@ -107,9 +132,8 @@ def advance_phase_to_target(
     target_phase = db.exec(statement).first()
 
     if not target_phase:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No phase with order index {target_phase_index} for this interview",
+        raise ResourceNotFoundError(
+            f"No phase with order index {target_phase_index} found for this interview."
         )
 
     now = datetime.now(timezone.utc)

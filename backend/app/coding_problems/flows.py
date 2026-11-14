@@ -9,6 +9,7 @@ from app.coding_problems.exceptions import (
     NoTestCasesConfiguredError,
 )
 from app.coding_problems.schemas import CodingProblemRead, RunCodeRequest
+from app.interviews.phases.models import InterviewPhase
 from app.language_templates.service import get_language_template_for_problem
 from app.programming_languages.service import (
     get_available_languages_for_problem,
@@ -75,14 +76,12 @@ async def run_against_examples(
 
 
 async def submit_candidate_code(
-    deps: Judge0ExecutionDeps, user_id: str, phase_id: int, request: RunCodeRequest
+    deps: Judge0ExecutionDeps,
+    user_id: str,
+    phase: InterviewPhase,
+    request: RunCodeRequest,
 ) -> ProblemSubmissionRead:
     """Runs candidate code against all test cases for the problem."""
-    phase = get_phase_for_user(deps.db, phase_id, user_id)
-
-    if not phase:
-        raise ResourceNotFoundError("Could not find phase for this user.")
-
     template = _get_language_template(
         deps.db, phase.coding_problem_id, request.language_id
     )

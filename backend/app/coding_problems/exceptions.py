@@ -1,6 +1,11 @@
-class NoTestCasesConfiguredError(Exception):
-    pass
+from http import HTTPStatus
+
+from app.exceptions import PrepStackError
 
 
-class InvalidPhaseTypeError(Exception):
-    pass
+class NoTestCasesConfiguredError(PrepStackError):
+    status_code = HTTPStatus.BAD_REQUEST
+
+
+class InvalidPhaseTypeError(PrepStackError):
+    status_code = HTTPStatus.UNPROCESSABLE_CONTENT

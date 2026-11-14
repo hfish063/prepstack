@@ -2,13 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 from starlette import status
 
-from app.exceptions import ResourceNotFoundError
 from app.auth.clerk import get_current_user_id
-from app.interviews.phases.service import get_phase_for_user
-from app.coding_problems.exceptions import (
-    InvalidPhaseTypeError,
-    NoTestCasesConfiguredError,
-)
+from app.interviews.phases.service import get_phase_for_user, get_mutable_phase_for_user
 from app.coding_problems.flows import (
     get_coding_problem_details,
     run_against_examples,
@@ -37,15 +32,12 @@ async def run_code(
     deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
     user_id=Depends(get_current_user_id),
 ) -> list[SubmissionResultRead]:
-    try:
-        return await run_against_examples(
-            deps,
-            user_id,
-            phase_id,
-            run_code_request,
-        )
-    except ResourceNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    return await run_against_examples(
+        deps,
+        user_id,
+        phase_id,
+        run_code_request,
+    )
 
 
 @router.post("/{phase_id}/submit", response_model=ProblemSubmissionRead)
@@ -55,12 +47,9 @@ async def submit_code(
     deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
     user_id=Depends(get_current_user_id),
 ) -> ProblemSubmissionRead:
-    try:
-        return await submit_candidate_code(deps, user_id, phase_id, run_code_request)
-    except NoTestCasesConfiguredError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-    except ResourceNotFoundError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    phase = get_mutable_phase_for_user(deps.db, phase_id, user_id)
+
+    return await submit_candidate_code(deps, user_id, phase, run_code_request)
 
 
 @router.get("/{phase_id}", response_model=CodingProblemRead)
@@ -134,12 +123,7 @@ def get_problem_submissions(
             detail="Could not find phase for user.",
         )
 
-    try:
-        return get_all_submissions(db, phase)
-    except InvalidPhaseTypeError as e:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(e)
-        )
+    return get_all_submissions(db, phase)
 
 
 @router.delete(
@@ -150,7 +134,7 @@ def get_problem_submissions(
 def delete_problem_submissions(
     phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
 ):
-    phase = get_phase_for_user(db, phase_id, user_id)
+    phase = get_mutable_phase_for_user(db, phase_id, user_id)
 
     if not phase:
         raise HTTPException(
@@ -158,9 +142,4 @@ def delete_problem_submissions(
             detail="Could not find phase for user.",
         )
 
-    try:
-        return delete_all_submissions(db, phase)
-    except InvalidPhaseTypeError as e:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(e)
-        )
+    return delete_all_submissions(db, phase)

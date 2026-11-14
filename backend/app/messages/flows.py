@@ -22,6 +22,7 @@ def process_message(
     """
     phase_id = phase.id
     interview = interviews_service.get(db, user_id, phase.interview_id)
+
     messages_service.save(db, phase_id, MessageRole.USER, content)
 
     # Get message history for phase
