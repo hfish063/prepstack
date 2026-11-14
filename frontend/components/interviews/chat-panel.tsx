@@ -1,19 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { ArrowUp } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { Message } from "@/app/api/messages";
-import { Card } from "../ui/card";
-import { Separator } from "../ui/separator";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Message as MessageData } from "@/app/api/messages";
 import { useMessages } from "@/hooks/use-messages";
+import {
+  MessageScrollerProvider,
+  MessageScroller,
+  MessageScrollerViewport,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerButton,
+} from "@/components/ui/message-scroller";
+import { Message, MessageContent } from "@/components/ui/message";
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
 
 type ChatPanelProps = {
   phaseId: number;
-  initialMessages: Message[];
+  initialMessages: MessageData[];
 };
 
 export default function ChatPanel({
@@ -21,15 +30,10 @@ export default function ChatPanel({
   initialMessages,
 }: ChatPanelProps) {
   const { sendMessage } = useMessages();
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<MessageData[]>(initialMessages);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, sending]);
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,25 +66,47 @@ export default function ChatPanel({
   }
 
   return (
-    <Card className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4">
-        {messages.map((message) => (
-          <ChatBubble key={message.id} message={message} />
-        ))}
-        {sending && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Spinner />
-            Thinking...
-          </div>
-        )}
-        <div ref={bottomRef} />
-      </div>
+    <Card className="flex h-full min-h-0 flex-col p-0 gap-0">
+      <MessageScrollerProvider autoScroll>
+        <MessageScroller className="min-h-0 flex-1">
+          <MessageScrollerViewport className="p-4">
+            <MessageScrollerContent>
+              {messages.map((message) => (
+                <MessageScrollerItem
+                  key={message.id}
+                  messageId={String(message.id)}
+                >
+                  <Message align={message.role === "user" ? "end" : "start"}>
+                    <MessageContent>
+                      <Bubble
+                        align={message.role === "user" ? "end" : "start"}
+                        variant={message.role === "user" ? "default" : "muted"}
+                      >
+                        <BubbleContent>{message.content}</BubbleContent>
+                      </Bubble>
+                    </MessageContent>
+                  </Message>
+                </MessageScrollerItem>
+              ))}
+              {sending && (
+                <MessageScrollerItem>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Spinner />
+                    Thinking...
+                  </div>
+                </MessageScrollerItem>
+              )}
+            </MessageScrollerContent>
+          </MessageScrollerViewport>
+          <MessageScrollerButton />
+        </MessageScroller>
+      </MessageScrollerProvider>
 
       <Separator />
 
       {error && <p className="text-sm text-destructive px-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="flex gap-2 p-4">
+      <form onSubmit={handleSubmit} className="flex gap-2 p-8">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -93,28 +119,5 @@ export default function ChatPanel({
         </Button>
       </form>
     </Card>
-  );
-}
-
-type ChatBubbleProps = {
-  message: Message;
-};
-
-function ChatBubble({ message }: ChatBubbleProps) {
-  const isUser = message.role === "user";
-
-  return (
-    <div className={cn("flex", isUser ? "justify-end" : "justify-start")}>
-      <div
-        className={cn(
-          "max-w-[75%] rounded-xl px-3 py-2 text-sm",
-          isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-foreground",
-        )}
-      >
-        {message.content}
-      </div>
-    </div>
   );
 }
