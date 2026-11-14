@@ -66,11 +66,11 @@ export default function ChatPanel({
   }
 
   return (
-    <Card className="flex h-full min-h-0 flex-col">
+    <Card className="flex h-full min-h-0 flex-col p-0 gap-0">
       <MessageScrollerProvider autoScroll>
-        <MessageScroller className="min-h-0 flex-1 px-4">
-          <MessageScrollerViewport>
-            <MessageScrollerContent className="mb-6">
+        <MessageScroller className="min-h-0 flex-1">
+          <MessageScrollerViewport className="p-4">
+            <MessageScrollerContent>
               {messages.map((message) => (
                 <MessageScrollerItem
                   key={message.id}
@@ -79,6 +79,7 @@ export default function ChatPanel({
                   <Message align={message.role === "user" ? "end" : "start"}>
                     <MessageContent>
                       <Bubble
+                        align={message.role === "user" ? "end" : "start"}
                         variant={message.role === "user" ? "default" : "muted"}
                       >
                         <BubbleContent>{message.content}</BubbleContent>
@@ -105,7 +106,7 @@ export default function ChatPanel({
 
       {error && <p className="text-sm text-destructive px-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="flex gap-2 p-4">
+      <form onSubmit={handleSubmit} className="flex gap-2 p-8">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
