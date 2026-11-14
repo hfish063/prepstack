@@ -2,6 +2,7 @@ import { findPhasesForInterview } from "@/app/api/interview-phases";
 import SubmissionsPanel from "./panel";
 import { getProblemSubmissions } from "@/app/api/code-execution";
 import { getServerAuthToken } from "@/lib/auth";
+import { notFound } from "next/navigation";
 
 export default async function SubmissionsPage({
   params,
@@ -10,6 +11,10 @@ export default async function SubmissionsPage({
 }) {
   const { id } = await params;
   const interviewId = Number(id);
+
+  if (!interviewId) {
+    return notFound();
+  }
 
   const token = await getServerAuthToken();
 

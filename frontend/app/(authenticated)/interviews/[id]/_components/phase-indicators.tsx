@@ -55,8 +55,8 @@ export default function InterviewPhaseIndicators({
     try {
       await advancePhase(currentPhase.id, targetPhase.orderIndex);
       router.refresh();
-    } catch {
-      console.error(`Failed to advance to: ${targetPhase.phaseType} phase`);
+    } catch (e) {
+      console.error(`Failed to advance to: ${targetPhase.phaseType} phase`, e);
     } finally {
       setAdvancingTo(null);
     }

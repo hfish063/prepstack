@@ -1,6 +1,7 @@
 import { getServerAuthToken } from "@/lib/auth";
 import NotesPanel from "./panel";
 import { findNotesForInterview } from "@/app/api/interview-session-notes";
+import { notFound } from "next/navigation";
 
 export default async function NotesPage({
   params,
@@ -9,6 +10,10 @@ export default async function NotesPage({
 }) {
   const { id } = await params;
   const interviewId = Number(id);
+
+  if (!interviewId) {
+    return notFound();
+  }
 
   const token = await getServerAuthToken();
 

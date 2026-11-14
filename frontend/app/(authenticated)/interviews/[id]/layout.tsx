@@ -5,6 +5,7 @@ import CompleteInterviewButton from "./_components/complete-button";
 import ManageInterviewSessionButton from "./_components/manage-session-button";
 import { Separator } from "@/components/ui/separator";
 import { getServerAuthToken } from "@/lib/auth";
+import { notFound } from "next/navigation";
 
 export default async function InterviewLayout({
   children,
@@ -15,6 +16,10 @@ export default async function InterviewLayout({
 }) {
   const { id } = await params;
   const interviewId = Number(id);
+
+  if (!interviewId) {
+    return notFound();
+  }
 
   const token = await getServerAuthToken();
 

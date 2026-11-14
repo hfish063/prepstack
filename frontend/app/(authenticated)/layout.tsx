@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import AppHeader from "@/components/common/app-header";
 import ProtectedRouteProvider from "@/components/providers/protected-route";
 import { Toaster } from "@/components/ui/toast";
+import { ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function AuthenticatedLayout({
   children,
@@ -17,7 +19,14 @@ export default function AuthenticatedLayout({
         <main className="flex flex-1 flex-col min-w-0 h-svh overflow-hidden">
           <TooltipProvider>
             <AppHeader />
-            <div className="flex-1 min-h-0 overflow-auto p-4">{children}</div>
+            <div className="flex-1 min-h-0 overflow-auto p-4">
+              <ClerkLoading>
+                <div className="flex size-full items-center justify-center">
+                  <Spinner />
+                </div>
+              </ClerkLoading>
+              <ClerkLoaded>{children}</ClerkLoaded>
+            </div>
           </TooltipProvider>
         </main>
         <Toaster />

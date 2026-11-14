@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const PREFERRED_LANGUAGE_NAME = "Python";
 
@@ -26,6 +26,10 @@ export default async function TechnicalPhaseLayout({
 }) {
   const { id } = await params;
   const interviewId = Number(id);
+
+  if (!interviewId) {
+    notFound();
+  }
 
   const { getToken } = await auth();
   const token = await getToken();
