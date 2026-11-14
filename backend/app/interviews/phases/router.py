@@ -7,7 +7,7 @@ from app.database.database import get_db
 from app.interviews.phases.schemas import InterviewPhaseRead
 from app.interviews.phases.service import (
     advance_phase_to_target,
-    get_phase_for_user,
+    get_mutable_phase_for_user,
 )
 
 router = APIRouter(prefix="/phases")
@@ -22,7 +22,7 @@ def advance_phase(
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    current_phase = get_phase_for_user(db, phase_id, user_id)
+    current_phase = get_mutable_phase_for_user(db, phase_id, user_id)
     if not current_phase:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
