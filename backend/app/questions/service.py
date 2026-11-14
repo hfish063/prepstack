@@ -10,7 +10,8 @@ from app.questions.schemas import InterviewQuestionCreate
 def get(db: Session, phase: InterviewPhase, question_id: int):
     question = db.exec(
         select(InterviewQuestion).where(
-            InterviewQuestion.id == question_id, InterviewQuestion.phase_id == phase.id,
+            InterviewQuestion.id == question_id,
+            InterviewQuestion.phase_id == phase.id,
         )
     ).one_or_none()
 
@@ -22,7 +23,9 @@ def get(db: Session, phase: InterviewPhase, question_id: int):
 
 def get_all(db: Session, phase: InterviewPhase) -> list[InterviewQuestion]:
     return db.exec(
-        select(InterviewQuestion).where(InterviewQuestion.phase_id == phase.id).order_by(InterviewQuestion.ordinal)
+        select(InterviewQuestion)
+        .where(InterviewQuestion.phase_id == phase.id)
+        .order_by(InterviewQuestion.ordinal)
     ).all()
 
 
