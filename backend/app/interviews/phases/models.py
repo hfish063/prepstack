@@ -24,5 +24,6 @@ class InterviewPhase(SQLModel, table=True):
     phase_type: PhaseType
     order_index: int  # 0 behavioral 1 conceptual 2 technical
     status: PhaseStatus
+    question_count: Optional[int] = 5
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
