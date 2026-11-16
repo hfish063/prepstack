@@ -10,7 +10,7 @@ from openai.types.chat import ChatCompletionMessageParam
 def generate_questions_for_interview_phase(
     phase: InterviewPhase,
 ) -> list[InterviewQuestionCreate]:
-    prompt = build_question_prompt(phase)
+    prompt = _build_question_prompt(phase)
 
     client = OpenAIClient(system_message=prompt)
 
@@ -29,7 +29,7 @@ def generate_questions_for_interview_phase(
     return questions
 
 
-def build_question_prompt(phase: InterviewPhase) -> str:
+def _build_question_prompt(phase: InterviewPhase) -> str:
     """Builds a system prompt for generating interview questions.
 
     Question content is based on the provided interview phase.
@@ -47,20 +47,20 @@ def generate_message_response(
         1. The provided interview phase
         2. The provided message history
     """
-    prompt = build_message_prompt(phase)
+    prompt = _build_message_prompt(phase)
 
     client = OpenAIClient(system_message=prompt)
 
-    return client.chat_completion(user_prompt, serialize_message_history(history))
+    return client.chat_completion(user_prompt, _serialize_message_history(history))
 
 
-def build_message_prompt(phase: InterviewPhase) -> str:
+def _build_message_prompt(phase: InterviewPhase) -> str:
     """Builds a system prompt for generating message responses."""
     strategy = get_phase_strategy(phase.phase_type)
     return strategy.build_system_prompt(phase.interview_session)
 
 
-def serialize_message_history(
+def _serialize_message_history(
     history: list[Message],
 ) -> list[ChatCompletionMessageParam]:
     """Converts message list (history) into ChatCompletionMessageParam list."""
