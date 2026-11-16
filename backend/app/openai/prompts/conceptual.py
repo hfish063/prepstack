@@ -2,7 +2,7 @@ from app.interviews.sessions.models import InterviewSession
 from app.interviews.phases.strategies.strategy import PhaseStrategy
 
 
-class ConceptualStrategy(PhaseStrategy):
+class ConceptualPrompt(PhaseStrategy):
     def build_system_prompt(self, interview: InterviewSession) -> str:
         topics_clause = (
             f" Focus areas to probe: {interview.topics}." if interview.topics else ""

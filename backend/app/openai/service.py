@@ -1,5 +1,5 @@
 from app.interviews.phases.models import InterviewPhase
-from app.interviews.phases.strategies.factory import get_phase_strategy
+from app.openai.prompts.factory import get_phase_prompt
 from app.messages.models import Message
 from app.openai.client import OpenAIClient
 from app.questions.schemas import InterviewQuestionCreate
@@ -34,7 +34,7 @@ def _build_question_prompt(phase: InterviewPhase) -> str:
 
     Question content is based on the provided interview phase.
     """
-    strategy = get_phase_strategy(phase.phase_type)
+    strategy = get_phase_prompt(phase.phase_type)
     return strategy.build_question_prompt(phase.interview_session, phase.question_count)
 
 
@@ -56,7 +56,7 @@ def generate_message_response(
 
 def _build_message_prompt(phase: InterviewPhase) -> str:
     """Builds a system prompt for generating message responses."""
-    strategy = get_phase_strategy(phase.phase_type)
+    strategy = get_phase_prompt(phase.phase_type)
     return strategy.build_system_prompt(phase.interview_session)
 
 

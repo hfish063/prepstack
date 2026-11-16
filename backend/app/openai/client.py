@@ -17,7 +17,7 @@ class OpenAIClient:
 
     def chat_completion(
         self, prompt: str, history: list[ChatCompletionMessageParam] | None = None
-    ) -> dict:
+    ) -> str | None:
         client = OpenAI(api_key=self.api_key)
 
         try:
