@@ -2,9 +2,10 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import Column, ForeignKey, Integer, UniqueConstraint
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 
 from app.enums import PhaseStatus, PhaseType
+from app.interviews.sessions.models import InterviewSession
 
 
 class InterviewPhase(SQLModel, table=True):
@@ -24,6 +25,8 @@ class InterviewPhase(SQLModel, table=True):
     phase_type: PhaseType
     order_index: int  # 0 behavioral 1 conceptual 2 technical
     status: PhaseStatus
-    question_count: Optional[int] = 5
+    question_count: Optional[int] = Field(default=5, le=20)
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+
+    interview_session: InterviewSession = Relationship()

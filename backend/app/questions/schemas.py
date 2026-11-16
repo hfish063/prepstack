@@ -9,6 +9,5 @@ class InterviewQuestionRead(CamelModel):
 
 
 class InterviewQuestionCreate(CamelModel):
-    phase_id: int
     text: str
     ordinal: int

@@ -24,7 +24,7 @@ def send_message(
         db, phase_id, user_id
     )  # Ownership check, raises 404
 
-    return process_message(db, phase, user_id, payload.content)
+    return process_message(db, phase, payload.content)
 
 
 @router.get("/{phase_id}", response_model=list[MessageRead])

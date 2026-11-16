@@ -1,17 +1,68 @@
-from fastapi import HTTPException
-from openai import APIError, OpenAI
+import json
+
+from openai import OpenAI
+from openai.types.chat import ChatCompletionMessageParam
 
 from app.config import get_settings
 
-api_key = get_settings().OPENAI_API_KEY
-client = OpenAI(api_key=api_key)
-MODEL = "gpt-6-luna"
+class OpenAIClient:
+    def __init__(
+        self,
+        system_message: str,
+        model: str = "gpt-6-luna",
+    ):
+        self.api_key = get_settings().OPENAI_API_KEY
+        self.system_message = system_message
+        self.model = model
 
+    def chat_completion(
+        self, prompt: str, history: list[ChatCompletionMessageParam] | None = None
+    ) -> dict:
+        client = OpenAI(api_key=self.api_key)
 
-def generate_response(messages: list[dict]) -> str:
-    try:
-        ai_response = client.chat.completions.create(model=MODEL, messages=messages)
-    except APIError:
-        raise HTTPException(status_code=502, detail="Communication with OpenAI failed.")
+        try:
+            completion = client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": self.system_message},
+                    *(history or []),
+                    {"role": "user", "content": prompt},
+                ],
+            )
+        except:
+            raise
 
-    return ai_response.choices[0].message.content
+        return completion.choices[0].message.content
+
+    def chat_json_parse(
+        self,
+        prompt: str | None = None,
+        history: list[ChatCompletionMessageParam] | None = None,
+    ) -> dict:
+        """Returns a JSON loaded OpenAI response model.
+
+        Optional args provide a user prompt and message history for the OpenAI generation context.
+
+        If these are not provided, the chat completion will be based on the client's
+        system prompt alone.
+        """
+        client = OpenAI(api_key=self.api_key)
+
+        messages: list[ChatCompletionMessageParam] = [
+            {"role": "system", "content": self.system_message},
+            *(history or []),
+        ]
+
+        if prompt:
+            messages.append({"role": "user", "content": prompt})
+
+        try:
+            completion = client.chat.completions.create(
+                model=self.model,
+                response_format={"type": "json_object"},
+                messages=messages,
+            )
+        except:
+            raise
+
+        return json.loads(completion.choices[0].message.content)
