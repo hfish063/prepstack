@@ -19,6 +19,7 @@ import app.interviews.phases.models
 import app.programming_languages.models
 import app.submissions.models
 import app.test_cases.models
+import app.questions.models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

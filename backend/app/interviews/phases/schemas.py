@@ -11,5 +11,6 @@ class InterviewPhaseRead(CamelModel):
     phase_type: PhaseType
     order_index: int
     status: PhaseStatus
+    question_count: int
     started_at: Optional[datetime]
     completed_at: Optional[datetime]

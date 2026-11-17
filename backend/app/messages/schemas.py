@@ -11,6 +11,7 @@ class MessageCreate(CamelModel):
 class MessageRead(CamelModel):
     id: int
     phase_id: int
+    question_id: int
     role: MessageRole
     content: str
     created_at: datetime

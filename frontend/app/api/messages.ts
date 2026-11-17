@@ -5,18 +5,24 @@ export type MessageRole = "user" | "assistant" | "system";
 export interface Message {
   id: number;
   phaseId: number;
+  questionId: number;
   role: MessageRole;
   content: string;
   createdAt: string;
 }
 
-export async function findMessagesForPhase(token: string, phaseId: number) {
-  const response = await apiFetch(`/messages/${phaseId}`, {
+export async function findMessagesForQuestion(
+  token: string,
+  questionId: number,
+) {
+  const response = await apiFetch(`/questions/${questionId}/messages`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch messages for phase with id: ${phaseId}`);
+    throw new Error(
+      `Failed to fetch messages for question with id: ${questionId}`,
+    );
   }
 
   return (await response.json()) as Message[];
@@ -24,10 +30,10 @@ export async function findMessagesForPhase(token: string, phaseId: number) {
 
 export async function sendMessage(
   token: string,
-  phaseId: number,
+  questionId: number,
   content: string,
 ) {
-  const response = await apiFetch(`/messages/send/${phaseId}`, {
+  const response = await apiFetch(`/questions/${questionId}/messages`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -37,7 +43,9 @@ export async function sendMessage(
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to send message for phase with id: ${phaseId}`);
+    throw new Error(
+      `Failed to send message for question with id: ${questionId}`,
+    );
   }
 
   return (await response.json()) as Message;
