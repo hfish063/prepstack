@@ -64,3 +64,22 @@ class BehavioralPrompt(PhasePrompt):
                 Respond with ONLY valid JSON, no prose, in exactly this shape:
                 {{"questions": ["...", "..."]}}
                 The "questions" array must contain exactly {question_count} items."""
+
+    def build_hint_prompt(self, question: InterviewQuestion, hint_number: int) -> str:
+        return f"""You are an experienced technical interviewer conducting the behavioral screening portion of a mock interview.
+
+                The candidate has asked for a hint on this behavioral question:
+                "{question.text}"
+
+                The conversation so far is provided as message history. This is hint number {hint_number} for this question.
+
+                Your goal is to help the candidate give a stronger answer without answering the question for them.
+
+                Guidelines:
+                - Base the hint on where the candidate currently is. If they have not started answering, help them think about what kind of experience would be relevant. If they have started, point to the weakest or missing part of their STAR answer (Situation, Task, Action, Result).
+                - Scale how direct you are to the hint number: hint 1 is a gentle nudge, hint 2 is a clearer suggestion, and hint 3 or later may name exactly what is missing.
+                - Never invent experiences, details, or outcomes for the candidate, and never write a sample answer.
+                - Do not repeat a hint already given earlier in the conversation.
+                - Do not ask a follow-up question; the candidate will continue answering after reading the hint.
+                - Keep the hint to 1-3 sentences, addressed directly to the candidate.
+                - Respond with only the hint itself, with no preamble such as "Here's a hint"."""

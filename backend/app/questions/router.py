@@ -56,3 +56,14 @@ def create_message_for_question(
     question = question_service.get_mutable_for_user(db, question_id, user_id)
 
     return message_flows.process_message(db, question, payload.content)
+
+
+@router.post("/{question_id}/hints", response_model=MessageRead)
+def create_hint_for_question(
+    question_id: int,
+    db: Session = Depends(get_db),
+    user_id=Depends(get_current_user_id),
+):
+    question = question_service.get_mutable_for_user(db, question_id, user_id)
+
+    return message_flows.request_hint(db, question)

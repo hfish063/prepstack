@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowUp, Bot, User } from "lucide-react";
+import { ArrowUp, Bot, Lightbulb, User } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -28,6 +28,7 @@ import {
   InputGroupButton,
   InputGroupTextarea,
 } from "../ui/input-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type ChatPanelProps = {
   phaseId: number;
@@ -40,7 +41,7 @@ export default function ChatPanel({
   questionId,
   initialMessages,
 }: ChatPanelProps) {
-  const { sendMessage } = useMessages();
+  const { sendMessage, requestHint } = useMessages();
   const [messages, setMessages] = useState<MessageData[]>(initialMessages);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -64,6 +65,7 @@ export default function ChatPanel({
         phaseId,
         questionId,
         role: "user",
+        kind: "message",
         content,
         createdAt: new Date().toISOString(),
       },
@@ -74,6 +76,21 @@ export default function ChatPanel({
       setMessages((prev) => [...prev, assistantMessage]);
     } catch {
       setError("Something went wrong sending your message. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function handleHintRequest() {
+    if (sending) return;
+    setSending(true);
+    setError(null);
+
+    try {
+      const assistantHint = await requestHint(questionId);
+      setMessages((prev) => [...prev, assistantHint]);
+    } catch {
+      setError("Something went wrong generating a hint. Please try again.");
     } finally {
       setSending(false);
     }
@@ -96,6 +113,8 @@ export default function ChatPanel({
                         <AvatarFallback>
                           {message.role === "user" ? (
                             <User className="size-4" />
+                          ) : message.kind === "hint" ? (
+                            <Lightbulb className="size-4 text-yellow-500" />
                           ) : (
                             <Bot className="size-4" />
                           )}
@@ -131,7 +150,7 @@ export default function ChatPanel({
 
       {error && <p className="text-sm text-destructive px-4 pt-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} ref={formRef} className="flex gap-2 p-8">
+      <form onSubmit={handleSubmit} ref={formRef} className="flex gap-2 p-4">
         <InputGroup>
           <InputGroupTextarea
             value={input}
@@ -149,6 +168,21 @@ export default function ChatPanel({
             autoFocus
           />
           <InputGroupAddon align={"block-end"}>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <InputGroupButton
+                    variant={"outline"}
+                    size={"icon-sm"}
+                    onClick={handleHintRequest}
+                    disabled={sending}
+                  >
+                    <Lightbulb className="text-yellow-500" />
+                  </InputGroupButton>
+                }
+              />
+              <TooltipContent>Ask for Hint</TooltipContent>
+            </Tooltip>
             <InputGroupButton
               type="submit"
               variant={"default"}

@@ -1,3 +1,4 @@
+from app.exceptions import UpstreamServiceError
 from app.interviews.phases.models import InterviewPhase
 from app.openai.prompts.factory import get_phase_prompt
 from app.messages.models import Message
@@ -62,6 +63,30 @@ def _build_message_prompt(phase: InterviewPhase, question: InterviewQuestion) ->
     """Builds a system prompt for generating message responses."""
     strategy = get_phase_prompt(phase.phase_type)
     return strategy.build_system_prompt(phase.interview_session, question)
+
+
+def generate_question_hint(
+    question: InterviewQuestion, history: list[Message], hint_number: int
+) -> str:
+    """Generate a hint for an interview question"""
+    prompt = _build_hint_prompt(question.phase, question, hint_number)
+
+    client = OpenAIClient(system_message=prompt)
+
+    hint = client.chat_completion(history=_serialize_message_history(history))
+
+    if not hint:
+        raise UpstreamServiceError("Failed to generate a question hint.")
+
+    return hint
+
+
+def _build_hint_prompt(
+    phase: InterviewPhase, question: InterviewQuestion, hint_number: int
+) -> str:
+    """Builds a system prompt for generating a question hint."""
+    strategy = get_phase_prompt(phase.phase_type)
+    return strategy.build_hint_prompt(question, hint_number)
 
 
 def _serialize_message_history(

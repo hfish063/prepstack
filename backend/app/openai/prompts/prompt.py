@@ -14,3 +14,8 @@ class PhasePrompt(ABC):
     def build_question_prompt(
         self, interview: InterviewSession, question_count: int
     ) -> str: ...
+
+    @abstractmethod
+    def build_hint_prompt(
+        self, question: InterviewQuestion, hint_number: int
+    ) -> str: ...

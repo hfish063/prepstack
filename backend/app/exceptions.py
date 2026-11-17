@@ -15,3 +15,7 @@ class ResourceNotFoundError(PrepStackError):
 
 class ResourceConflictError(PrepStackError):
     status_code = HTTPStatus.CONFLICT
+
+
+class UpstreamServiceError(PrepStackError):
+    status_code = HTTPStatus.BAD_GATEWAY
