@@ -1,17 +1,26 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, select
 
-from app.enums import MessageRole
+from app.enums import MessageKind, MessageRole
 from app.interviews.phases.models import InterviewPhase
 from app.messages.models import Message
 from app.questions.models import InterviewQuestion
 
 
 def save(
-    db: Session, phase_id: int, question_id: int, role: MessageRole, content: str
+    db: Session,
+    phase_id: int,
+    question_id: int,
+    role: MessageRole,
+    kind: MessageKind,
+    content: str,
 ) -> Message:
     db_message = Message(
-        phase_id=phase_id, question_id=question_id, role=role, content=content
+        phase_id=phase_id,
+        question_id=question_id,
+        role=role,
+        kind=kind,
+        content=content,
     )
 
     try:

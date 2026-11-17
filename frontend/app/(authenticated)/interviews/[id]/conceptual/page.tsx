@@ -4,13 +4,7 @@ import { findQuestionsForPhase } from "@/app/api/questions";
 import ChatPanel from "@/components/interviews/chat-panel";
 import { getServerAuthToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import QuestionMenu from "../_components/question-menu";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import QuestionView from "../_components/question-view";
 
 const PAGE_PHASE: PhaseType = "conceptual";
 
@@ -67,27 +61,13 @@ export default async function ConceptualPhasePage({
   const messages = await findMessagesForQuestion(token, activeQuestion.id);
 
   return (
-    <div className="flex flex-row h-full min-h-0 gap-4">
-      <div className="w-56 shrink-0 lg:w-72 xl:w-80 2xl:w-96">
-        <QuestionMenu
-          questions={questions}
-          activeQuestionId={activeQuestion.id}
-        />
-      </div>
-      <div className="flex flex-col flex-1 min-w-0 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Prompt</CardTitle>
-            <CardDescription>{activeQuestion.text}</CardDescription>
-          </CardHeader>
-        </Card>
-        <ChatPanel
-          key={activeQuestion.id}
-          phaseId={currentPhase.id}
-          questionId={activeQuestion.id}
-          initialMessages={messages}
-        />
-      </div>
-    </div>
+    <QuestionView activeQuestion={activeQuestion} questions={questions}>
+      <ChatPanel
+        key={activeQuestion.id}
+        phaseId={currentPhase.id}
+        questionId={activeQuestion.id}
+        initialMessages={messages}
+      />
+    </QuestionView>
   );
 }

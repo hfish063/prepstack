@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, func
 from sqlmodel import Field, SQLModel
 
-from app.enums import MessageRole
+from app.enums import MessageKind, MessageRole
 
 
 class Message(SQLModel, table=True):
@@ -22,6 +22,7 @@ class Message(SQLModel, table=True):
     question_id: int = Field(foreign_key="interview_questions.id")
     content: str
     role: MessageRole
+    kind: MessageKind = Field(default=MessageKind.MESSAGE)
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True), server_default=func.now()),

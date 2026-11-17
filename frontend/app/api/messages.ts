@@ -1,12 +1,14 @@
 import apiFetch from "./api";
 
 export type MessageRole = "user" | "assistant" | "system";
+export type MessageKind = "message" | "hint";
 
 export interface Message {
   id: number;
   phaseId: number;
   questionId: number;
   role: MessageRole;
+  kind: MessageKind;
   content: string;
   createdAt: string;
 }
@@ -45,6 +47,21 @@ export async function sendMessage(
   if (!response.ok) {
     throw new Error(
       `Failed to send message for question with id: ${questionId}`,
+    );
+  }
+
+  return (await response.json()) as Message;
+}
+
+export async function requestHint(token: string, questionId: number) {
+  const response = await apiFetch(`/questions/${questionId}/hints`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to request hint for question with id: ${questionId}`,
     );
   }
 

@@ -17,18 +17,24 @@ class OpenAIClient:
         self.model = model
 
     def chat_completion(
-        self, prompt: str, history: list[ChatCompletionMessageParam] | None = None
+        self,
+        prompt: str | None = None,
+        history: list[ChatCompletionMessageParam] | None = None,
     ) -> str | None:
         client = OpenAI(api_key=self.api_key)
+
+        messages: list[ChatCompletionMessageParam] = [
+            {"role": "system", "content": self.system_message},
+            *(history or []),
+        ]
+
+        if prompt:
+            messages.append({"role": "user", "content": prompt})
 
         try:
             completion = client.chat.completions.create(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": self.system_message},
-                    *(history or []),
-                    {"role": "user", "content": prompt},
-                ],
+                messages=messages,
             )
         except:
             raise

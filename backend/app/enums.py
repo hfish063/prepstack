@@ -25,6 +25,11 @@ class MessageRole(Enum):
     ASSISTANT = "assistant"
 
 
+class MessageKind(Enum):
+    MESSAGE = "message"
+    HINT = "hint"
+
+
 class Difficulty(Enum):
     EASY = "easy"
     MEDIUM = "medium"
