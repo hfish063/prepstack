@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowUp, Bot, User } from "lucide-react";
+import { ArrowUp, Bot, Lightbulb, User } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -28,6 +28,7 @@ import {
   InputGroupButton,
   InputGroupTextarea,
 } from "../ui/input-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 type ChatPanelProps = {
   phaseId: number;
@@ -149,6 +150,16 @@ export default function ChatPanel({
             autoFocus
           />
           <InputGroupAddon align={"block-end"}>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <InputGroupButton variant={"outline"} size={"icon-sm"}>
+                    <Lightbulb className="text-yellow-500" />
+                  </InputGroupButton>
+                }
+              />
+              <TooltipContent>Ask for Hint</TooltipContent>
+            </Tooltip>
             <InputGroupButton
               type="submit"
               variant={"default"}
