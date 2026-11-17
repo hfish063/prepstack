@@ -15,6 +15,7 @@ def get(db: Session, user_id: str) -> DashboardSummaryRead:
     messages_sent = _count_messages_sent(db, user_id)
     hints_used = _count_hints(db, user_id)
     submissions_accepted = _count_accepted_submissions(db, user_id)
+    total_submissions = _count_submissions(db, user_id)
 
     return DashboardSummaryRead(
         interviews_created=interviews_count,
@@ -22,6 +23,7 @@ def get(db: Session, user_id: str) -> DashboardSummaryRead:
         messages_sent=messages_sent,
         hints_used=hints_used,
         submissions_accepted=submissions_accepted,
+        total_submissions=total_submissions
     )
 
 
@@ -38,7 +40,8 @@ def _count_completed_interviews(db: Session, user_id: str) -> int:
         select(func.count())
         .select_from(InterviewSession)
         .where(
-            InterviewSession.user_id == user_id, InterviewSession.status == InterviewStatus.COMPLETED
+            InterviewSession.user_id == user_id,
+            InterviewSession.status == InterviewStatus.COMPLETED,
         )
     ).one()
 
@@ -68,4 +71,12 @@ def _count_accepted_submissions(db: Session, user_id: str) -> int:
         select(func.count())
         .select_from(ProblemSubmission)
         .where(ProblemSubmission.accepted, ProblemSubmission.user_id == user_id)
+    ).one()
+
+
+def _count_submissions(db: Session, user_id: str) -> int:
+    return db.exec(
+        select(func.count())
+        .select_from(ProblemSubmission)
+        .where(ProblemSubmission.user_id == user_id)
     ).one()

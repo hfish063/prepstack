@@ -6,6 +6,7 @@ export interface DashboardSummary {
   messagesSent: number;
   hintsUsed: number;
   submissionsAccepted: number;
+  totalSubmissions: number;
 }
 
 export async function findDashboardSummary(token: string) {

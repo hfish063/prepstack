@@ -7,3 +7,4 @@ class DashboardSummaryRead(CamelModel):
     messages_sent: int
     hints_used: int
     submissions_accepted: int
+    total_submissions: int

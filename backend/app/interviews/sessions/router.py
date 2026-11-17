@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
+from app.enums import InterviewStatus
 from app.interviews.sessions.flows import (
     complete_interview,
     create_interview_with_phases,
@@ -23,9 +24,12 @@ router.include_router(notes_router)
 
 @router.get("/all", response_model=list[InterviewSessionRead])
 def find_all_interview_sessions(
-    db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
+    interview_status: InterviewStatus | None = Query(alias="status", default=None),
+    limit: int | None = None,
+    db: Session = Depends(get_db),
+    user_id=Depends(get_current_user_id),
 ):
-    return get_all(db, user_id)
+    return get_all(db, user_id, interview_status, limit)
 
 
 @router.get("/{interview_id}", response_model=InterviewSessionRead)

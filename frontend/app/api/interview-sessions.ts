@@ -21,8 +21,17 @@ export interface InterviewSessionCreate {
   description?: string;
 }
 
-export async function findAllInterviewsForUser(token: string) {
-  const response = await apiFetch(`/interviews/all`, {
+export async function findAllInterviewsForUser(
+  token: string,
+  status?: InterviewStatus,
+  limit?: number,
+) {
+  const params = new URLSearchParams(
+    Object.entries({ status, limit })
+      .filter(([, value]) => value !== undefined)
+      .map(([Key, value]) => [Key, String(value)]),
+  );
+  const response = await apiFetch(`/interviews/all?${params.toString()}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 

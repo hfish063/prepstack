@@ -5,6 +5,7 @@ import {
   LucideIcon,
   MessageSquare,
 } from "lucide-react";
+import { ReactNode } from "react";
 import { DashboardSummary } from "@/app/api/dashboard";
 import StatCard from "./stat-card";
 
@@ -41,7 +42,8 @@ const STATS: StatDefinition[] = [
   {
     key: "submissionsAccepted",
     label: "Submissions accepted",
-    description: "Coding solutions that passed every test",
+    description: ({ totalSubmissions }) =>
+      `Out of ${totalSubmissions} coding submissions`,
     icon: Code,
     valueClassName: "text-confirmation",
   },
@@ -49,9 +51,10 @@ const STATS: StatDefinition[] = [
 
 type StatGridProps = {
   summary: DashboardSummary;
+  children?: ReactNode;
 };
 
-export default function StatGrid({ summary }: StatGridProps) {
+export default function StatGrid({ summary, children }: StatGridProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {STATS.map(({ key, description, ...stat }) => (
@@ -66,6 +69,7 @@ export default function StatGrid({ summary }: StatGridProps) {
           {...stat}
         />
       ))}
+      {children}
     </div>
   );
 }
