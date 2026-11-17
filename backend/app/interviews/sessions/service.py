@@ -22,9 +22,22 @@ def mark_interview_complete(
     return interview
 
 
-def get_all(db: Session, user_id: str) -> list[InterviewSession]:
+def get_all(
+    db: Session,
+    user_id: str,
+    status: InterviewStatus | None = None,
+    limit: int | None = None,
+) -> list[InterviewSession]:
     statement = select(InterviewSession).where(InterviewSession.user_id == user_id)
-    return db.exec(statement).all()
+
+    if status:
+        statement = statement.where(InterviewSession.status == status)
+
+    return db.exec(
+        statement.order_by(
+            InterviewSession.created_at.desc(), InterviewSession.id.desc()
+        ).limit(limit)
+    ).all()
 
 
 def get(db: Session, user_id: str, interview_id: int) -> InterviewSession | None:

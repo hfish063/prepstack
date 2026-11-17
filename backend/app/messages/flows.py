@@ -24,7 +24,12 @@ def process_message(db: Session, question: InterviewQuestion, content: str) -> M
 
     # Save AI response
     return messages_service.save(
-        db, phase.id, question.id, MessageRole.ASSISTANT, MessageKind.MESSAGE, ai_content
+        db,
+        phase.id,
+        question.id,
+        MessageRole.ASSISTANT,
+        MessageKind.MESSAGE,
+        ai_content,
     )
 
 
@@ -40,5 +45,10 @@ def request_hint(db: Session, question: InterviewQuestion) -> Message:
     ai_content = generate_question_hint(question, history, hint_number)
 
     return messages_service.save(
-        db, question.phase_id, question.id, MessageRole.ASSISTANT, MessageKind.HINT, ai_content
+        db,
+        question.phase_id,
+        question.id,
+        MessageRole.ASSISTANT,
+        MessageKind.HINT,
+        ai_content,
     )
