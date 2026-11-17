@@ -8,6 +8,7 @@ export interface InterviewPhase {
   interviewId: number;
   phaseType: PhaseType;
   orderIndex: number;
+  questionCount: number;
   status: PhaseStatus;
   startedAt: string | null;
   completedAt: string | null;

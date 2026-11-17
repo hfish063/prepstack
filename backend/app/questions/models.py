@@ -1,6 +1,8 @@
 from typing import Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.interviews.phases.models import InterviewPhase
 
 
 class InterviewQuestion(SQLModel, table=True):
@@ -12,3 +14,5 @@ class InterviewQuestion(SQLModel, table=True):
     )
     text: str = Field(max_length=500)
     ordinal: int
+
+    phase: InterviewPhase = Relationship()

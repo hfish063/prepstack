@@ -5,6 +5,7 @@ from openai.types.chat import ChatCompletionMessageParam
 
 from app.config import get_settings
 
+
 class OpenAIClient:
     def __init__(
         self,

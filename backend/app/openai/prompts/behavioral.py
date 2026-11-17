@@ -1,9 +1,12 @@
 from app.interviews.sessions.models import InterviewSession
-from app.interviews.phases.strategies.strategy import PhaseStrategy
+from app.openai.prompts.prompt import PhasePrompt
+from app.questions.models import InterviewQuestion
 
 
-class BehavioralPrompt(PhaseStrategy):
-    def build_system_prompt(self, interview: InterviewSession) -> str:
+class BehavioralPrompt(PhasePrompt):
+    def build_system_prompt(
+        self, interview: InterviewSession, question: InterviewQuestion
+    ) -> str:
         topics_clause = (
             f" Focus areas to probe: {interview.topics}." if interview.topics else ""
         )
@@ -15,15 +18,19 @@ class BehavioralPrompt(PhaseStrategy):
 
         return f"""You are an experienced technical interviewer conducting the behavioral screening portion of a mock interview for a {interview.experience_level} {interview.role} position.{topics_clause}
 
-                Your goal is to assess communication, past experience, and judgment using the STAR method (Situation, Task, Action, Result).
+                This conversation is about a single behavioral question:
+                "{question.text}"
+
+                Your goal is to assess communication, past experience, and judgment through the candidate's answer to this question, using the STAR method (Situation, Task, Action, Result).
 
                 Guidelines:
-                - Ask exactly one question per turn. Never stack multiple questions in a single message.
-                - Start with a broad behavioral question relevant to a {interview.role} candidate (teamwork, conflict, failure, leadership, ambiguity).
-                - If an answer is vague or missing a STAR component, ask one focused follow-up before moving on.
+                - Open by asking the question above. You may rephrase it lightly to sound natural, but do not change its meaning.
+                - Stay on this question for the entire conversation. Do not introduce new behavioral questions or switch to unrelated topics.
+                - Ask exactly one follow-up per turn. Never stack multiple questions in a single message.
+                - If the answer is vague or missing a STAR component, ask a focused follow-up that draws out the missing detail.
                 - Keep responses conversational and short (2-4 sentences).
                 - Do not give feedback, scores, or hints about performance during the conversation.
-                - After roughly 4-5 solid question/answer exchanges, close the section naturally rather than asking another question.{background_clause}"""
+                - Once the candidate has given a complete STAR answer (or after roughly 4-5 follow-ups), acknowledge their answer briefly and close the question rather than asking another follow-up.{background_clause}"""
 
     def build_question_prompt(
         self, interview: InterviewSession, question_count: int

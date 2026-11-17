@@ -5,9 +5,9 @@ export function useMessages() {
   const resolveToken = useAuthToken();
 
   return {
-    sendMessage: async (phaseId: number, content: string) => {
+    sendMessage: async (questionId: number, content: string) => {
       const token = await resolveToken();
-      return await sendMessage(token, phaseId, content);
+      return await sendMessage(token, questionId, content);
     },
   };
 }

@@ -2,6 +2,7 @@ from app.interviews.phases.models import InterviewPhase
 from app.openai.prompts.factory import get_phase_prompt
 from app.messages.models import Message
 from app.openai.client import OpenAIClient
+from app.questions.models import InterviewQuestion
 from app.questions.schemas import InterviewQuestionCreate
 
 from openai.types.chat import ChatCompletionMessageParam
@@ -39,7 +40,10 @@ def _build_question_prompt(phase: InterviewPhase) -> str:
 
 
 def generate_message_response(
-    phase: InterviewPhase, user_prompt: str, history: list[Message]
+    phase: InterviewPhase,
+    question: InterviewQuestion,
+    user_prompt: str,
+    history: list[Message],
 ) -> str:
     """Generate a response to a user message.
 
@@ -47,17 +51,17 @@ def generate_message_response(
         1. The provided interview phase
         2. The provided message history
     """
-    prompt = _build_message_prompt(phase)
+    prompt = _build_message_prompt(phase, question)
 
     client = OpenAIClient(system_message=prompt)
 
     return client.chat_completion(user_prompt, _serialize_message_history(history))
 
 
-def _build_message_prompt(phase: InterviewPhase) -> str:
+def _build_message_prompt(phase: InterviewPhase, question: InterviewQuestion) -> str:
     """Builds a system prompt for generating message responses."""
     strategy = get_phase_prompt(phase.phase_type)
-    return strategy.build_system_prompt(phase.interview_session)
+    return strategy.build_system_prompt(phase.interview_session, question)
 
 
 def _serialize_message_history(

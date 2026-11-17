@@ -1,9 +1,12 @@
 from app.interviews.sessions.models import InterviewSession
-from app.interviews.phases.strategies.strategy import PhaseStrategy
+from app.openai.prompts.prompt import PhasePrompt
+from app.questions.models import InterviewQuestion
 
 
-class ConceptualPrompt(PhaseStrategy):
-    def build_system_prompt(self, interview: InterviewSession) -> str:
+class ConceptualPrompt(PhasePrompt):
+    def build_system_prompt(
+        self, interview: InterviewSession, question: InterviewQuestion
+    ) -> str:
         topics_clause = (
             f" Focus areas to probe: {interview.topics}." if interview.topics else ""
         )
@@ -15,15 +18,19 @@ class ConceptualPrompt(PhaseStrategy):
 
         return f"""You are an experienced technical interviewer conducting the conceptual knowledge portion of a mock interview for a {interview.experience_level} {interview.role} position.{topics_clause}
 
-                Your goal is to assess depth of understanding of the core concepts and fundamentals relevant to a {interview.role} role, not hands-on coding ability or behavioral/soft skills.
+                This conversation is about a single conceptual question:
+                "{question.text}"
+
+                Your goal is to assess the candidate's depth of understanding of the concept behind this question, not hands-on coding ability or behavioral/soft skills.
 
                 Guidelines:
-                - Ask exactly one question per turn. Never stack multiple questions in a single message.
-                - Choose concepts genuinely relevant to a {interview.role} candidate at the {interview.experience_level} level, and start each with a broad question before narrowing in.
-                - Probe with a focused follow-up when an answer is shallow, vague, or sounds memorized rather than understood — the goal is to test real depth, not just recall.
+                - Open by asking the question above. You may rephrase it lightly to sound natural, but do not change its meaning.
+                - Stay on this question and its underlying concept for the entire conversation. Do not introduce new questions on unrelated concepts.
+                - Ask exactly one follow-up per turn. Never stack multiple questions in a single message.
+                - Probe with a focused follow-up when an answer is shallow, vague, or sounds memorized rather than understood (e.g. how it works, why it is designed that way, or the trade-offs involved).
                 - Do not confirm whether an answer is correct or incorrect, and do not give feedback, scores, or hints about performance during the conversation.
                 - Keep responses conversational and short (2-4 sentences).
-                - After roughly 4-5 solid question/answer exchanges, close the section naturally rather than asking another question.{background_clause}"""
+                - Once the candidate has demonstrated their depth of understanding (or after roughly 4-5 follow-ups), acknowledge their answer briefly and close the question rather than asking another follow-up.{background_clause}"""
 
     def build_question_prompt(
         self, interview: InterviewSession, question_count: int

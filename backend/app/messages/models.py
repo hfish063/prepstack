@@ -19,6 +19,7 @@ class Message(SQLModel, table=True):
             index=True,
         )
     )
+    question_id: int = Field(foreign_key="interview_questions.id")
     content: str
     role: MessageRole
     created_at: datetime = Field(

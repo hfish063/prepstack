@@ -1,8 +1,10 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, select
 
-from app.exceptions import ResourceNotFoundError
+from app.enums import InterviewStatus
+from app.exceptions import ResourceConflictError, ResourceNotFoundError
 from app.interviews.phases.models import InterviewPhase
+from app.interviews.sessions.models import InterviewSession
 from app.questions.models import InterviewQuestion
 from app.questions.schemas import InterviewQuestionCreate
 
@@ -27,6 +29,53 @@ def get_all(db: Session, phase: InterviewPhase) -> list[InterviewQuestion]:
         .where(InterviewQuestion.phase_id == phase.id)
         .order_by(InterviewQuestion.ordinal)
     ).all()
+
+
+def get_for_user(db: Session, question_id: int, user_id: str) -> InterviewQuestion:
+    """Gets interview question that belongs to provided user."""
+    question = db.exec(
+        select(InterviewQuestion)
+        .join(InterviewPhase, InterviewQuestion.phase_id == InterviewPhase.id)
+        .join(InterviewSession, InterviewSession.id == InterviewPhase.interview_id)
+        .where(InterviewQuestion.id == question_id, InterviewSession.user_id == user_id)
+    ).one_or_none()
+
+    if not question:
+        raise ResourceNotFoundError(
+            "No interview questions with this id were found for user."
+        )
+
+    return question
+
+
+def get_mutable_for_user(
+    db: Session, question_id: int, user_id: str
+) -> InterviewQuestion:
+    """Get a mutable question that belongs to provided user.
+
+    Mutability depends on the parent InterviewSession, and status not being COMPLETED.
+    Completed interview sessions can no longer be modified.
+    """
+    row = db.exec(
+        select(InterviewQuestion, InterviewSession.status)
+        .join(InterviewPhase, InterviewQuestion.phase_id == InterviewPhase.id)
+        .join(InterviewSession, InterviewPhase.interview_id == InterviewSession.id)
+        .where(InterviewQuestion.id == question_id, InterviewSession.user_id == user_id)
+    ).one_or_none()
+
+    if not row:
+        raise ResourceNotFoundError(
+            "No interview questions with this id were found for user."
+        )
+
+    question, interview_status = row
+
+    if interview_status == InterviewStatus.COMPLETED:
+        raise ResourceConflictError(
+            "This interview has already been completed and can no longer be modified."
+        )
+
+    return question
 
 
 def save(
