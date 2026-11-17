@@ -5,18 +5,21 @@ import {
   InterviewStatus,
 } from "@/app/api/interview-sessions";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../../../../components/ui/card";
-import { Badge } from "../../../../components/ui/badge";
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemFooter,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "../../../../components/ui/tooltip";
+} from "@/components/ui/tooltip";
 import Link from "next/link";
 import ManageInterviewButton from "./manage-button";
 import { CircleCheck, CircleDot, CircleX } from "lucide-react";
@@ -34,45 +37,42 @@ export default function InterviewCard({ interview }: InterviewCardProps) {
     : [];
 
   return (
-    <Card key={interview.id} className="relative h-full hover:bg-muted/50">
-      <CardHeader className="flex flex-row items-center justify-between gap-2">
-        <div className="flex flex-row items-center gap-2">
-          <div className="relative z-10">
+    <Card className="relative transition-colors hover:bg-muted">
+      <CardContent>
+        <Item className="p-0">
+          <ItemMedia variant="icon" className="relative z-10">
             <InterviewStatusIndicator status={interview.status} />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Link
-              href={`/interviews/${interview.id}`}
-              className="after:absolute after:inset-0"
-            >
-              <CardTitle>{interview.role}</CardTitle>
-            </Link>
-            <p className="text-sm text-muted-foreground">
-              {interview.experienceLevel}
-            </p>
-          </div>
-        </div>
-        <div className="relative z-10">
-          <ManageInterviewButton interview={interview} />
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex flex-1 flex-row flex-wrap gap-2">
-        {topics.map((topic, index) => (
-          <Badge key={index} variant="secondary">
-            {topic}
-          </Badge>
-        ))}
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>
+              <Link
+                href={`/interviews/${interview.id}`}
+                className="after:absolute after:inset-0"
+              >
+                {interview.role}
+              </Link>
+            </ItemTitle>
+            <ItemDescription>
+              {interview.experienceLevel} ·{" "}
+              {new Date(interview.createdAt).toLocaleDateString("en-US")}
+            </ItemDescription>
+          </ItemContent>
+          <ItemActions className="relative z-10">
+            <ManageInterviewButton interview={interview} />
+          </ItemActions>
+          <ItemFooter className="h-5 justify-start overflow-hidden">
+            {topics.map((topic, index) => (
+              <Badge key={index} variant="secondary">
+                {topic}
+              </Badge>
+            ))}
+          </ItemFooter>
+        </Item>
       </CardContent>
-
-      <CardFooter className="flex flex-row items-center">
-        <span className="text-sm text-muted-foreground">
-          {new Date(interview.createdAt).toLocaleDateString("en-US")}
-        </span>
-      </CardFooter>
     </Card>
   );
 }
+
 type InterviewStatusIndicatorProps = {
   status: InterviewStatus;
 };
