@@ -31,3 +31,16 @@ class ConversationContext(PromptContext):
 class HintContext(PromptContext):
     question: str
     hint_number: int
+
+
+class InterviewSummaryContext(PromptContext):
+    interview: InterviewContext
+    phase_evaluations: list[PhaseEvaluationContext]
+
+
+class PhaseEvaluationContext(PromptContext):
+    interview: InterviewContext
+    phase_type: PhaseType
+    transcript: str
+
+

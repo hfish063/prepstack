@@ -34,37 +34,6 @@ def _serialize_message_history(
     ]
 
 
-def generate_questions_for_interview_phase(
-    phase: InterviewPhase,
-) -> list[InterviewQuestionCreate]:
-    """Generates interview questions for the provided phase.
-
-    The amount of questions generated is based on the question_count InterviewPhase attribute.
-    """
-    context = QuestionContext(
-        interview=InterviewContext.model_validate(phase.interview_session),
-        phase_type=phase.phase_type,
-        question_count=phase.question_count,
-    )
-    prompt = build_question_prompt(context)
-
-    client = OpenAIClient(system_message=prompt)
-
-    results = client.chat_json_parse().get("questions", [])
-
-    if len(results) < phase.question_count:
-        raise ValueError(
-            f"Expected {phase.question_count} questions, received {len(results)}."
-        )
-
-    questions = [
-        InterviewQuestionCreate(text=text, ordinal=ordinal)
-        for ordinal, text in enumerate(results[: phase.question_count], start=1)
-    ]
-
-    return questions
-
-
 def generate_message_response(
     phase: InterviewPhase,
     question: InterviewQuestion,
@@ -83,11 +52,13 @@ def generate_message_response(
         phase_type=phase.phase_type,
         question=question.text,
     )
-    prompt = build_message_prompt(context)
+    prompt = build_message_prompt(phase.phase_type)
 
     client = OpenAIClient(system_message=prompt)
 
-    response = client.chat_completion(user_prompt, _serialize_message_history(history))
+    response = client.chat_completion(
+        user_prompt, context, _serialize_message_history(history)
+    )
 
     if not response:
         raise UpstreamServiceError("Failed to generate a message response.")
@@ -95,16 +66,47 @@ def generate_message_response(
     return response
 
 
+def generate_questions_for_interview_phase(
+    phase: InterviewPhase,
+) -> list[InterviewQuestionCreate]:
+    """Generates interview questions for the provided phase.
+
+    The amount of questions generated is based on the question_count InterviewPhase attribute.
+    """
+    context = QuestionContext(
+        interview=InterviewContext.model_validate(phase.interview_session),
+        phase_type=phase.phase_type,
+        question_count=phase.question_count,
+    )
+    prompt = build_question_prompt()
+
+    client = OpenAIClient(system_message=prompt)
+
+    results = client.chat_json_parse(context=context).get("questions", [])
+
+    if len(results) < phase.question_count:
+        raise ValueError(
+            f"Expected {phase.question_count} questions, received {len(results)}."
+        )
+
+    questions = [
+        InterviewQuestionCreate(text=text, ordinal=ordinal)
+        for ordinal, text in enumerate(results[: phase.question_count], start=1)
+    ]
+
+    return questions
+
+
 def generate_question_hint(
     question: InterviewQuestion, history: list[Message], hint_number: int
 ) -> str:
     """Generate a hint for an interview question"""
     context = HintContext(question=question.text, hint_number=hint_number)
-    prompt = build_hint_prompt(context)
+    prompt = build_hint_prompt()
 
     client = OpenAIClient(system_message=prompt)
 
-    hint = client.chat_completion(history=_serialize_message_history(history))
+    hint = client.chat_completion(context=context, history=_serialize_message_history(history))
 
     if not hint:
         raise UpstreamServiceError("Failed to generate a question hint.")

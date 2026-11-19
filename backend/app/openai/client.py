@@ -4,6 +4,7 @@ from openai import APIError, OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
 from app.config import get_settings
+from app.openai.prompts.context import PromptContext
 
 
 class OpenAIClient:
@@ -19,14 +20,30 @@ class OpenAIClient:
     def chat_completion(
         self,
         prompt: str | None = None,
+        context: PromptContext | None = None,
         history: list[ChatCompletionMessageParam] | None = None,
     ) -> str | None:
+        """OpenAI chat completion API endpoint.
+
+        Args:
+            prompt: the user's message to the AI model
+            context: dynamic data about the conversation
+            history: conversation history
+        """
         client = OpenAI(api_key=self.api_key)
 
         messages: list[ChatCompletionMessageParam] = [
             {"role": "system", "content": self.system_message},
             *(history or []),
         ]
+
+        if context:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"<context>{context.model_dump_json()}</context>",
+                }
+            )
 
         if prompt:
             messages.append({"role": "user", "content": prompt})
@@ -44,14 +61,15 @@ class OpenAIClient:
     def chat_json_parse(
         self,
         prompt: str | None = None,
+        context: PromptContext | None = None,
         history: list[ChatCompletionMessageParam] | None = None,
     ) -> dict:
         """Returns a JSON loaded OpenAI response model.
 
-        Optional args provide a user prompt and message history for the OpenAI generation context.
-
-        If these are not provided, the chat completion will be based on the client's
-        system prompt alone.
+        Args:
+            prompt: the user's message to the AI model
+            context: dynamic data about the conversation
+            history: conversation history
         """
         client = OpenAI(api_key=self.api_key)
 
@@ -59,6 +77,14 @@ class OpenAIClient:
             {"role": "system", "content": self.system_message},
             *(history or []),
         ]
+
+        if context:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"<context>{context.model_dump_json()}</context>"
+                }
+            )
 
         if prompt:
             messages.append({"role": "user", "content": prompt})
