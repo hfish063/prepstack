@@ -23,7 +23,7 @@ def get(db: Session, user_id: str) -> DashboardSummaryRead:
         messages_sent=messages_sent,
         hints_used=hints_used,
         submissions_accepted=submissions_accepted,
-        total_submissions=total_submissions
+        total_submissions=total_submissions,
     )
 
 

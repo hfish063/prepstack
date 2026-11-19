@@ -1,18 +1,52 @@
 from app.exceptions import UpstreamServiceError
+from app.interviews.evaluations.models import InterviewPhaseEvaluation
 from app.interviews.phases.models import InterviewPhase
-from app.openai.prompts.factory import get_phase_prompt
+from app.interviews.sessions.models import InterviewSession
 from app.messages.models import Message
 from app.openai.client import OpenAIClient
+from app.openai.prompts.context import (
+    ConversationContext,
+    HintContext,
+    InterviewContext,
+    QuestionContext,
+)
+from app.openai.prompts.builders import (
+    build_hint_prompt,
+    build_message_prompt,
+    build_question_prompt,
+)
 from app.questions.models import InterviewQuestion
 from app.questions.schemas import InterviewQuestionCreate
 
 from openai.types.chat import ChatCompletionMessageParam
 
 
+def _serialize_message_history(
+    history: list[Message],
+) -> list[ChatCompletionMessageParam]:
+    """Converts message list (history) into ChatCompletionMessageParam list."""
+    return [
+        {
+            "role": message.role.value,
+            "content": message.content,
+        }
+        for message in history[-20:]
+    ]
+
+
 def generate_questions_for_interview_phase(
     phase: InterviewPhase,
 ) -> list[InterviewQuestionCreate]:
-    prompt = _build_question_prompt(phase)
+    """Generates interview questions for the provided phase.
+
+    The amount of questions generated is based on the question_count InterviewPhase attribute.
+    """
+    context = QuestionContext(
+        interview=InterviewContext.model_validate(phase.interview_session),
+        phase_type=phase.phase_type,
+        question_count=phase.question_count,
+    )
+    prompt = build_question_prompt(context)
 
     client = OpenAIClient(system_message=prompt)
 
@@ -31,15 +65,6 @@ def generate_questions_for_interview_phase(
     return questions
 
 
-def _build_question_prompt(phase: InterviewPhase) -> str:
-    """Builds a system prompt for generating interview questions.
-
-    Question content is based on the provided interview phase.
-    """
-    strategy = get_phase_prompt(phase.phase_type)
-    return strategy.build_question_prompt(phase.interview_session, phase.question_count)
-
-
 def generate_message_response(
     phase: InterviewPhase,
     question: InterviewQuestion,
@@ -50,26 +75,32 @@ def generate_message_response(
 
     Response generation is based on:
         1. The provided interview phase
+        2. The current question
         2. The provided message history
     """
-    prompt = _build_message_prompt(phase, question)
+    context = ConversationContext(
+        interview=InterviewContext.model_validate(phase.interview_session),
+        phase_type=phase.phase_type,
+        question=question.text,
+    )
+    prompt = build_message_prompt(context)
 
     client = OpenAIClient(system_message=prompt)
 
-    return client.chat_completion(user_prompt, _serialize_message_history(history))
+    response = client.chat_completion(user_prompt, _serialize_message_history(history))
 
+    if not response:
+        raise UpstreamServiceError("Failed to generate a message response.")
 
-def _build_message_prompt(phase: InterviewPhase, question: InterviewQuestion) -> str:
-    """Builds a system prompt for generating message responses."""
-    strategy = get_phase_prompt(phase.phase_type)
-    return strategy.build_system_prompt(phase.interview_session, question)
+    return response
 
 
 def generate_question_hint(
     question: InterviewQuestion, history: list[Message], hint_number: int
 ) -> str:
     """Generate a hint for an interview question"""
-    prompt = _build_hint_prompt(question.phase, question, hint_number)
+    context = HintContext(question=question.text, hint_number=hint_number)
+    prompt = build_hint_prompt(context)
 
     client = OpenAIClient(system_message=prompt)
 
@@ -81,22 +112,13 @@ def generate_question_hint(
     return hint
 
 
-def _build_hint_prompt(
-    phase: InterviewPhase, question: InterviewQuestion, hint_number: int
-) -> str:
-    """Builds a system prompt for generating a question hint."""
-    strategy = get_phase_prompt(phase.phase_type)
-    return strategy.build_hint_prompt(question, hint_number)
+def generate_phase_evaluation(
+    phase: InterviewPhase, transcript: str
+) -> InterviewPhaseEvaluation:
+    pass
 
 
-def _serialize_message_history(
-    history: list[Message],
-) -> list[ChatCompletionMessageParam]:
-    """Converts message list (history) into ChatCompletionMessageParam list."""
-    return [
-        {
-            "role": message.role.value,
-            "content": message.content,
-        }
-        for message in history
-    ]
+def generate_interview_summary(
+    interview: InterviewSession, phase_evaluations: list[InterviewPhaseEvaluation]
+):
+    pass

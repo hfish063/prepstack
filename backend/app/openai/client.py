@@ -1,6 +1,6 @@
 import json
 
-from openai import OpenAI
+from openai import APIError, OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
 from app.config import get_settings
@@ -36,7 +36,7 @@ class OpenAIClient:
                 model=self.model,
                 messages=messages,
             )
-        except:
+        except APIError:
             raise
 
         return completion.choices[0].message.content
@@ -69,7 +69,7 @@ class OpenAIClient:
                 response_format={"type": "json_object"},
                 messages=messages,
             )
-        except:
+        except APIError:
             raise
 
         return json.loads(completion.choices[0].message.content)
