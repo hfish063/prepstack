@@ -3,8 +3,8 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
-class InterviewEvaluation(SQLModel, table=True):
-    __tablename__ = "interview_evaluations"
+class InterviewSummary(SQLModel, table=True):
+    __tablename__ = "interview_summaries"
     id: Optional[int] = Field(default=None, primary_key=True)
     interview_id: int = Field(foreign_key="interview_sessions.id")
     overall_score: int = Field(ge=0, le=100)
