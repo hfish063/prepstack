@@ -82,7 +82,7 @@ class OpenAIClient:
             messages.append(
                 {
                     "role": "user",
-                    "content": f"<context>{context.model_dump_json()}</context>"
+                    "content": f"<context>{context.model_dump_json()}</context>",
                 }
             )
 

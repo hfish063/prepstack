@@ -1,5 +1,6 @@
 from app.exceptions import UpstreamServiceError
 from app.interviews.evaluations.models import InterviewPhaseEvaluation
+from app.interviews.evaluations.schemas import InterviewPhaseEvaluationCreate, InterviewSummaryCreate
 from app.interviews.phases.models import InterviewPhase
 from app.interviews.sessions.models import InterviewSession
 from app.messages.models import Message
@@ -8,6 +9,8 @@ from app.openai.prompts.context import (
     ConversationContext,
     HintContext,
     InterviewContext,
+    InterviewSummaryContext,
+    PhaseEvaluationContext,
     QuestionContext,
 )
 from app.openai.prompts.builders import (
@@ -106,7 +109,9 @@ def generate_question_hint(
 
     client = OpenAIClient(system_message=prompt)
 
-    hint = client.chat_completion(context=context, history=_serialize_message_history(history))
+    hint = client.chat_completion(
+        context=context, history=_serialize_message_history(history)
+    )
 
     if not hint:
         raise UpstreamServiceError("Failed to generate a question hint.")
@@ -116,11 +121,11 @@ def generate_question_hint(
 
 def generate_phase_evaluation(
     phase: InterviewPhase, transcript: str
-) -> InterviewPhaseEvaluation:
-    pass
+) -> InterviewPhaseEvaluationCreate:
+    context = PhaseEvaluationContext(phase.interview_session, phase.phase_type, transcript)
 
 
 def generate_interview_summary(
     interview: InterviewSession, phase_evaluations: list[InterviewPhaseEvaluation]
-):
-    pass
+) -> InterviewSummaryCreate:
+    context = InterviewSummaryContext(interview, phase_evaluations)

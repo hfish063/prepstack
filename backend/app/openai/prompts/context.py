@@ -42,5 +42,3 @@ class PhaseEvaluationContext(PromptContext):
     interview: InterviewContext
     phase_type: PhaseType
     transcript: str
-
-
