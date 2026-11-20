@@ -20,5 +20,5 @@ class InterviewSummaryCreate(CamelModel):
 
 
 class InterviewPhaseEvaluationCreate(CamelModel):
-    score: int  = Field(ge=0, le=100)
+    score: int = Field(ge=0, le=100)
     summary: str

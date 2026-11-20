@@ -4,6 +4,7 @@ from app.openai.prompts.strings import (
     BEHAVIORAL_SYSTEM_PROMPT,
     CONCEPTUAL_SYSTEM_PROMPT,
     INTERVIEW_SUMMARY_PROMPT,
+    PHASE_EVALUATION_PROMPT,
     SYSTEM_HINT_PROMPT,
     SYSTEM_QUESTION_PROMPT,
 )
@@ -30,5 +31,5 @@ def build_interview_summary_prompt() -> str:
     return BASE_SYSTEM_PROMPT + "\n" + INTERVIEW_SUMMARY_PROMPT
 
 
-def build_phase_evaluation_Prompt() -> str:
-    return BASE_SYSTEM_PROMPT + "\n" + INTERVIEW_SUMMARY_PROMPT
+def build_phase_evaluation_prompt() -> str:
+    return BASE_SYSTEM_PROMPT + "\n" + PHASE_EVALUATION_PROMPT

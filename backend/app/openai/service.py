@@ -1,6 +1,9 @@
 from app.exceptions import UpstreamServiceError
 from app.interviews.evaluations.models import InterviewPhaseEvaluation
-from app.interviews.evaluations.schemas import InterviewPhaseEvaluationCreate, InterviewSummaryCreate
+from app.interviews.evaluations.schemas import (
+    InterviewPhaseEvaluationCreate,
+    InterviewSummaryCreate,
+)
 from app.interviews.phases.models import InterviewPhase
 from app.interviews.sessions.models import InterviewSession
 from app.messages.models import Message
@@ -10,13 +13,20 @@ from app.openai.prompts.context import (
     HintContext,
     InterviewContext,
     InterviewSummaryContext,
+    PhaseEvaluationSummary,
     PhaseEvaluationContext,
     QuestionContext,
 )
 from app.openai.prompts.builders import (
     build_hint_prompt,
+    build_interview_summary_prompt,
     build_message_prompt,
+    build_phase_evaluation_prompt,
     build_question_prompt,
+)
+from app.openai.schemas import (
+    InterviewPhaseEvaluationResponse,
+    InterviewSummaryResponse,
 )
 from app.questions.models import InterviewQuestion
 from app.questions.schemas import InterviewQuestionCreate
@@ -122,10 +132,42 @@ def generate_question_hint(
 def generate_phase_evaluation(
     phase: InterviewPhase, transcript: str
 ) -> InterviewPhaseEvaluationCreate:
-    context = PhaseEvaluationContext(phase.interview_session, phase.phase_type, transcript)
+    context = PhaseEvaluationContext(
+        interview=InterviewContext.model_validate(phase.interview_session),
+        phase_type=phase.phase_type,
+        transcript=transcript,
+    )
+    sys_prompt = build_phase_evaluation_prompt()
+
+    client = OpenAIClient(system_message=sys_prompt)
+
+    response = client.chat_parse(context, InterviewPhaseEvaluationResponse)
+
+    if not response:
+        raise UpstreamServiceError("Failed to generate a phase evaluation.")
+
+    return
 
 
 def generate_interview_summary(
     interview: InterviewSession, phase_evaluations: list[InterviewPhaseEvaluation]
 ) -> InterviewSummaryCreate:
-    context = InterviewSummaryContext(interview, phase_evaluations)
+    context = InterviewSummaryContext(
+        interview=InterviewContext.model_validate(interview),
+        phase_evaluations=[
+            PhaseEvaluationSummary(summary=evaluation.summary, score=evaluation.score)
+            for evaluation in phase_evaluations
+        ],
+    )
+    sys_prompt = build_interview_summary_prompt()
+
+    client = OpenAIClient(system_message=sys_prompt)
+
+    response = client.chat_parse(
+        context=context, response_model=InterviewSummaryResponse
+    )
+
+    if not response:
+        raise UpstreamServiceError("Failed to generate an interview summary.")
+
+    return

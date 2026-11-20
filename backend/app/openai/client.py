@@ -1,10 +1,15 @@
 import json
+import logging
+from typing import Type, TypeVar
 
-from openai import APIError, OpenAI
+from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
+from pydantic import BaseModel
 
 from app.config import get_settings
 from app.openai.prompts.context import PromptContext
+
+logger = logging.getLogger(__name__)
 
 
 class OpenAIClient:
@@ -53,7 +58,8 @@ class OpenAIClient:
                 model=self.model,
                 messages=messages,
             )
-        except APIError:
+        except Exception as e:
+            logger.error(e)
             raise
 
         return completion.choices[0].message.content
@@ -95,7 +101,35 @@ class OpenAIClient:
                 response_format={"type": "json_object"},
                 messages=messages,
             )
-        except APIError:
+        except Exception as e:
+            logger.error(e)
             raise
 
         return json.loads(completion.choices[0].message.content)
+
+    T = TypeVar("T", bound=BaseModel)
+
+    def chat_parse(
+        self,
+        context: PromptContext,
+        response_model: Type[T],
+    ) -> T:
+        client = OpenAI(api_key=self.api_key)
+
+        try:
+            completion = client.chat.completions.parse(
+                model=self.model,
+                response_format=response_model,
+                messages=[
+                    {"role": "system", "content": self.system_message},
+                    {
+                        "role": "user",
+                        "content": f"<context>{context.model_dump_json()}</context>",
+                    },
+                ],
+            )
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return completion.choices[0].message.parsed

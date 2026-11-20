@@ -1,6 +1,8 @@
 from typing import Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+from app.interviews.phases.models import InterviewPhase
 
 
 class InterviewSummary(SQLModel, table=True):
@@ -17,3 +19,5 @@ class InterviewPhaseEvaluation(SQLModel, table=True):
     phase_id: int = Field(foreign_key="interview_phases.id")
     score: int = Field(ge=0, le=100)
     summary: str
+
+    phase: InterviewPhase = Relationship()
