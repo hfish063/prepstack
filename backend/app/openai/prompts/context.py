@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
-from app.enums import PhaseType
+from app.enums import MessageKind, MessageRole, PhaseType
 
 
 class PromptContext(BaseModel):
@@ -43,12 +43,27 @@ class HintContext(PromptContext):
     hint_number: int
 
 
+class TranscriptMessage(PromptContext):
+    """A single message in a question transcript. Kind distinguishes hints from answers."""
+
+    role: MessageRole
+    kind: MessageKind
+    content: str
+
+
+class QuestionTranscript(PromptContext):
+    """A question and every message exchanged about it. Unanswered questions have no messages."""
+
+    question: str
+    messages: list[TranscriptMessage]
+
+
 class PhaseEvaluationContext(PromptContext):
     """Context class used by the AI client to generate an evaluation report."""
 
     interview: InterviewContext
     phase_type: PhaseType
-    transcript: str
+    transcript: list[QuestionTranscript]
 
 
 class PhaseEvaluationSummary(PromptContext):
@@ -57,6 +72,7 @@ class PhaseEvaluationSummary(PromptContext):
     Used by the AI client to generate an overall interview summary report.
     """
 
+    phase_type: PhaseType
     summary: str
     score: int
 

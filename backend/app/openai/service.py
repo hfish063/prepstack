@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from app.exceptions import UpstreamServiceError
 from app.interviews.evaluations.models import InterviewPhaseEvaluation
 from app.interviews.evaluations.schemas import (
@@ -16,6 +18,8 @@ from app.openai.prompts.context import (
     PhaseEvaluationSummary,
     PhaseEvaluationContext,
     QuestionContext,
+    QuestionTranscript,
+    TranscriptMessage,
 )
 from app.openai.prompts.builders import (
     build_hint_prompt,
@@ -129,13 +133,34 @@ def generate_question_hint(
     return hint
 
 
+def _build_transcript(
+    questions: list[InterviewQuestion], messages: list[Message]
+) -> list[QuestionTranscript]:
+    """Groups messages under their question, keeping questions without messages."""
+    messages_by_question: dict[int, list[TranscriptMessage]] = defaultdict(list)
+    for message in messages:
+        messages_by_question[message.question_id].append(
+            TranscriptMessage.model_validate(message)
+        )
+
+    return [
+        QuestionTranscript(
+            question=question.text, messages=messages_by_question[question.id]
+        )
+        for question in questions
+    ]
+
+
 def generate_phase_evaluation(
-    phase: InterviewPhase, transcript: str
+    phase: InterviewPhase,
+    questions: list[InterviewQuestion],
+    messages: list[Message],
 ) -> InterviewPhaseEvaluationCreate:
+    """Generates an evaluation of the candidate's performance in a single phase."""
     context = PhaseEvaluationContext(
         interview=InterviewContext.model_validate(phase.interview_session),
         phase_type=phase.phase_type,
-        transcript=transcript,
+        transcript=_build_transcript(questions, messages),
     )
     sys_prompt = build_phase_evaluation_prompt()
 
@@ -146,16 +171,21 @@ def generate_phase_evaluation(
     if not response:
         raise UpstreamServiceError("Failed to generate a phase evaluation.")
 
-    return
+    return InterviewPhaseEvaluationCreate(**response.model_dump())
 
 
 def generate_interview_summary(
     interview: InterviewSession, phase_evaluations: list[InterviewPhaseEvaluation]
 ) -> InterviewSummaryCreate:
+    """Generates an overall interview summary from the completed phase evaluations."""
     context = InterviewSummaryContext(
         interview=InterviewContext.model_validate(interview),
         phase_evaluations=[
-            PhaseEvaluationSummary(summary=evaluation.summary, score=evaluation.score)
+            PhaseEvaluationSummary(
+                phase_type=evaluation.phase.phase_type,
+                summary=evaluation.summary,
+                score=evaluation.score,
+            )
             for evaluation in phase_evaluations
         ],
     )
@@ -170,4 +200,6 @@ def generate_interview_summary(
     if not response:
         raise UpstreamServiceError("Failed to generate an interview summary.")
 
-    return
+    return InterviewSummaryCreate(
+        overall_score=response.score, summary=response.summary
+    )

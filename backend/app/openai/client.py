@@ -113,7 +113,7 @@ class OpenAIClient:
         self,
         context: PromptContext,
         response_model: Type[T],
-    ) -> T:
+    ) -> T | None:
         client = OpenAI(api_key=self.api_key)
 
         try:
@@ -132,4 +132,10 @@ class OpenAIClient:
             logger.error(e)
             raise
 
-        return completion.choices[0].message.parsed
+        message = completion.choices[0].message
+
+        if message.refusal:
+            logger.warning("OpenAI refused structured response: %s", message.refusal)
+            return None
+
+        return message.parsed

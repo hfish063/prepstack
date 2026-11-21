@@ -45,11 +45,6 @@ def get_all_by_phase(db: Session, phase: InterviewPhase) -> list[Message]:
     return db.exec(statement).all()
 
 
-def get_all_by_phases(db: Session, phases: list[InterviewPhase]) -> list[Message]:
-    phase_ids = [phase.id for phase in phases]
-    return db.exec(select(Message).where(Message.phase_id.in_(phase_ids))).all()
-
-
 def get_all_by_question(db: Session, question: InterviewQuestion) -> list[Message]:
     statement = (
         select(Message)

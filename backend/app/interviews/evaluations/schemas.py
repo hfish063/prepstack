@@ -1,5 +1,6 @@
 from pydantic import Field
 
+from app.enums import PhaseType
 from app.schemas import CamelModel
 
 
