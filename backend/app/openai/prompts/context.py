@@ -82,3 +82,21 @@ class InterviewSummaryContext(PromptContext):
 
     interview: InterviewContext
     phase_evaluations: list[PhaseEvaluationSummary]
+
+
+class CodingProblemContext(PromptContext):
+    title: str
+    prompt: str
+    difficulty: str
+
+
+class CodingEvaluationContext(PromptContext):
+    """Context class used by the AI client to analyze and generate an evaluation for coding problems."""
+
+    interview: InterviewContext
+    problem: CodingProblemContext
+    language: str
+    source_code: str
+    tests_passed: int
+    tests_total: int
+    attempts: int

@@ -17,7 +17,7 @@ from app.language_templates.schemas import ProblemLanguageTemplateRead
 from app.language_templates.service import get_language_template_for_problem
 from app.submissions.schemas import (
     ProblemSubmissionHistoryRead,
-    ProblemSubmissionRead,
+    ProblemSubmissionSummaryRead,
     SubmissionResultRead,
 )
 from app.submissions.service import delete_all_submissions, get_all_submissions
@@ -40,13 +40,13 @@ async def run_code(
     )
 
 
-@router.post("/{phase_id}/submit", response_model=ProblemSubmissionRead)
+@router.post("/{phase_id}/submit", response_model=ProblemSubmissionSummaryRead)
 async def submit_code(
     phase_id: int,
     run_code_request: RunCodeRequest,
     deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
     user_id=Depends(get_current_user_id),
-) -> ProblemSubmissionRead:
+) -> ProblemSubmissionSummaryRead:
     phase = get_mutable_phase_for_user(deps.db, phase_id, user_id)
 
     return await submit_candidate_code(deps, user_id, phase, run_code_request)

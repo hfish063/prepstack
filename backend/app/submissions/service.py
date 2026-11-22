@@ -5,6 +5,7 @@ from app.coding_problems.exceptions import InvalidPhaseTypeError
 from app.enums import PhaseType
 from app.interviews.phases.models import InterviewPhase
 from app.submissions.models import ProblemSubmission
+from app.submissions.schemas import ProblemSubmissionCreate
 
 
 def get_all_submissions(db: Session, phase: InterviewPhase) -> list[ProblemSubmission]:
@@ -16,31 +17,17 @@ def get_all_submissions(db: Session, phase: InterviewPhase) -> list[ProblemSubmi
     return db.exec(
         select(ProblemSubmission)
         .where(ProblemSubmission.phase_id == phase.id)
-        .order_by(ProblemSubmission.created_at)
+        .order_by(ProblemSubmission.created_at, ProblemSubmission.id)
     ).all()
 
 
 def create_submission(
-    db: Session,
-    user_id: str,
-    problem_id: int,
-    language_id: int,
-    phase_id: int,
-    source_code: str,
-    accepted: bool,
+    db: Session, user_id: str, submission_create: ProblemSubmissionCreate
 ) -> ProblemSubmission:
-    submission = ProblemSubmission(
-        user_id=user_id,
-        problem_id=problem_id,
-        language_id=language_id,
-        phase_id=phase_id,
-        source_code=source_code,
-        accepted=accepted,
-    )
-
-    db.add(submission)
+    submission = ProblemSubmission(user_id=user_id, **submission_create.model_dump())
 
     try:
+        db.add(submission)
         db.commit()
     except SQLAlchemyError:
         db.rollback()

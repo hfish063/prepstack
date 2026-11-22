@@ -4,7 +4,8 @@ import StatGrid from "./_components/stat-grid";
 import { currentUser } from "@clerk/nextjs/server";
 import CreateInterviewDialog from "../interviews/_components/create-dialog";
 import { findAllInterviewsForUser } from "@/app/api/interview-sessions";
-import RecentInterviewsList from "./_components/recent-interviews-list";import { buttonVariants } from "@/components/ui/button";
+import RecentInterviewsList from "./_components/recent-interviews-list";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { Play } from "lucide-react";
 
@@ -43,7 +44,8 @@ export default async function DashboardPage() {
         </div>
       </div>
       <StatGrid summary={summary}>
-        <RecentInterviewsList recentInterviews={recentInterviews} />      </StatGrid>
+        <RecentInterviewsList recentInterviews={recentInterviews} />{" "}
+      </StatGrid>
     </div>
   );
 }

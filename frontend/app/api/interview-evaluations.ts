@@ -1,8 +1,19 @@
 import apiFetch from "./api";
+import { ProblemSubmissionHistoryRead } from "./code-execution";
+import { PhaseType } from "./interview-phases";
+
+export interface CodingEvaluation {
+  timeComplexity: string;
+  spaceComplexity: string;
+  complexityReasoning: string;
+  submission: ProblemSubmissionHistoryRead;
+}
 
 export interface InterviewPhaseEvaluation {
   score: number;
   summary: string;
+  phaseType: PhaseType;
+  codingEvaluation: CodingEvaluation | null;
 }
 
 export interface InterviewSummary {

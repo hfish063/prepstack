@@ -20,6 +20,8 @@ class ProblemSubmission(SQLModel, table=True):
         index=True,
     )
     source_code: str
+    passed_test_cases: int
+    total_test_cases: int
     accepted: bool = False
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),

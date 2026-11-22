@@ -14,6 +14,8 @@ class CodingProblem(SQLModel, table=True):
     prompt: str
     difficulty: Difficulty
     is_published: bool
+    optimal_time_complexity: Optional[str] = None
+    optimal_space_complexity: Optional[str] = None
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc),
         sa_column=Column(DateTime(timezone=True), server_default=func.now()),

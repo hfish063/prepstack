@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from app.coding_problems.models import CodingProblem
 from app.exceptions import UpstreamServiceError
 from app.interviews.evaluations.models import InterviewPhaseEvaluation
 from app.interviews.evaluations.schemas import (
@@ -11,6 +12,8 @@ from app.interviews.sessions.models import InterviewSession
 from app.messages.models import Message
 from app.openai.client import OpenAIClient
 from app.openai.prompts.context import (
+    CodingEvaluationContext,
+    CodingProblemContext,
     ConversationContext,
     HintContext,
     InterviewContext,
@@ -27,15 +30,19 @@ from app.openai.prompts.builders import (
     build_message_prompt,
     build_phase_evaluation_prompt,
     build_question_prompt,
+    build_coding_evaluation_prompt,
 )
 from app.openai.schemas import (
     InterviewPhaseEvaluationResponse,
     InterviewSummaryResponse,
+    CodingEvaluationResponse,
 )
 from app.questions.models import InterviewQuestion
 from app.questions.schemas import InterviewQuestionCreate
 
 from openai.types.chat import ChatCompletionMessageParam
+
+from app.submissions.models import ProblemSubmission
 
 
 def _serialize_message_history(
@@ -172,6 +179,34 @@ def generate_phase_evaluation(
         raise UpstreamServiceError("Failed to generate a phase evaluation.")
 
     return InterviewPhaseEvaluationCreate(**response.model_dump())
+
+
+def generate_coding_review(
+    phase: InterviewPhase,
+    problem: CodingProblem,
+    submission: ProblemSubmission,
+    attempts: int,
+) -> CodingEvaluationResponse:
+    """Generates a review of the candidate's final coding problem submission."""
+    context = CodingEvaluationContext(
+        interview=InterviewContext.model_validate(phase.interview_session),
+        problem=CodingProblemContext.model_validate(problem),
+        language=submission.language.name,
+        source_code=submission.source_code,
+        tests_passed=submission.passed_test_cases,
+        tests_total=submission.total_test_cases,
+        attempts=attempts,
+    )
+    sys_prompt = build_coding_evaluation_prompt()
+
+    client = OpenAIClient(system_message=sys_prompt)
+
+    response = client.chat_parse(context, CodingEvaluationResponse)
+
+    if not response:
+        raise UpstreamServiceError("Failed to generate a coding evaluation.")
+
+    return response
 
 
 def generate_interview_summary(
