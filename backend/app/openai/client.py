@@ -1,9 +1,15 @@
 import json
+import logging
+from typing import Type, TypeVar
 
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
+from pydantic import BaseModel
 
 from app.config import get_settings
+from app.openai.prompts.context import PromptContext
+
+logger = logging.getLogger(__name__)
 
 
 class OpenAIClient:
@@ -19,14 +25,30 @@ class OpenAIClient:
     def chat_completion(
         self,
         prompt: str | None = None,
+        context: PromptContext | None = None,
         history: list[ChatCompletionMessageParam] | None = None,
     ) -> str | None:
+        """OpenAI chat completion API endpoint.
+
+        Args:
+            prompt: the user's message to the AI model
+            context: dynamic data about the conversation
+            history: conversation history
+        """
         client = OpenAI(api_key=self.api_key)
 
         messages: list[ChatCompletionMessageParam] = [
             {"role": "system", "content": self.system_message},
             *(history or []),
         ]
+
+        if context:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"<context>{context.model_dump_json()}</context>",
+                }
+            )
 
         if prompt:
             messages.append({"role": "user", "content": prompt})
@@ -36,7 +58,8 @@ class OpenAIClient:
                 model=self.model,
                 messages=messages,
             )
-        except:
+        except Exception as e:
+            logger.error(e)
             raise
 
         return completion.choices[0].message.content
@@ -44,14 +67,15 @@ class OpenAIClient:
     def chat_json_parse(
         self,
         prompt: str | None = None,
+        context: PromptContext | None = None,
         history: list[ChatCompletionMessageParam] | None = None,
     ) -> dict:
         """Returns a JSON loaded OpenAI response model.
 
-        Optional args provide a user prompt and message history for the OpenAI generation context.
-
-        If these are not provided, the chat completion will be based on the client's
-        system prompt alone.
+        Args:
+            prompt: the user's message to the AI model
+            context: dynamic data about the conversation
+            history: conversation history
         """
         client = OpenAI(api_key=self.api_key)
 
@@ -59,6 +83,14 @@ class OpenAIClient:
             {"role": "system", "content": self.system_message},
             *(history or []),
         ]
+
+        if context:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"<context>{context.model_dump_json()}</context>",
+                }
+            )
 
         if prompt:
             messages.append({"role": "user", "content": prompt})
@@ -69,7 +101,41 @@ class OpenAIClient:
                 response_format={"type": "json_object"},
                 messages=messages,
             )
-        except:
+        except Exception as e:
+            logger.error(e)
             raise
 
         return json.loads(completion.choices[0].message.content)
+
+    T = TypeVar("T", bound=BaseModel)
+
+    def chat_parse(
+        self,
+        context: PromptContext,
+        response_model: Type[T],
+    ) -> T | None:
+        client = OpenAI(api_key=self.api_key)
+
+        try:
+            completion = client.chat.completions.parse(
+                model=self.model,
+                response_format=response_model,
+                messages=[
+                    {"role": "system", "content": self.system_message},
+                    {
+                        "role": "user",
+                        "content": f"<context>{context.model_dump_json()}</context>",
+                    },
+                ],
+            )
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        message = completion.choices[0].message
+
+        if message.refusal:
+            logger.warning("OpenAI refused structured response: %s", message.refusal)
+            return None
+
+        return message.parsed

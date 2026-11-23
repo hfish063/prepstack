@@ -4,6 +4,8 @@ from sqlmodel import Session
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
 from app.enums import InterviewStatus
+from app.interviews.evaluations import flows as evaluation_flows
+from app.interviews.evaluations.schemas import InterviewSummaryRead
 from app.interviews.sessions.flows import (
     complete_interview,
     create_interview_with_phases,
@@ -105,3 +107,35 @@ def complete_interview_session(
         )
 
     return complete_interview(db, interview)
+
+
+@router.get("/{interview_id}/evaluate", response_model=InterviewSummaryRead)
+def get_interview_summary(
+    interview_id: int,
+    db: Session = Depends(get_db),
+    user_id=Depends(get_current_user_id),
+):
+    interview = get(db, user_id, interview_id)
+    if not interview:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Interview session with this id does not exist.",
+        )
+
+    return evaluation_flows.get_interview_summary(db, interview)
+
+
+@router.post("/{interview_id}/evaluate", response_model=InterviewSummaryRead)
+def evaluate_interview_session(
+    interview_id: int,
+    db: Session = Depends(get_db),
+    user_id=Depends(get_current_user_id),
+):
+    interview = get(db, user_id, interview_id)
+    if not interview:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Interview session with this id does not exist.",
+        )
+
+    return evaluation_flows.evaluate_interview(db, interview)

@@ -29,6 +29,8 @@ export interface ProblemSubmissionHistoryRead {
   language: ProgrammingLanguageRead;
   phaseId: number;
   sourceCode: string;
+  totalTestCases: number;
+  passedTestCases: number | null;
   accepted: boolean;
   createdAt: string;
   updatedAt: string;

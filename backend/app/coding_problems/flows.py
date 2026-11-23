@@ -26,7 +26,11 @@ from app.judge0.client import (
 )
 from app.judge0.dependencies import Judge0ExecutionDeps
 from app.submissions import service as submissions_service
-from app.submissions.schemas import ProblemSubmissionRead, SubmissionResultRead
+from app.submissions.schemas import (
+    ProblemSubmissionCreate,
+    ProblemSubmissionSummaryRead,
+    SubmissionResultRead,
+)
 from app.interviews.phases.service import get_phase_for_user
 
 CANDIDATE_CODE_STUB = "##CANDIDATE_CODE##"
@@ -80,7 +84,7 @@ async def submit_candidate_code(
     user_id: str,
     phase: InterviewPhase,
     request: RunCodeRequest,
-) -> ProblemSubmissionRead:
+) -> ProblemSubmissionSummaryRead:
     """Runs candidate code against all test cases for the problem."""
     template = _get_language_template(
         deps.db, phase.coding_problem_id, request.language_id
@@ -96,18 +100,23 @@ async def submit_candidate_code(
     results = await _execute_code(deps, source_code, request.language_id, test_cases)
     stderr, compile_err = _get_submission_errors(results)
 
+    passed_cases = sum(1 for result in results if result.passed == True)
+
     submission = submissions_service.create_submission(
         deps.db,
         user_id=user_id,
-        problem_id=phase.coding_problem_id,
-        language_id=request.language_id,
-        phase_id=phase.id,
-        source_code=request.source_code,
-        accepted=all(result.passed for result in results),
+        submission_create=ProblemSubmissionCreate(
+            problem_id=phase.coding_problem_id,
+            language_id=request.language_id,
+            phase_id=phase.id,
+            source_code=request.source_code,
+            passed_test_cases=passed_cases,
+            total_test_cases=len(test_cases),
+            accepted=all(result.passed for result in results),
+        ),
     )
 
-    passed_cases = sum(1 for result in results if result.passed == True)
-    return ProblemSubmissionRead(
+    return ProblemSubmissionSummaryRead(
         accepted=submission.accepted,
         total_test_cases=len(test_cases),
         passed_test_cases=passed_cases,

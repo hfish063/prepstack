@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/tooltip";
 import Link from "next/link";
 import ManageInterviewButton from "./manage-button";
-import { CircleCheck, CircleDot, CircleX } from "lucide-react";
+import { CircleCheck, CircleDot } from "lucide-react";
 
 type InterviewCardProps = {
   interview: InterviewSession;
@@ -82,8 +82,6 @@ function InterviewStatusIndicator({ status }: InterviewStatusIndicatorProps) {
 
   if (status === "completed") {
     icon = <CircleCheck />;
-  } else if (status === "abandoned") {
-    icon = <CircleX />;
   }
 
   return (

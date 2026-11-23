@@ -30,14 +30,12 @@ const STATS: StatDefinition[] = [
     label: "Messages sent",
     description: "Responses given to interview questions",
     icon: MessageSquare,
-    valueClassName: "text-blue-500",
   },
   {
     key: "hintsUsed",
     label: "Hints used",
     description: "Hints requested across all questions",
     icon: Lightbulb,
-    valueClassName: "text-yellow-500",
   },
   {
     key: "submissionsAccepted",
@@ -45,7 +43,6 @@ const STATS: StatDefinition[] = [
     description: ({ totalSubmissions }) =>
       `Out of ${totalSubmissions} coding submissions`,
     icon: Code,
-    valueClassName: "text-confirmation",
   },
 ];
 

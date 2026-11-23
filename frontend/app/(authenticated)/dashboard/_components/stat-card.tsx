@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import {
   Card,
   CardAction,
@@ -16,7 +15,6 @@ type StatCardProps = {
   value: number;
   description: string;
   icon: LucideIcon;
-  valueClassName?: string;
 };
 
 export default function StatCard({
@@ -24,15 +22,12 @@ export default function StatCard({
   value,
   description,
   icon: Icon,
-  valueClassName,
 }: StatCardProps) {
   return (
     <Card>
       <CardHeader>
         <CardDescription>{label}</CardDescription>
-        <CardTitle className={cn("text-3xl", valueClassName)}>
-          {numberFormat.format(value)}
-        </CardTitle>
+        <CardTitle className="text-3xl">{numberFormat.format(value)}</CardTitle>
         <CardAction>
           <Icon className="size-4 text-muted-foreground" />
         </CardAction>

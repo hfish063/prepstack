@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 
 from app.enums import MessageKind, MessageRole
 from app.interviews.phases.models import InterviewPhase
+from app.interviews.sessions.models import InterviewSession
 from app.messages.models import Message
 from app.questions.models import InterviewQuestion
 

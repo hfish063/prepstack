@@ -14,11 +14,13 @@ def process_message(db: Session, question: InterviewQuestion, content: str) -> M
     """
     phase = question.phase
 
-    # Get message history for phase
-    history = messages_service.get_all_by_phase(db, phase)
+    # Get message history for this question
+    history = messages_service.get_all_by_question(db, question)
 
     # Save user message
-    messages_service.save(db, phase.id, question.id, MessageRole.USER, content)
+    messages_service.save(
+        db, phase.id, question.id, MessageRole.USER, MessageKind.MESSAGE, content
+    )
 
     ai_content = generate_message_response(phase, question, content, history)
 
