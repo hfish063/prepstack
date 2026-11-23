@@ -1,6 +1,6 @@
 import apiFetch from "./api";
 
-export type InterviewStatus = "in_progress" | "completed" | "abandoned";
+export type InterviewStatus = "in_progress" | "completed";
 
 export interface InterviewSession {
   id: number;

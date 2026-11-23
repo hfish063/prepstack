@@ -16,11 +16,7 @@ export default async function InterviewSessionPage({
   const currentPhase = phases.find((phase) => phase.status === "in_progress");
 
   if (!currentPhase) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        This interview has already been completed and is set to read-only mode.
-      </p>
-    );
+    return redirect(`/interviews/${interviewId}/evaluate`);
   }
 
   redirect(`/interviews/${interviewId}/${currentPhase.phaseType}`);

@@ -1,13 +1,13 @@
-import {
-  evaluateInterview,
-  findInterviewSummary,
-} from "@/app/api/interview-evaluations";
+import { findInterviewSummary } from "@/app/api/interview-evaluations";
+import { findInterviewById } from "@/app/api/interview-sessions";
+import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getServerAuthToken } from "@/lib/auth";
 import { findEvaluationByPhaseType } from "./_utils/utils";
 import TechnicalEvaluationResults from "./_components/technical-results";
 import ConversationEvaluationResults from "./_components/conversation-results";
 import InterviewSummaryResults from "./_components/summary-results";
+import EvaluateInterviewButton from "./_components/evaluate-button";
 
 export default async function EvaluationPage({
   params,
@@ -19,11 +19,16 @@ export default async function EvaluationPage({
 
   const token = await getServerAuthToken();
 
+  const interview = await findInterviewById(token, interviewId);
+
+  if (interview.status === "in_progress") {
+    redirect(`/interviews/${interviewId}/behavioral`);
+  }
+
   const summary = await findInterviewSummary(token, interviewId);
 
   if (!summary) {
-    await evaluateInterview(token, interviewId);
-    return;
+    return <EvaluateInterviewButton interviewId={interviewId} />;
   }
 
   const phaseEvaluations = summary.phaseEvaluations;

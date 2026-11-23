@@ -4,7 +4,6 @@ from enum import Enum
 class InterviewStatus(Enum):
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
-    ABANDONED = "abandoned"
 
 
 class PhaseType(Enum):
