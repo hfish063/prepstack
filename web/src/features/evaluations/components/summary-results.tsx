@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/progress"
 import type { InterviewSummaryRead } from "@/lib/api/generated"
 import { Sparkles } from "lucide-react"
+import { InterviewScoreChart } from "./interview-score-chart"
 
 type InterviewSummaryProps = {
   summary: InterviewSummaryRead
@@ -26,7 +27,9 @@ export default function InterviewSummaryResults({
         <CardHeader>
           <CardTitle>Overall Evaluation Score</CardTitle>
         </CardHeader>
-        <CardContent>{`${summary.overallScore} / 100`}</CardContent>
+        <CardContent>
+          <InterviewScoreChart score={summary.overallScore} />
+        </CardContent>
       </Card>
       <Card>
         <CardHeader>
