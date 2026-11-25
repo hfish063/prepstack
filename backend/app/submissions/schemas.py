@@ -44,3 +44,17 @@ class ProblemSubmissionHistoryRead(CamelModel):
     accepted: bool
     created_at: datetime
     updated_at: datetime
+
+
+class SubmissionAttemptRead(CamelModel):
+    attempt_number: int
+    accepted: bool
+    passed_test_cases: int
+    total_test_cases: int
+    created_at: datetime
+
+
+class SubmissionStatsRead(CamelModel):
+    attempt_count: int
+    accepted_on_attempt: Optional[int] = None
+    attempts: list[SubmissionAttemptRead]

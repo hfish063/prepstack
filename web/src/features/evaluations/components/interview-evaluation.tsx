@@ -1,7 +1,11 @@
+import { Link } from "@tanstack/react-router"
 import { useInterviewSummary } from "../hooks/use-interview-summary"
 import EvaluateInterviewButton from "./evaluate-button"
 import PhaseEvaluationTabs from "./phase-evaluation-tabs"
 import InterviewSummaryResults from "./summary-results"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "cn"
+import { ArrowLeft } from "lucide-react"
 
 type InterviewEvaluationProps = {
   interviewId: number
@@ -15,7 +19,14 @@ export default function InterviewEvaluation({
   if (!summary) return <EvaluateInterviewButton interviewId={interviewId} />
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
+      <Link
+        to="/interviews"
+        className={cn(buttonVariants({ variant: "link" }), "w-min px-0")}
+      >
+        <ArrowLeft />
+        All Interviews
+      </Link>
       <InterviewSummaryResults summary={summary} />
       <PhaseEvaluationTabs evaluations={summary.phaseEvaluations} />
     </div>

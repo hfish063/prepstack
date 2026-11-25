@@ -6,6 +6,7 @@ from app.interviews.evaluations import service as evaluation_service
 from app.interviews.evaluations.evaluators import get_evaluator
 from app.interviews.evaluations.models import InterviewPhaseEvaluation, InterviewSummary
 from app.interviews.evaluations.schemas import (
+    CodingEvaluationRead,
     InterviewPhaseEvaluationRead,
     InterviewSummaryRead,
 )
@@ -13,6 +14,7 @@ from app.interviews.phases import service as phase_service
 from app.interviews.phases.models import InterviewPhase
 from app.interviews.sessions.models import InterviewSession
 from app.openai import service as openai_service
+from app.submissions import service as submission_service
 
 
 def get_interview_summary(
@@ -26,7 +28,7 @@ def get_interview_summary(
         db, interview
     )
 
-    return _to_summary_read(summary, phase_evaluations)
+    return _to_summary_read(db, summary, phase_evaluations)
 
 
 def evaluate_interview(
@@ -55,7 +57,7 @@ def evaluate_interview(
 
     summary = evaluation_service.save_summary(db, interview, summary_create)
 
-    return _to_summary_read(summary, phase_evaluations)
+    return _to_summary_read(db, summary, phase_evaluations)
 
 
 def _get_or_create_phase_evaluation(
@@ -75,7 +77,7 @@ def _get_or_create_phase_evaluation(
 
 
 def _to_summary_read(
-    summary: InterviewSummary, evaluations: list[InterviewPhaseEvaluation]
+    db: Session, summary: InterviewSummary, evaluations: list[InterviewPhaseEvaluation]
 ) -> InterviewSummaryRead:
     return InterviewSummaryRead(
         overall_score=summary.overall_score,
@@ -85,8 +87,25 @@ def _to_summary_read(
                 score=evaluation.score,
                 summary=evaluation.summary,
                 phase_type=evaluation.phase.phase_type,
-                coding_evaluation=evaluation.coding_evaluation,
+                coding_evaluation=_to_coding_evaluation_read(db, evaluation),
             )
             for evaluation in evaluations
         ],
+    )
+
+
+def _to_coding_evaluation_read(
+    db: Session, evaluation: InterviewPhaseEvaluation
+) -> CodingEvaluationRead | None:
+    coding_evaluation = evaluation.coding_evaluation
+
+    if not coding_evaluation:
+        return None
+
+    return CodingEvaluationRead(
+        time_complexity=coding_evaluation.time_complexity,
+        space_complexity=coding_evaluation.space_complexity,
+        complexity_reasoning=coding_evaluation.complexity_reasoning,
+        submission=coding_evaluation.submission,
+        submission_stats=submission_service.get_submission_stats(db, evaluation.phase),
     )

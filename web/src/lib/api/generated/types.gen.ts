@@ -21,6 +21,7 @@ export type CodingEvaluationRead = {
      */
     complexityReasoning: string;
     submission: ProblemSubmissionHistoryRead;
+    submissionStats: SubmissionStatsRead;
 };
 
 /**
@@ -516,6 +517,32 @@ export type RunCodeRequest = {
 };
 
 /**
+ * SubmissionAttemptRead
+ */
+export type SubmissionAttemptRead = {
+    /**
+     * Attemptnumber
+     */
+    attemptNumber: number;
+    /**
+     * Accepted
+     */
+    accepted: boolean;
+    /**
+     * Passedtestcases
+     */
+    passedTestCases: number;
+    /**
+     * Totaltestcases
+     */
+    totalTestCases: number;
+    /**
+     * Createdat
+     */
+    createdAt: string;
+};
+
+/**
  * SubmissionResultRead
  */
 export type SubmissionResultRead = {
@@ -539,6 +566,24 @@ export type SubmissionResultRead = {
      * Compileoutput
      */
     compileOutput?: string | null;
+};
+
+/**
+ * SubmissionStatsRead
+ */
+export type SubmissionStatsRead = {
+    /**
+     * Attemptcount
+     */
+    attemptCount: number;
+    /**
+     * Acceptedonattempt
+     */
+    acceptedOnAttempt?: number | null;
+    /**
+     * Attempts
+     */
+    attempts: Array<SubmissionAttemptRead>;
 };
 
 /**
