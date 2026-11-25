@@ -4,7 +4,7 @@ from pydantic import Field
 
 from app.enums import PhaseType
 from app.schemas import CamelModel
-from app.submissions.schemas import ProblemSubmissionHistoryRead
+from app.submissions.schemas import ProblemSubmissionHistoryRead, SubmissionStatsRead
 
 
 class InterviewSummaryRead(CamelModel):
@@ -25,6 +25,7 @@ class CodingEvaluationRead(CamelModel):
     space_complexity: str
     complexity_reasoning: str
     submission: ProblemSubmissionHistoryRead
+    submission_stats: SubmissionStatsRead
 
 
 class InterviewSummaryCreate(CamelModel):
