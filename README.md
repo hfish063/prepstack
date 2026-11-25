@@ -8,7 +8,7 @@ Many computer science students face significant hurdles entering the job market 
 
 This is a mono-repo with two apps:
 
-- **`frontend/`** — Next.js (React 19) app, using [Clerk](https://clerk.com) for authentication.
+- **`web/`** — React- (Vite) app, using [Clerk](https://clerk.com) for authentication.
 - **`backend/`** — FastAPI app, using SQLModel + Alembic on Postgres for persistence, Clerk for auth verification, and the OpenAI API for interview generation.
 
 The frontend talks to the backend's `/api` routes; the backend talks to Postgres and OpenAI.
@@ -56,15 +56,15 @@ alembic upgrade head
 ### 3. Frontend
 
 ```bash
-cd frontend
+cd web
 npm install
 ```
 
-Create `frontend/.env.local` with your Clerk keys (see the [Next.js quickstart](https://clerk.com/docs/nextjs/getting-started/quickstart)):
+Create `frontend/.env.local` with these environment variables:
 
 ```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
+VITE_CLERK_PUBLISHABLE_KEY=
+VITE_API_BASE_URL="http://localhost:8000"
 ```
 
 ## Running the Application
@@ -75,7 +75,7 @@ From `backend/` (with the virtualenv activated):
 fastapi dev app/main.py
 ```
 
-From `frontend/`:
+From `web/`:
 
 ```bash
 npm run dev
