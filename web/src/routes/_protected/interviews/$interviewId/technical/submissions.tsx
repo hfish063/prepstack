@@ -6,10 +6,14 @@ import { findPhaseByType } from "@/features/phases/utils/utils"
 import SubmissionsPanel from "@/features/submissions/components/panel"
 import { getSubmissionsQueryOptions } from "@/features/submissions/hooks/use-submissions"
 import { createFileRoute } from "@tanstack/react-router"
+import { z } from "zod"
+
+const searchSchema = z.object({ submission: z.number().min(0).optional() })
 
 export const Route = createFileRoute(
   "/_protected/interviews/$interviewId/technical/submissions"
 )({
+  validateSearch: searchSchema,
   loader: async ({ context, params }) => {
     const phases = await context.queryClient.query(
       getPhasesQueryOptions(params.interviewId)

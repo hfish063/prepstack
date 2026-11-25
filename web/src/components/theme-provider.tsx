@@ -225,5 +225,8 @@ export const useTheme = () => {
     throw new Error("useTheme must be used within a ThemeProvider")
   }
 
-  return context
+  const resolvedTheme: ResolvedTheme =
+    context.theme === "system" ? getSystemTheme() : context.theme
+
+  return { ...context, resolvedTheme }
 }
