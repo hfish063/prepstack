@@ -14,20 +14,13 @@ from app.interviews.notes.schemas import (
 router = APIRouter()
 
 
-@router.get("/{interview_id}/notes", response_model=InterviewSessionNotesRead)
+@router.get("/{interview_id}/notes", response_model=InterviewSessionNotesRead | None)
 def get_interview_notes(
     interview_id: int,
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    notes = get(db, user_id, interview_id)
-    if not notes:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview notes with this id do not exist.",
-        )
-
-    return notes
+    return get(db, user_id, interview_id)
 
 
 @router.post("/{interview_id}/notes/save", response_model=InterviewSessionNotesRead)

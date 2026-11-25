@@ -37,7 +37,7 @@ class CodingEvaluation(SQLModel, table=True):
         unique=True,
         ondelete="CASCADE",
     )
-    submission_id: int = Field(foreign_key="problem_submissions.id")
+    submission_id: int = Field(foreign_key="problem_submissions.id", ondelete="CASCADE")
     time_complexity: str
     space_complexity: str
     complexity_reasoning: str
