@@ -14,6 +14,8 @@ type EvaluateReportButtonProps = {
   summary: InterviewSummaryRead
 }
 
+const REVOKE_URL_TIMEOUT_MS = 1000
+
 export default function EvaluateReportButton({
   summary,
 }: EvaluateReportButtonProps) {
@@ -36,7 +38,7 @@ export default function EvaluateReportButton({
       link.download = "evaluation-report.pdf"
       link.click()
 
-      setTimeout(() => URL.revokeObjectURL(url), 1000)
+      setTimeout(() => URL.revokeObjectURL(url), REVOKE_URL_TIMEOUT_MS)
     } catch {
       toast.add({
         type: "error",
