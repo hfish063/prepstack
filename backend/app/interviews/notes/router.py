@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlmodel import Session
-from starlette import status
 
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
-from app.interviews.notes.service import get, save, update, delete
+from app.interviews.notes.service import delete, get, get_existing, save, update
 from app.interviews.notes.schemas import (
     InterviewSessionNotesCreate,
     InterviewSessionNotesRead,
@@ -30,10 +29,7 @@ def save_interview_notes(
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    try:
-        return save(db, user_id, interview_id, notes)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    return save(db, user_id, interview_id, notes)
 
 
 @router.put("/{interview_id}/notes/update", response_model=InterviewSessionNotesRead)
@@ -43,12 +39,7 @@ def update_interview_notes(
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    notes = get(db, user_id, interview_id)
-    if not notes:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview notes with this id do not exist.",
-        )
+    notes = get_existing(db, user_id, interview_id)
 
     return update(db, notes, notes_update)
 
@@ -59,11 +50,4 @@ def delete_interview_notes(
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    notes = get(db, user_id, interview_id)
-    if not notes:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview notes with this id do not exist.",
-        )
-
     delete(db, user_id, interview_id)

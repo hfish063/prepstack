@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from starlette import status
 
@@ -60,12 +60,6 @@ def get_coding_problem(
 
     problem = get_coding_problem_by_phase(db, phase)
 
-    if not problem:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No coding problems exist for this phase.",
-        )
-
     return get_coding_problem_details(db, problem)
 
 
@@ -80,21 +74,7 @@ def get_coding_problem_language_template(
 
     problem = get_coding_problem_by_phase(db, phase)
 
-    if not problem:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No coding problems exist for this phase.",
-        )
-
-    template = get_language_template_for_problem(db, problem.id, language_id)
-
-    if not template:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No language templates exist for this problem.",
-        )
-
-    return template
+    return get_language_template_for_problem(db, problem.id, language_id)
 
 
 @router.get(

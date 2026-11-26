@@ -1,6 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, select
 
+from app.exceptions import ResourceNotFoundError
 from app.enums import InterviewStatus
 from app.interviews.sessions.models import InterviewSession
 from app.interviews.sessions.schemas import InterviewSessionCreate
@@ -40,12 +41,17 @@ def get_all(
     ).all()
 
 
-def get(db: Session, user_id: str, interview_id: int) -> InterviewSession | None:
-    return db.exec(
+def get(db: Session, user_id: str, interview_id: int) -> InterviewSession:
+    interview = db.exec(
         select(InterviewSession).where(
             InterviewSession.id == interview_id, InterviewSession.user_id == user_id
         )
     ).one_or_none()
+
+    if not interview:
+        raise ResourceNotFoundError("Interview session with this id does not exist.")
+
+    return interview
 
 
 def save(

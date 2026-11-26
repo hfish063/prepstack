@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
@@ -41,11 +41,6 @@ def find_interview_session(
     user_id=Depends(get_current_user_id),
 ):
     interview = get(db, user_id, interview_id)
-    if not interview:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview session with this id does not exist.",
-        )
 
     return interview
 
@@ -68,11 +63,6 @@ def delete_interview_session(
     user_id=Depends(get_current_user_id),
 ):
     interview = get(db, user_id, interview_id)
-    if not interview:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview session with this id does not exist.",
-        )
 
     delete(db, interview)
 
@@ -84,11 +74,6 @@ def find_phases_for_interview(
     user_id=Depends(get_current_user_id),
 ):
     interview = get(db, user_id, interview_id)
-    if not interview:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview session with this id does not exist.",
-        )
 
     return get_phases_for_interview(db, interview)
 
@@ -100,11 +85,6 @@ def complete_interview_session(
     user_id=Depends(get_current_user_id),
 ):
     interview = get(db, user_id, interview_id)
-    if not interview:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview session with this id does not exist.",
-        )
 
     return complete_interview(db, interview)
 
@@ -116,11 +96,6 @@ def get_interview_summary(
     user_id=Depends(get_current_user_id),
 ):
     interview = get(db, user_id, interview_id)
-    if not interview:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview session with this id does not exist.",
-        )
 
     return evaluation_flows.get_interview_summary(db, interview)
 
@@ -132,10 +107,5 @@ def evaluate_interview_session(
     user_id=Depends(get_current_user_id),
 ):
     interview = get(db, user_id, interview_id)
-    if not interview:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Interview session with this id does not exist.",
-        )
 
     return evaluation_flows.evaluate_interview(db, interview)

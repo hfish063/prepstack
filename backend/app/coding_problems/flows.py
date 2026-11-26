@@ -4,7 +4,6 @@ from typing import Any
 from sqlmodel import Session
 
 from app.coding_problems.models import CodingProblem
-from app.exceptions import ResourceNotFoundError
 from app.coding_problems.exceptions import (
     NoTestCasesConfiguredError,
 )
@@ -62,7 +61,7 @@ def run_against_examples(
     language_id = request.language_id
     problem_id = phase.coding_problem_id
 
-    template = _get_language_template(deps.db, problem_id, language_id)
+    template = get_language_template_for_problem(deps.db, problem_id, language_id)
 
     examples = get_example_cases_for_problem(deps.db, problem_id)
     if not examples:
@@ -83,7 +82,7 @@ def submit_candidate_code(
     request: RunCodeRequest,
 ) -> ProblemSubmissionSummaryRead:
     """Runs candidate code against all test cases for the problem."""
-    template = _get_language_template(
+    template = get_language_template_for_problem(
         deps.db, phase.coding_problem_id, request.language_id
     )
 
@@ -120,17 +119,6 @@ def submit_candidate_code(
         stderr=stderr,
         compile_output=compile_err,
     )
-
-
-def _get_language_template(db: Session, problem_id, language_id):
-    template = get_language_template_for_problem(db, problem_id, language_id)
-
-    if not template:
-        raise ResourceNotFoundError(
-            "This problem has no language templates configured."
-        )
-
-    return template
 
 
 def _splice_driver_code(driver_code: str, candidate_code: str) -> str:
