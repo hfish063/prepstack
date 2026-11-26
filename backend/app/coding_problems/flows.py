@@ -4,7 +4,6 @@ from typing import Any
 from sqlmodel import Session
 
 from app.coding_problems.models import CodingProblem
-from app.exceptions import ResourceNotFoundError
 from app.coding_problems.exceptions import (
     NoTestCasesConfiguredError,
 )
@@ -47,7 +46,7 @@ def get_coding_problem_details(
     )
 
 
-async def run_against_examples(
+def run_against_examples(
     deps: Judge0ExecutionDeps,
     user_id: str,
     phase_id: int,
@@ -59,13 +58,10 @@ async def run_against_examples(
     """
     phase = get_phase_for_user(deps.db, phase_id, user_id)
 
-    if not phase:
-        raise ResourceNotFoundError("Could not find phase for this user.")
-
     language_id = request.language_id
     problem_id = phase.coding_problem_id
 
-    template = _get_language_template(deps.db, problem_id, language_id)
+    template = get_language_template_for_problem(deps.db, problem_id, language_id)
 
     examples = get_example_cases_for_problem(deps.db, problem_id)
     if not examples:
@@ -74,19 +70,19 @@ async def run_against_examples(
     # Insert the candidate's code into our driver code to ensure it has an execution point
     source_code = _splice_driver_code(template.driver_code, request.source_code)
 
-    results = await _execute_code(deps, source_code, language_id, examples)
+    results = _execute_code(deps, source_code, language_id, examples)
 
     return results
 
 
-async def submit_candidate_code(
+def submit_candidate_code(
     deps: Judge0ExecutionDeps,
     user_id: str,
     phase: InterviewPhase,
     request: RunCodeRequest,
 ) -> ProblemSubmissionSummaryRead:
     """Runs candidate code against all test cases for the problem."""
-    template = _get_language_template(
+    template = get_language_template_for_problem(
         deps.db, phase.coding_problem_id, request.language_id
     )
 
@@ -97,7 +93,7 @@ async def submit_candidate_code(
 
     source_code = _splice_driver_code(template.driver_code, request.source_code)
 
-    results = await _execute_code(deps, source_code, request.language_id, test_cases)
+    results = _execute_code(deps, source_code, request.language_id, test_cases)
     stderr, compile_err = _get_submission_errors(results)
 
     passed_cases = sum(1 for result in results if result.passed == True)
@@ -125,17 +121,6 @@ async def submit_candidate_code(
     )
 
 
-def _get_language_template(db: Session, problem_id, language_id):
-    template = get_language_template_for_problem(db, problem_id, language_id)
-
-    if not template:
-        raise ResourceNotFoundError(
-            "This problem has no language templates configured."
-        )
-
-    return template
-
-
 def _splice_driver_code(driver_code: str, candidate_code: str) -> str:
     if CANDIDATE_CODE_STUB not in driver_code:
         raise ValueError("Driver code is missing the candidate code placeholder.")
@@ -143,7 +128,7 @@ def _splice_driver_code(driver_code: str, candidate_code: str) -> str:
     return driver_code.replace(CANDIDATE_CODE_STUB, candidate_code)
 
 
-async def _execute_code(
+def _execute_code(
     deps: Judge0ExecutionDeps,
     source_code: str,
     language_id: int,
@@ -156,11 +141,11 @@ async def _execute_code(
 
     expected_inputs = [json.dumps(case.input) for case in test_cases]
 
-    tokens = await create_submission_batch(
+    tokens = create_submission_batch(
         deps.client, source_code, language.judge0_language_id, expected_inputs
     )
 
-    judge0_results = await poll_submission_batch(deps.client, tokens)
+    judge0_results = poll_submission_batch(deps.client, tokens)
 
     if len(judge0_results) != len(test_cases):
         raise RuntimeError(

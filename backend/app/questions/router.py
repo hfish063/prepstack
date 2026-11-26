@@ -3,7 +3,6 @@ from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
-from app.exceptions import ResourceNotFoundError
 from app.interviews.phases.service import get_phase_for_user
 from app.messages.schemas import MessageCreate, MessageRead
 from app.questions import service as question_service
@@ -19,9 +18,6 @@ def get_questions_for_phase(
     phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
 ):
     phase = get_phase_for_user(db, phase_id, user_id)
-
-    if not phase:
-        raise ResourceNotFoundError("Interview phase with this id does not exist.")
 
     return question_service.get_all(db, phase)
 

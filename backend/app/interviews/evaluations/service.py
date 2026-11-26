@@ -4,6 +4,7 @@ from sqlmodel import Session, select
 
 from app.interviews.evaluations.models import (
     CodingEvaluation,
+    InterviewFeedback,
     InterviewPhaseEvaluation,
     InterviewSummary,
 )
@@ -82,7 +83,13 @@ def save_phase_evaluation(
 def save_summary(
     db: Session, interview: InterviewSession, summary_create: InterviewSummaryCreate
 ) -> InterviewSummary:
-    summary = InterviewSummary(**summary_create.model_dump(), interview_id=interview.id)
+    summary = InterviewSummary(
+        **summary_create.model_dump(exclude={"feedback"}),
+        feedback=[
+            InterviewFeedback(**item.model_dump()) for item in summary_create.feedback
+        ],
+        interview_id=interview.id
+    )
 
     try:
         db.add(summary)

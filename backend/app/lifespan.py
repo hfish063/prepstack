@@ -9,6 +9,6 @@ from app.config import get_settings
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
-    app.state.judge0_client = httpx.AsyncClient(base_url=settings.JUDGE0_URL)
+    app.state.judge0_client = httpx.Client(base_url=settings.JUDGE0_URL)
     yield
-    await app.state.judge0_client.aclose()
+    app.state.judge0_client.close()

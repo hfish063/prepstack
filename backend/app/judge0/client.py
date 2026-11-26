@@ -1,4 +1,4 @@
-import asyncio
+import time
 
 from fastapi import HTTPException
 import httpx
@@ -13,13 +13,13 @@ IN_PROGRESS_STATUSES = {1, 2}  # 1 (In Queue), 2 (Processing)
 _batch_adapter = TypeAdapter(list[Judge0Response])
 
 
-async def create_submission_batch(
-    client: httpx.AsyncClient, source_code: str, language_id: int, inputs: list[str]
+def create_submission_batch(
+    client: httpx.Client, source_code: str, language_id: int, inputs: list[str]
 ) -> list[str]:
     if not inputs:
         raise ValueError("At least one test case is required.")
 
-    response = await client.post(
+    response = client.post(
         "/submissions/batch",
         json={
             "submissions": [
@@ -34,16 +34,16 @@ async def create_submission_batch(
     return [result["token"] for result in data]
 
 
-async def poll_submission_batch(
-    client: httpx.AsyncClient, tokens: list[str]
+def poll_submission_batch(
+    client: httpx.Client, tokens: list[str]
 ) -> list[Judge0Response]:
     for _ in range(MAX_POLL_ATTEMPTS):
-        submissions = await _get_submission_batch(client, tokens)
+        submissions = _get_submission_batch(client, tokens)
 
         if any(
             submission.status.id in IN_PROGRESS_STATUSES for submission in submissions
         ):
-            await asyncio.sleep(POLLING_INTERVAL_SECONDS)
+            time.sleep(POLLING_INTERVAL_SECONDS)
             continue
 
         return submissions
@@ -54,12 +54,10 @@ async def poll_submission_batch(
     )
 
 
-async def _get_submission_batch(
-    client: httpx.AsyncClient, tokens: list[str]
+def _get_submission_batch(
+    client: httpx.Client, tokens: list[str]
 ) -> list[Judge0Response]:
-    response = await client.get(
-        f"/submissions/batch", params={"tokens": ",".join(tokens)}
-    )
+    response = client.get(f"/submissions/batch", params={"tokens": ",".join(tokens)})
     response.raise_for_status()
     data = response.json()
 

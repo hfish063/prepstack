@@ -9,18 +9,23 @@ from app.interviews.sessions.models import InterviewSession
 from app.interviews.phases.models import InterviewPhase
 
 
-def get_phase_for_user(
-    db: Session, phase_id: int, user_id: str
-) -> InterviewPhase | None:
+def get_phase_for_user(db: Session, phase_id: int, user_id: str) -> InterviewPhase:
     statement = (
         select(InterviewPhase)
         .join(InterviewSession, InterviewPhase.interview_id == InterviewSession.id)
         .where(InterviewPhase.id == phase_id, InterviewSession.user_id == user_id)
     )
-    return db.exec(statement).one_or_none()
+    phase = db.exec(statement).one_or_none()
+
+    if not phase:
+        raise ResourceNotFoundError("Interview phase with this id does not exist.")
+
+    return phase
 
 
-def get_mutable_phase_for_user(db: Session, phase_id: int, user_id: str):
+def get_mutable_phase_for_user(
+    db: Session, phase_id: int, user_id: str
+) -> InterviewPhase:
     """Retrieve phase for in-progress interviews.
 
     Completed interviews are read-only, and cannot be modified.

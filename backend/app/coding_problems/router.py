@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlmodel import Session
 from starlette import status
 
@@ -26,13 +26,13 @@ router = APIRouter(prefix="/coding-problems")
 
 
 @router.post("/{phase_id}/run")
-async def run_code(
+def run_code(
     phase_id: int,
     run_code_request: RunCodeRequest,
     deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
     user_id=Depends(get_current_user_id),
 ) -> list[SubmissionResultRead]:
-    return await run_against_examples(
+    return run_against_examples(
         deps,
         user_id,
         phase_id,
@@ -41,7 +41,7 @@ async def run_code(
 
 
 @router.post("/{phase_id}/submit", response_model=ProblemSubmissionSummaryRead)
-async def submit_code(
+def submit_code(
     phase_id: int,
     run_code_request: RunCodeRequest,
     deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
@@ -49,7 +49,7 @@ async def submit_code(
 ) -> ProblemSubmissionSummaryRead:
     phase = get_mutable_phase_for_user(deps.db, phase_id, user_id)
 
-    return await submit_candidate_code(deps, user_id, phase, run_code_request)
+    return submit_candidate_code(deps, user_id, phase, run_code_request)
 
 
 @router.get("/{phase_id}", response_model=CodingProblemRead)
@@ -58,19 +58,7 @@ def get_coding_problem(
 ):
     phase = get_phase_for_user(db, phase_id, user_id)
 
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
-
     problem = get_coding_problem_by_phase(db, phase)
-
-    if not problem:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No coding problems exist for this phase.",
-        )
 
     return get_coding_problem_details(db, problem)
 
@@ -84,29 +72,9 @@ def get_coding_problem_language_template(
 ):
     phase = get_phase_for_user(db, phase_id, user_id)
 
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
-
     problem = get_coding_problem_by_phase(db, phase)
 
-    if not problem:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No coding problems exist for this phase.",
-        )
-
-    template = get_language_template_for_problem(db, problem.id, language_id)
-
-    if not template:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No language templates exist for this problem.",
-        )
-
-    return template
+    return get_language_template_for_problem(db, problem.id, language_id)
 
 
 @router.get(
@@ -116,12 +84,6 @@ def get_problem_submissions(
     phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
 ):
     phase = get_phase_for_user(db, phase_id, user_id)
-
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
 
     return get_all_submissions(db, phase)
 
@@ -135,11 +97,5 @@ def delete_problem_submissions(
     phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
 ):
     phase = get_mutable_phase_for_user(db, phase_id, user_id)
-
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
 
     return delete_all_submissions(db, phase)

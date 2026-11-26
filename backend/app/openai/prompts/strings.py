@@ -120,6 +120,9 @@ Write the summary in 4-6 sentences addressed to the candidate ("You..."):
 target role and experience level.
 - Name the strongest phase and the weakest phase, and why.
 - End with the two or three highest-impact things to practice next.
+
+Provide lists of 2-4 improvements and 2-4 strengths
+- Improvements and lists should be concise, 1 sentence overviews.
 """
 
 

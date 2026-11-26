@@ -1,5 +1,6 @@
 from sqlmodel import Session, select
 
+from app.exceptions import ResourceNotFoundError
 from app.interviews.sessions.models import InterviewSession
 from app.interviews.notes.models import InterviewSessionNotes
 from app.interviews.notes.schemas import (
@@ -21,6 +22,15 @@ def get(db: Session, user_id: str, interview_id: int) -> InterviewSessionNotes |
     ).one_or_none()
 
 
+def get_existing(db: Session, user_id: str, interview_id: int) -> InterviewSessionNotes:
+    notes = get(db, user_id, interview_id)
+
+    if not notes:
+        raise ResourceNotFoundError("Interview notes with this id do not exist.")
+
+    return notes
+
+
 def save(
     db: Session, user_id: str, interview_id: int, notes: InterviewSessionNotesCreate
 ) -> InterviewSessionNotes:
@@ -31,7 +41,7 @@ def save(
     ).one_or_none()
 
     if not interview:
-        raise ValueError("Interview does not exist")
+        raise ResourceNotFoundError("Interview session with this id does not exist.")
 
     interview_notes = InterviewSessionNotes(
         **notes.model_dump(), interview_id=interview_id
@@ -58,17 +68,8 @@ def update(
     return notes
 
 
-def delete(db: Session, user_id: str, interview_id) -> None:
-    notes = db.exec(
-        select(InterviewSessionNotes)
-        .join(
-            InterviewSession, InterviewSession.id == InterviewSessionNotes.interview_id
-        )
-        .where(
-            InterviewSession.user_id == user_id,
-            InterviewSessionNotes.interview_id == interview_id,
-        )
-    ).one_or_none()
+def delete(db: Session, user_id: str, interview_id: int) -> None:
+    notes = get_existing(db, user_id, interview_id)
 
     db.delete(notes)
     db.commit()
