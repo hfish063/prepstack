@@ -25,7 +25,7 @@ export default function EvaluateReportButton({
     try {
       const [{ pdf }, { default: EvaluationReport }] = await Promise.all([
         import("@react-pdf/renderer"),
-        import("./report/evaluation-report"),
+        import("./evaluation-report"),
       ])
 
       const blob = await pdf(<EvaluationReport summary={summary} />).toBlob()
