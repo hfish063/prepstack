@@ -95,6 +95,11 @@ export type DashboardSummaryRead = {
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 /**
+ * FeedbackType
+ */
+export type FeedbackType = 'strength' | 'improvement';
+
+/**
  * HTTPValidationError
  */
 export type HttpValidationError = {
@@ -102,6 +107,17 @@ export type HttpValidationError = {
      * Detail
      */
     detail?: Array<ValidationError>;
+};
+
+/**
+ * InterviewFeedbackRead
+ */
+export type InterviewFeedbackRead = {
+    type: FeedbackType;
+    /**
+     * Content
+     */
+    content: string;
 };
 
 /**
@@ -275,6 +291,28 @@ export type InterviewSessionRead = {
 };
 
 /**
+ * InterviewStatsRead
+ */
+export type InterviewStatsRead = {
+    /**
+     * Answeredquestions
+     */
+    answeredQuestions: number;
+    /**
+     * Totalquestions
+     */
+    totalQuestions: number;
+    /**
+     * Messagecount
+     */
+    messageCount: number;
+    /**
+     * Hintsused
+     */
+    hintsUsed: number;
+};
+
+/**
  * InterviewStatus
  */
 export type InterviewStatus = 'in_progress' | 'completed';
@@ -291,10 +329,15 @@ export type InterviewSummaryRead = {
      * Summary
      */
     summary: string;
+    stats: InterviewStatsRead;
     /**
      * Phaseevaluations
      */
     phaseEvaluations: Array<InterviewPhaseEvaluationRead>;
+    /**
+     * Feedback
+     */
+    feedback: Array<InterviewFeedbackRead>;
 };
 
 /**

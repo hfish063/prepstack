@@ -4,16 +4,18 @@ from app.enums import InterviewStatus
 from app.exceptions import ResourceConflictError, ResourceNotFoundError
 from app.interviews.evaluations import service as evaluation_service
 from app.interviews.evaluations.evaluators import get_evaluator
+from app.interviews.evaluations.mappers import to_summary_read
 from app.interviews.evaluations.models import InterviewPhaseEvaluation, InterviewSummary
 from app.interviews.evaluations.schemas import (
-    CodingEvaluationRead,
-    InterviewPhaseEvaluationRead,
+    InterviewStatsRead,
     InterviewSummaryRead,
 )
 from app.interviews.phases import service as phase_service
 from app.interviews.phases.models import InterviewPhase
 from app.interviews.sessions.models import InterviewSession
+from app.messages import service as message_service
 from app.openai import service as openai_service
+from app.questions import service as question_service
 from app.submissions import service as submission_service
 
 
@@ -28,7 +30,7 @@ def get_interview_summary(
         db, interview
     )
 
-    return _to_summary_read(db, summary, phase_evaluations)
+    return _build_summary_read(db, summary, phase_evaluations)
 
 
 def evaluate_interview(
@@ -57,7 +59,7 @@ def evaluate_interview(
 
     summary = evaluation_service.save_summary(db, interview, summary_create)
 
-    return _to_summary_read(db, summary, phase_evaluations)
+    return _build_summary_read(db, summary, phase_evaluations)
 
 
 def _get_or_create_phase_evaluation(
@@ -76,36 +78,30 @@ def _get_or_create_phase_evaluation(
     return evaluation_service.save_phase_evaluation(db, phase, evaluation_create)
 
 
-def _to_summary_read(
-    db: Session, summary: InterviewSummary, evaluations: list[InterviewPhaseEvaluation]
+def _build_summary_read(
+    db: Session,
+    summary: InterviewSummary,
+    phase_evaluations: list[InterviewPhaseEvaluation],
 ) -> InterviewSummaryRead:
-    return InterviewSummaryRead(
-        overall_score=summary.overall_score,
-        summary=summary.summary,
-        phase_evaluations=[
-            InterviewPhaseEvaluationRead(
-                score=evaluation.score,
-                summary=evaluation.summary,
-                phase_type=evaluation.phase.phase_type,
-                coding_evaluation=_to_coding_evaluation_read(db, evaluation),
+    submission_stats = None
+    answered, messages, hints = message_service.get_message_stats(
+        db, summary.interview_id
+    )
+    questions = question_service.get_count_for_interview(db, summary.interview_id)
+
+    for evaluation in phase_evaluations:
+        if evaluation.coding_evaluation:
+            submission_stats = submission_service.get_submission_stats(
+                db, evaluation.phase
             )
-            for evaluation in evaluations
-        ],
+
+    interview_stats = InterviewStatsRead(
+        answered_questions=answered,
+        total_questions=questions,
+        message_count=messages,
+        hints_used=hints,
     )
 
-
-def _to_coding_evaluation_read(
-    db: Session, evaluation: InterviewPhaseEvaluation
-) -> CodingEvaluationRead | None:
-    coding_evaluation = evaluation.coding_evaluation
-
-    if not coding_evaluation:
-        return None
-
-    return CodingEvaluationRead(
-        time_complexity=coding_evaluation.time_complexity,
-        space_complexity=coding_evaluation.space_complexity,
-        complexity_reasoning=coding_evaluation.complexity_reasoning,
-        submission=coding_evaluation.submission,
-        submission_stats=submission_service.get_submission_stats(db, evaluation.phase),
+    return to_summary_read(
+        summary, phase_evaluations, interview_stats, submission_stats
     )

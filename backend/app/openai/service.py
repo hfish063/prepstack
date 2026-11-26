@@ -1,9 +1,11 @@
 from collections import defaultdict
 
 from app.coding_problems.models import CodingProblem
+from app.enums import FeedbackType
 from app.exceptions import UpstreamServiceError
 from app.interviews.evaluations.models import InterviewPhaseEvaluation
 from app.interviews.evaluations.schemas import (
+    InterviewFeedbackCreate,
     InterviewPhaseEvaluationCreate,
     InterviewSummaryCreate,
 )
@@ -235,6 +237,16 @@ def generate_interview_summary(
     if not response:
         raise UpstreamServiceError("Failed to generate an interview summary.")
 
+    strengths = [
+        InterviewFeedbackCreate(type=FeedbackType.STRENGTH, content=strength)
+        for strength in response.strengths
+    ]
+    improvements = [
+        InterviewFeedbackCreate(type=FeedbackType.IMPROVEMENT, content=improvement)
+        for improvement in response.improvements
+    ]
+    feedback = strengths + improvements
+
     return InterviewSummaryCreate(
-        overall_score=response.score, summary=response.summary
+        overall_score=response.score, summary=response.summary, feedback=feedback
     )

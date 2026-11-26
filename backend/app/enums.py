@@ -33,3 +33,8 @@ class Difficulty(Enum):
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"
+
+
+class FeedbackType(Enum):
+    STRENGTH = "strength"
+    IMPROVEMENT = "improvement"

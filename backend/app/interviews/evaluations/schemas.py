@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import Field
 
-from app.enums import PhaseType
+from app.enums import FeedbackType, PhaseType
 from app.schemas import CamelModel
 from app.submissions.schemas import ProblemSubmissionHistoryRead, SubmissionStatsRead
 
@@ -10,7 +10,16 @@ from app.submissions.schemas import ProblemSubmissionHistoryRead, SubmissionStat
 class InterviewSummaryRead(CamelModel):
     overall_score: int = Field(ge=0, le=100)
     summary: str
+    stats: InterviewStatsRead
     phase_evaluations: list[InterviewPhaseEvaluationRead]
+    feedback: list[InterviewFeedbackRead]
+
+
+class InterviewStatsRead(CamelModel):
+    answered_questions: int
+    total_questions: int
+    message_count: int
+    hints_used: int
 
 
 class InterviewPhaseEvaluationRead(CamelModel):
@@ -31,6 +40,7 @@ class CodingEvaluationRead(CamelModel):
 class InterviewSummaryCreate(CamelModel):
     overall_score: int = Field(ge=0, le=100)
     summary: str
+    feedback: list[InterviewFeedbackCreate]
 
 
 class InterviewPhaseEvaluationCreate(CamelModel):
@@ -44,3 +54,13 @@ class CodingEvaluationCreate(CamelModel):
     space_complexity: str
     complexity_reasoning: str
     submission_id: int
+
+
+class InterviewFeedbackRead(CamelModel):
+    type: FeedbackType
+    content: str
+
+
+class InterviewFeedbackCreate(CamelModel):
+    type: FeedbackType
+    content: str

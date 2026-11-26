@@ -1,5 +1,5 @@
 from sqlalchemy.exc import SQLAlchemyError
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from app.enums import InterviewStatus
 from app.exceptions import ResourceConflictError, ResourceNotFoundError
@@ -76,6 +76,14 @@ def get_mutable_for_user(
         )
 
     return question
+
+
+def get_count_for_interview(db: Session, interview_id: int) -> int:
+    return db.exec(
+        select(func.count(InterviewQuestion.id))
+        .join(InterviewPhase, InterviewQuestion.phase_id == InterviewPhase.id)
+        .where(InterviewPhase.interview_id == interview_id)
+    ).one()
 
 
 def save(
