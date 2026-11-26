@@ -23,6 +23,7 @@ def to_summary_read(
             InterviewPhaseEvaluationRead(
                 score=evaluation.score,
                 summary=evaluation.summary,
+                phase_id=evaluation.phase_id,
                 phase_type=evaluation.phase.phase_type,
                 coding_evaluation=_to_coding_evaluation_read(
                     evaluation, submission_stats

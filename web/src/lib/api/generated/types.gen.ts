@@ -132,6 +132,10 @@ export type InterviewPhaseEvaluationRead = {
      * Summary
      */
     summary: string;
+    /**
+     * Phaseid
+     */
+    phaseId: number;
     phaseType: PhaseType;
     codingEvaluation?: CodingEvaluationRead | null;
 };
@@ -1019,6 +1023,38 @@ export type EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostResponse
 };
 
 export type EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostResponse = EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostResponses[keyof EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostResponses];
+
+export type FindMessagesForPhaseApiPhasesPhaseIdMessagesGetData = {
+    body?: never;
+    path: {
+        /**
+         * Phase Id
+         */
+        phase_id: number;
+    };
+    query?: never;
+    url: '/api/phases/{phase_id}/messages';
+};
+
+export type FindMessagesForPhaseApiPhasesPhaseIdMessagesGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type FindMessagesForPhaseApiPhasesPhaseIdMessagesGetError = FindMessagesForPhaseApiPhasesPhaseIdMessagesGetErrors[keyof FindMessagesForPhaseApiPhasesPhaseIdMessagesGetErrors];
+
+export type FindMessagesForPhaseApiPhasesPhaseIdMessagesGetResponses = {
+    /**
+     * Response Find Messages For Phase Api Phases  Phase Id  Messages Get
+     *
+     * Successful Response
+     */
+    200: Array<MessageRead>;
+};
+
+export type FindMessagesForPhaseApiPhasesPhaseIdMessagesGetResponse = FindMessagesForPhaseApiPhasesPhaseIdMessagesGetResponses[keyof FindMessagesForPhaseApiPhasesPhaseIdMessagesGetResponses];
 
 export type AdvancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPostData = {
     body?: never;

@@ -25,6 +25,7 @@ class InterviewStatsRead(CamelModel):
 class InterviewPhaseEvaluationRead(CamelModel):
     score: int = Field(ge=0, le=100)
     summary: str
+    phase_id: int
     phase_type: PhaseType
     coding_evaluation: Optional["CodingEvaluationRead"] = None
 
