@@ -26,13 +26,13 @@ router = APIRouter(prefix="/coding-problems")
 
 
 @router.post("/{phase_id}/run")
-async def run_code(
+def run_code(
     phase_id: int,
     run_code_request: RunCodeRequest,
     deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
     user_id=Depends(get_current_user_id),
 ) -> list[SubmissionResultRead]:
-    return await run_against_examples(
+    return run_against_examples(
         deps,
         user_id,
         phase_id,
@@ -41,7 +41,7 @@ async def run_code(
 
 
 @router.post("/{phase_id}/submit", response_model=ProblemSubmissionSummaryRead)
-async def submit_code(
+def submit_code(
     phase_id: int,
     run_code_request: RunCodeRequest,
     deps: Judge0ExecutionDeps = Depends(Judge0ExecutionDeps),
@@ -49,7 +49,7 @@ async def submit_code(
 ) -> ProblemSubmissionSummaryRead:
     phase = get_mutable_phase_for_user(deps.db, phase_id, user_id)
 
-    return await submit_candidate_code(deps, user_id, phase, run_code_request)
+    return submit_candidate_code(deps, user_id, phase, run_code_request)
 
 
 @router.get("/{phase_id}", response_model=CodingProblemRead)
