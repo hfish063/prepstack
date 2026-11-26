@@ -58,12 +58,6 @@ def get_coding_problem(
 ):
     phase = get_phase_for_user(db, phase_id, user_id)
 
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
-
     problem = get_coding_problem_by_phase(db, phase)
 
     if not problem:
@@ -83,12 +77,6 @@ def get_coding_problem_language_template(
     user_id=Depends(get_current_user_id),
 ):
     phase = get_phase_for_user(db, phase_id, user_id)
-
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
 
     problem = get_coding_problem_by_phase(db, phase)
 
@@ -117,12 +105,6 @@ def get_problem_submissions(
 ):
     phase = get_phase_for_user(db, phase_id, user_id)
 
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
-
     return get_all_submissions(db, phase)
 
 
@@ -135,11 +117,5 @@ def delete_problem_submissions(
     phase_id: int, db: Session = Depends(get_db), user_id=Depends(get_current_user_id)
 ):
     phase = get_mutable_phase_for_user(db, phase_id, user_id)
-
-    if not phase:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find phase for user.",
-        )
 
     return delete_all_submissions(db, phase)

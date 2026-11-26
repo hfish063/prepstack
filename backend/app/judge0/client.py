@@ -57,9 +57,7 @@ def poll_submission_batch(
 def _get_submission_batch(
     client: httpx.Client, tokens: list[str]
 ) -> list[Judge0Response]:
-    response = client.get(
-        f"/submissions/batch", params={"tokens": ",".join(tokens)}
-    )
+    response = client.get(f"/submissions/batch", params={"tokens": ",".join(tokens)})
     response.raise_for_status()
     data = response.json()
 

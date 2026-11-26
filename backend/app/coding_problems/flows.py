@@ -59,9 +59,6 @@ def run_against_examples(
     """
     phase = get_phase_for_user(deps.db, phase_id, user_id)
 
-    if not phase:
-        raise ResourceNotFoundError("Could not find phase for this user.")
-
     language_id = request.language_id
     problem_id = phase.coding_problem_id
 
