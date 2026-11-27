@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from app.config import get_settings
 from app.openai.prompts.context import PromptContext
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class OpenAIClient:
@@ -59,7 +59,7 @@ class OpenAIClient:
                 messages=messages,
             )
         except Exception as e:
-            logger.error(e)
+            log.exception(e)
             raise
 
         return completion.choices[0].message.content
@@ -102,7 +102,7 @@ class OpenAIClient:
                 messages=messages,
             )
         except Exception as e:
-            logger.error(e)
+            log.exception(e)
             raise
 
         return json.loads(completion.choices[0].message.content)
@@ -129,13 +129,13 @@ class OpenAIClient:
                 ],
             )
         except Exception as e:
-            logger.error(e)
+            log.exception(e)
             raise
 
         message = completion.choices[0].message
 
         if message.refusal:
-            logger.warning("OpenAI refused structured response: %s", message.refusal)
+            log.warning("OpenAI refused structured response: %s", message.refusal)
             return None
 
         return message.parsed
