@@ -10,7 +10,7 @@ from app.interviews.notes.schemas import (
 
 
 def get(db: Session, user_id: str, interview_id: int) -> InterviewSessionNotes | None:
-    return db.exec(
+    notes = db.exec(
         select(InterviewSessionNotes)
         .join(
             InterviewSession, InterviewSession.id == InterviewSessionNotes.interview_id
@@ -20,10 +20,6 @@ def get(db: Session, user_id: str, interview_id: int) -> InterviewSessionNotes |
             InterviewSession.user_id == user_id,
         )
     ).one_or_none()
-
-
-def get_existing(db: Session, user_id: str, interview_id: int) -> InterviewSessionNotes:
-    notes = get(db, user_id, interview_id)
 
     if not notes:
         raise ResourceNotFoundError("Interview notes with this id do not exist.")
@@ -69,7 +65,7 @@ def update(
 
 
 def delete(db: Session, user_id: str, interview_id: int) -> None:
-    notes = get_existing(db, user_id, interview_id)
+    notes = get(db, user_id, interview_id)
 
     db.delete(notes)
     db.commit()

@@ -684,11 +684,9 @@ export type GetInterviewNotesApiInterviewsInterviewIdNotesGetError = GetIntervie
 
 export type GetInterviewNotesApiInterviewsInterviewIdNotesGetResponses = {
     /**
-     * Response Get Interview Notes Api Interviews  Interview Id  Notes Get
-     *
      * Successful Response
      */
-    200: InterviewSessionNotesRead | null;
+    200: InterviewSessionNotesRead;
 };
 
 export type GetInterviewNotesApiInterviewsInterviewIdNotesGetResponse = GetInterviewNotesApiInterviewsInterviewIdNotesGetResponses[keyof GetInterviewNotesApiInterviewsInterviewIdNotesGetResponses];

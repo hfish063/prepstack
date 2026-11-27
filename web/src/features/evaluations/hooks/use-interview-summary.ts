@@ -1,4 +1,4 @@
-import { ApiError } from "@/lib/api-client"
+import { isNotFoundError } from "@/lib/api/errors"
 import { getInterviewSummaryApiInterviewsInterviewIdEvaluateGetOptions } from "@/lib/api/generated/@tanstack/react-query.gen"
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query"
 
@@ -14,7 +14,10 @@ export function getInterviewSummaryOptions(interviewId: number) {
       try {
         return await queryFn!(context)
       } catch (error) {
-        if (error instanceof ApiError && error.status === 404) return null
+        if (isNotFoundError(error)) {
+          return null
+        }
+
         throw error
       }
     },
