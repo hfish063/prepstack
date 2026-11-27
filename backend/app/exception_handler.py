@@ -14,10 +14,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def resource_exception_handler(request: Request, exc: PrepStackError):
         status_code = exc.status_code
 
-        if status_code >= status.HTTP_500_INTERNAL_SERVER_ERROR:
-            log.error(f"{request.method} {request.url.path}: {exc.message}")
-        else:
-            log.info(f"{request.method} {request.url.path}: {exc.message}")
+        log.error(f"{request.method} {request.url.path}: {exc.message}")
 
         return JSONResponse(status_code=status_code, content={"detail": exc.message})
 
