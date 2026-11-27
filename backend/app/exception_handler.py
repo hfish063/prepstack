@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import logging
 
 from fastapi import FastAPI, Request
@@ -14,7 +15,10 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def resource_exception_handler(request: Request, exc: PrepStackError):
         status_code = exc.status_code
 
-        log.error(f"{request.method} {request.url.path}: {exc.message}")
+        if status_code >= HTTPStatus.INTERNAL_SERVER_ERROR:
+            log.error(f"{request.method} {request.url.path}: {exc.message}")
+        else:
+            log.info(f"{request.method} {request.url.path}: {exc.message}")
 
         return JSONResponse(status_code=status_code, content={"detail": exc.message})
 

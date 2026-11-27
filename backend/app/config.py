@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     CLERK_SECRET_KEY: str
     OPENAI_API_KEY: str
     JUDGE0_URL: str
+    LOG_LEVEL: str = "WARN"
 
     model_config = SettingsConfigDict(env_file=".env")
 

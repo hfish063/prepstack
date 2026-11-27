@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.exception_handler import register_exception_handlers
 from app.lifespan import lifespan
 from app import api
+from app.logging import configure_logging
 
 app = FastAPI(lifespan=lifespan)
 register_exception_handlers(app)
@@ -17,3 +18,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+configure_logging()
