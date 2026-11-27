@@ -19,6 +19,10 @@ def get(db: Session, saved_question_id: int, user_id: str) -> SavedQuestion:
     return saved_question
 
 
+def get_all(db: Session, user_id: str) -> list[SavedQuestion]:
+    return db.exec(select(SavedQuestion).where(SavedQuestion.user_id == user_id)).all()
+
+
 def save(
     db: Session, saved_question_create: SavedQuestionCreate, user_id: str
 ) -> SavedQuestion:
