@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <div>
+    <div className="p-4">
       <Button nativeButton={false} render={<Link to="/dashboard" />}>
         Get Started
       </Button>

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "@/components/ui/toast"
 
 type ManageInterviewButtonProps = {
   interview: InterviewSessionRead
@@ -17,7 +18,15 @@ type ManageInterviewButtonProps = {
 export default function ManageInterviewButton({
   interview,
 }: ManageInterviewButtonProps) {
-  const deleteInterview = useDeleteInterview()
+  const deleteInterview = useDeleteInterview({
+    mutationConfig: {
+      onError: () =>
+        toast.add({
+          type: "error",
+          description: "Failed to delete the interview. Please try again.",
+        }),
+    },
+  })
 
   const isDeleting = deleteInterview.isPending
 

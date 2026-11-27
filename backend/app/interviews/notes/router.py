@@ -3,7 +3,7 @@ from sqlmodel import Session
 
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
-from app.interviews.notes.service import delete, get, get_existing, save, update
+from app.interviews.notes.service import delete, get, save, update
 from app.interviews.notes.schemas import (
     InterviewSessionNotesCreate,
     InterviewSessionNotesRead,
@@ -13,7 +13,7 @@ from app.interviews.notes.schemas import (
 router = APIRouter()
 
 
-@router.get("/{interview_id}/notes", response_model=InterviewSessionNotesRead | None)
+@router.get("/{interview_id}/notes", response_model=InterviewSessionNotesRead)
 def get_interview_notes(
     interview_id: int,
     db: Session = Depends(get_db),
@@ -39,7 +39,7 @@ def update_interview_notes(
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    notes = get_existing(db, user_id, interview_id)
+    notes = get(db, user_id, interview_id)
 
     return update(db, notes, notes_update)
 

@@ -9,8 +9,9 @@ import "./index.css"
 import { routeTree } from "./routeTree.gen"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
 import { Spinner } from "./components/ui/spinner"
-import { setAuthTokenGetter } from "@/lib/api-client"
-import NotFound from "./components/errors/not-fround"
+import { setAuthTokenGetter } from "@/lib/api/client"
+import { getNotFoundMessage, NotFound } from "./components/errors/not-found"
+import DefaultError from "./components/errors/error"
 
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -27,7 +28,10 @@ const router = createRouter({
   context: { queryClient, auth: undefined! },
   defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
-  defaultNotFoundComponent: () => <NotFound />,
+  defaultNotFoundComponent: ({ data }) => (
+    <NotFound message={getNotFoundMessage(data)} />
+  ),
+  defaultErrorComponent: () => <DefaultError />,
 })
 
 declare module "@tanstack/react-router" {

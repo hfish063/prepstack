@@ -1,4 +1,5 @@
 import { client } from "@/lib/api/generated/client.gen"
+import { ApiError } from "./errors"
 
 type GetToken = () => Promise<string | null>
 
@@ -20,18 +21,6 @@ client.interceptors.request.use(async (request) => {
 
   return request
 })
-
-export class ApiError extends Error {
-  status: number
-  body: unknown
-
-  constructor(status: number, body: unknown) {
-    super(`Request failed with status ${status}`)
-
-    this.status = status
-    this.body = body
-  }
-}
 
 client.interceptors.error.use((error, response) =>
   response ? new ApiError(response.status, error) : error

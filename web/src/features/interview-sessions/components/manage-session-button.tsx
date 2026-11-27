@@ -21,6 +21,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { useDeleteInterview } from "@/features/interviews/hooks/use-delete-interview"
 import { toast } from "@/components/ui/toast"
 import type { InterviewSessionRead } from "@/lib/api/generated"
+import { useNavigate } from "@tanstack/react-router"
 
 type ManageInterviewSessionButtonProps = {
   interview: InterviewSessionRead
@@ -29,12 +30,17 @@ type ManageInterviewSessionButtonProps = {
 export default function ManageInterviewSessionButton({
   interview,
 }: ManageInterviewSessionButtonProps) {
+  const navigate = useNavigate()
+
   const deleteInterview = useDeleteInterview({
     mutationConfig: {
+      onSuccess: () => {
+        navigate({ to: "/interviews" })
+      },
       onError: () =>
         toast.add({
           type: "error",
-          description: "Failed to delete interview. Please try again.",
+          description: "Failed to delete the interview. Please try again.",
         }),
     },
   })

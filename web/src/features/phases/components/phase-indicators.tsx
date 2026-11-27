@@ -15,6 +15,7 @@ import { Spinner } from "@/components/ui/spinner"
 import type { InterviewPhaseRead } from "@/lib/api/generated"
 import { useAdvancePhase } from "@/features/phases/hooks/use-advance-phase"
 import { useNavigate } from "@tanstack/react-router"
+import { toast } from "@/components/ui/toast"
 
 type InterviewPhaseIndicatorsProps = {
   phases: InterviewPhaseRead[]
@@ -65,6 +66,12 @@ export default function InterviewPhaseIndicators({
           navigate({
             to: `/interviews/$interviewId/${targetPhase.phaseType}`,
             params: { interviewId: targetPhase.interviewId },
+          }),
+        onError: () =>
+          toast.add({
+            type: "error",
+            description:
+              "Failed to change the current phase. Please try again.",
           }),
       }
     )

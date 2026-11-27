@@ -11,6 +11,7 @@ import {
   usePhases,
 } from "@/features/phases/hooks/use-phases"
 import { createFileRoute, notFound, Outlet } from "@tanstack/react-router"
+import { isNotFoundError } from "@/lib/api/errors"
 
 export const Route = createFileRoute("/_protected/interviews/$interviewId")({
   params: {
@@ -21,13 +22,25 @@ export const Route = createFileRoute("/_protected/interviews/$interviewId")({
     },
     stringify: ({ interviewId }) => ({ interviewId: String(interviewId) }),
   },
-  loader: ({ context, params }) => {
+  loader: async ({ context, params }) => {
     const { interviewId } = params
 
-    return Promise.all([
-      context.queryClient.query(getInterviewQueryOptions(interviewId)),
-      context.queryClient.query(getPhasesQueryOptions(interviewId)),
-    ])
+    try {
+      await Promise.all([
+        context.queryClient.query(getInterviewQueryOptions(interviewId)),
+        context.queryClient.query(getPhasesQueryOptions(interviewId)),
+      ])
+    } catch (error) {
+      if (isNotFoundError(error)) {
+        throw notFound({
+          data: {
+            message: "The requested interview does not exist.",
+          },
+        })
+      }
+
+      throw error
+    }
   },
   component: InterviewSessionLayout,
 })
