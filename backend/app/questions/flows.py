@@ -35,6 +35,8 @@ def add_question_to_interview(
     if questions:
         next_ordinal = questions[-1].ordinal + 1
 
-    question_create = InterviewQuestionCreate(text=question_add.text, ordinal=next_ordinal)
+    question_create = InterviewQuestionCreate(
+        text=question_add.text, ordinal=next_ordinal
+    )
 
     return question_service.save(db, phase, question_create)
