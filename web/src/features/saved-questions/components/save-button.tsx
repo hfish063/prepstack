@@ -13,21 +13,21 @@ import {
 } from "@/components/ui/tooltip"
 
 type SaveQuestionButtonProps = {
+  questionId: number
   content: string
   phaseType: PhaseType
 }
 
 export default function SaveQuestionButton({
+  questionId,
   content,
   phaseType,
 }: SaveQuestionButtonProps) {
-  const { data: isAlreadySaved } = useSuspenseQuery({
+  const { data: isSaved } = useSuspenseQuery({
     ...getSavedQuestionsQueryOptions(),
     select: (savedQuestions) =>
       savedQuestions.some(
-        (savedQuestion) =>
-          savedQuestion.content === content &&
-          savedQuestion.phaseType === phaseType
+        (savedQuestion) => savedQuestion.sourceQuestionId === questionId
       ),
   })
 
@@ -44,10 +44,11 @@ export default function SaveQuestionButton({
   })
 
   const isSaving = saveQuestion.isPending
-  const isSaved = isAlreadySaved || saveQuestion.isSuccess
 
   function handleSaveQuestion() {
-    saveQuestion.mutate({ body: { content, phaseType } })
+    saveQuestion.mutate({
+      body: { content, phaseType, sourceQuestionId: questionId },
+    })
   }
 
   return (

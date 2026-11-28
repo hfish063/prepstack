@@ -4,7 +4,23 @@ from app.exceptions import ResourceConflictError, ResourceNotFoundError
 from app.openai import service as openai_service
 from app.questions.saved import service as saved_question_service
 from app.questions.saved.models import SavedQuestion, SavedQuestionAnalysis
-from app.questions.saved.schemas import SavedQuestionAnalysisCreate
+from app.questions.saved.schemas import (
+    SavedQuestionAnalysisCreate,
+    SavedQuestionCreate,
+)
+from app.questions import service as questions_service
+
+
+def create_saved_question(
+    db: Session, saved_question_create: SavedQuestionCreate, user_id: str
+) -> SavedQuestion:
+    """Saves a question, verifying that its source interview question belongs to the user."""
+    if saved_question_create.source_question_id is not None:
+        questions_service.get_for_user(
+            db, saved_question_create.source_question_id, user_id
+        )
+
+    return saved_question_service.save(db, saved_question_create, user_id)
 
 
 def analyze_question(

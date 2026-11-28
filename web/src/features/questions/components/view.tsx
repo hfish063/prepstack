@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card"
 
 type QuestionViewProps = {
+  phaseId: number
   activeQuestion: InterviewQuestionRead
   questions: InterviewQuestionRead[]
   actions?: React.ReactNode
@@ -16,6 +17,7 @@ type QuestionViewProps = {
 }
 
 export default function QuestionView({
+  phaseId,
   activeQuestion,
   questions,
   actions,
@@ -25,6 +27,7 @@ export default function QuestionView({
     <div className="flex h-full min-h-0 flex-row gap-4">
       <div className="w-56 shrink-0 lg:w-72 xl:w-80 2xl:w-96">
         <QuestionMenu
+          phaseId={phaseId}
           questions={questions}
           activeQuestionId={activeQuestion.id}
         />

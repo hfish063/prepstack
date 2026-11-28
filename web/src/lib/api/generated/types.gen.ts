@@ -60,6 +60,16 @@ export type CodingProblemRead = {
 };
 
 /**
+ * CustomQuestionAdd
+ */
+export type CustomQuestionAdd = {
+    /**
+     * Text
+     */
+    text: string;
+};
+
+/**
  * DashboardSummaryRead
  */
 export type DashboardSummaryRead = {
@@ -615,6 +625,10 @@ export type SavedQuestionCreate = {
     content: string;
     phaseType: PhaseType;
     /**
+     * Sourcequestionid
+     */
+    sourceQuestionId?: number | null;
+    /**
      * Tags
      */
     tags?: Array<SavedQuestionTagCreate> | null;
@@ -633,6 +647,10 @@ export type SavedQuestionRead = {
      */
     content: string;
     phaseType: PhaseType;
+    /**
+     * Sourcequestionid
+     */
+    sourceQuestionId: number | null;
     /**
      * Tags
      */
@@ -1505,6 +1523,36 @@ export type CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostResponses 
 };
 
 export type CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostResponse = CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostResponses[keyof CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostResponses];
+
+export type CreateQuestionApiQuestionsPhaseIdPostData = {
+    body: CustomQuestionAdd;
+    path: {
+        /**
+         * Phase Id
+         */
+        phase_id: number;
+    };
+    query?: never;
+    url: '/api/questions/{phase_id}';
+};
+
+export type CreateQuestionApiQuestionsPhaseIdPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateQuestionApiQuestionsPhaseIdPostError = CreateQuestionApiQuestionsPhaseIdPostErrors[keyof CreateQuestionApiQuestionsPhaseIdPostErrors];
+
+export type CreateQuestionApiQuestionsPhaseIdPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: InterviewQuestionRead;
+};
+
+export type CreateQuestionApiQuestionsPhaseIdPostResponse = CreateQuestionApiQuestionsPhaseIdPostResponses[keyof CreateQuestionApiQuestionsPhaseIdPostResponses];
 
 export type CreateHintForQuestionApiQuestionsQuestionIdHintsPostData = {
     body?: never;

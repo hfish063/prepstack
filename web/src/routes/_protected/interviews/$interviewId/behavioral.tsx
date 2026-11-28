@@ -70,10 +70,12 @@ function BehavioralQuestions({ phase }: BehavioralQuestionsProps) {
 
   return (
     <QuestionView
+      phaseId={phase.id}
       activeQuestion={activeQuestion}
       questions={questions}
       actions={
         <SaveQuestionButton
+          questionId={activeQuestion.id}
           content={activeQuestion.text}
           phaseType={phase.phaseType}
         />

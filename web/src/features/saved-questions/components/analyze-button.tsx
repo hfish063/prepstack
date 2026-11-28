@@ -4,6 +4,7 @@ import { useAnalyzeQuestion } from "../hooks/use-analyze-saved-question"
 import { Spinner } from "@/components/ui/spinner"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { toast } from "@/components/ui/toast"
+import { cn } from "cn"
 
 type AnalyzeSavedQuestionButtonProps = {
   savedQuestionId: number
@@ -48,7 +49,7 @@ export default function AnalyzeSavedQuestionButton({
       <Link
         to="/question-bank/$questionId/analyze"
         params={{ questionId: String(savedQuestionId) }}
-        className={buttonVariants({ variant: "outline" })}
+        className={cn(buttonVariants({ variant: "outline" }), "w-28")}
       >
         View Results
       </Link>
@@ -60,8 +61,10 @@ export default function AnalyzeSavedQuestionButton({
       variant={"outline"}
       disabled={isAnalyzed || isLoading}
       onClick={handleAnalyze}
+      className="w-28"
     >
-      {isLoading ? <Spinner /> : <Sparkles />} Analyze
+      {isLoading ? <Spinner /> : <Sparkles />}
+      {isLoading ? "Analyzing" : "Analyze"}
     </Button>
   )
 }

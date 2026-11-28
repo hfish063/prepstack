@@ -31,7 +31,7 @@ const router = createRouter({
   defaultNotFoundComponent: ({ data }) => (
     <NotFound message={getNotFoundMessage(data)} />
   ),
-  defaultErrorComponent: () => <DefaultError />,
+  defaultErrorComponent: ({ error }) => <DefaultError error={error} />,
 })
 
 declare module "@tanstack/react-router" {

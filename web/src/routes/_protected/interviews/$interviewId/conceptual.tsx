@@ -70,10 +70,12 @@ function ConceptualQuestions({ phase }: ConceptualQuestionsProps) {
 
   return (
     <QuestionView
+      phaseId={phase.id}
       activeQuestion={activeQuestion}
       questions={questions}
       actions={
         <SaveQuestionButton
+          questionId={activeQuestion.id}
           content={activeQuestion.text}
           phaseType={phase.phaseType}
         />

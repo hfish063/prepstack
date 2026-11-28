@@ -1,8 +1,6 @@
-import {
-  createSavedQuestionApiSavedQuestionsSavePostMutation,
-  findAllSavedQuestionsApiSavedQuestionsAllGetQueryKey,
-} from "@/lib/api/generated/@tanstack/react-query.gen"
+import { createSavedQuestionApiSavedQuestionsSavePostMutation } from "@/lib/api/generated/@tanstack/react-query.gen"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { getSavedQuestionsQueryOptions } from "./use-saved-questions"
 
 type SaveQuestionMutationConfig = Omit<
   ReturnType<typeof createSavedQuestionApiSavedQuestionsSavePostMutation>,
@@ -21,11 +19,10 @@ export function useSaveQuestion({
   const { onSuccess, ...restConfig } = mutationConfig ?? {}
 
   return useMutation({
-    onSuccess: (...args) => {
-      queryClient.invalidateQueries({
-        queryKey: findAllSavedQuestionsApiSavedQuestionsAllGetQueryKey(),
-      })
-      onSuccess?.(...args)
+    onSuccess: async (...args) => {
+      const { queryKey } = getSavedQuestionsQueryOptions()
+      await queryClient.invalidateQueries({ queryKey })
+      await onSuccess?.(...args)
     },
     ...restConfig,
     mutationFn:

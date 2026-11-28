@@ -38,7 +38,9 @@ def create_saved_question(
     db: Session = Depends(get_db),
     user_id=Depends(get_current_user_id),
 ):
-    return saved_question_service.save(db, saved_question_create, user_id)
+    return saved_question_flows.create_saved_question(
+        db, saved_question_create, user_id
+    )
 
 
 @router.get("/{saved_question_id}/analysis", response_model=SavedQuestionAnalysisRead)

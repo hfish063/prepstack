@@ -1,7 +1,7 @@
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlmodel import Session, select
 
-from app.exceptions import ResourceNotFoundError
+from app.exceptions import ResourceConflictError, ResourceNotFoundError
 from app.questions.saved.models import (
     SavedQuestion,
     SavedQuestionAnalysis,
@@ -47,6 +47,9 @@ def save(
     try:
         db.add(question)
         db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise ResourceConflictError("This question has already been saved.") from e
     except SQLAlchemyError:
         db.rollback()
         raise
