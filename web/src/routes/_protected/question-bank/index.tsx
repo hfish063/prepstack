@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_protected/question-bank/")({
 function RouteComponent() {
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold">Saved Questions</h1>
+      <h1 className="text-4xl font-semibold">Question Bank</h1>
       <p className="text-muted-foreground">
         Load your previously saved AI-generated questions
       </p>

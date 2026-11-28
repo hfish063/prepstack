@@ -15,8 +15,8 @@ class SavedQuestion(SQLModel, table=True):
     phase_type: PhaseType
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    tags: list["SavedQuestionTag"] = Relationship()
-    analysis: Optional["SavedQuestionAnalysis"] = Relationship()
+    tags: list["SavedQuestionTag"] = Relationship(passive_deletes=True)
+    analysis: Optional["SavedQuestionAnalysis"] = Relationship(passive_deletes=True)
 
 
 class SavedQuestionTag(SQLModel, table=True):

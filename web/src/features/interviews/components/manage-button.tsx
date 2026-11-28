@@ -38,7 +38,7 @@ export default function ManageInterviewButton({
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant={"ghost"} size={"icon"} disabled={isDeleting}>
+          <Button variant={"outline"} size={"icon"} disabled={isDeleting}>
             <EllipsisVertical />
           </Button>
         }

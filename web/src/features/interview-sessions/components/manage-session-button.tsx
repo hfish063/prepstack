@@ -60,7 +60,7 @@ export default function ManageInterviewSessionButton({
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant={"ghost"} size={"icon"}>
+            <Button variant={"outline"} size={"icon"}>
               <EllipsisVertical />
             </Button>
           }
