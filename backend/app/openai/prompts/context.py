@@ -100,3 +100,10 @@ class CodingEvaluationContext(PromptContext):
     tests_passed: int
     tests_total: int
     attempts: int
+
+
+class QuestionAnalysisContext(PromptContext):
+    """Context class used by the AI client to analyze a saved question."""
+
+    question: str
+    phase_type: PhaseType

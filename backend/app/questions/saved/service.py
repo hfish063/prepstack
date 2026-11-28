@@ -2,8 +2,17 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, select
 
 from app.exceptions import ResourceNotFoundError
-from app.questions.saved.models import SavedQuestion, SavedQuestionTag
-from app.questions.saved.schemas import SavedQuestionCreate
+from app.questions.saved.models import (
+    SavedQuestion,
+    SavedQuestionAnalysis,
+    SavedQuestionAnalysisFollowUp,
+    SavedQuestionAnalysisTip,
+    SavedQuestionTag,
+)
+from app.questions.saved.schemas import (
+    SavedQuestionAnalysisCreate,
+    SavedQuestionCreate,
+)
 
 
 def get(db: Session, saved_question_id: int, user_id: str) -> SavedQuestion:
@@ -52,3 +61,42 @@ def delete(db: Session, saved_question: SavedQuestion) -> None:
     except SQLAlchemyError:
         db.rollback()
         raise
+
+
+def get_analysis(
+    db: Session, saved_question: SavedQuestion
+) -> SavedQuestionAnalysis | None:
+    return db.exec(
+        select(SavedQuestionAnalysis).where(
+            SavedQuestionAnalysis.saved_question_id == saved_question.id
+        )
+    ).one_or_none()
+
+
+def save_analysis(
+    db: Session,
+    saved_question: SavedQuestion,
+    analysis_create: SavedQuestionAnalysisCreate,
+) -> SavedQuestionAnalysis:
+    analysis = SavedQuestionAnalysis(
+        saved_question_id=saved_question.id,
+        example_response=analysis_create.example_response,
+        follow_ups=[
+            SavedQuestionAnalysisFollowUp(content=content)
+            for content in analysis_create.follow_ups
+        ],
+        tips=[
+            SavedQuestionAnalysisTip(content=content)
+            for content in analysis_create.tips
+        ],
+    )
+
+    try:
+        db.add(analysis)
+        db.commit()
+        db.refresh(analysis)
+    except SQLAlchemyError:
+        db.rollback()
+        raise
+
+    return analysis
