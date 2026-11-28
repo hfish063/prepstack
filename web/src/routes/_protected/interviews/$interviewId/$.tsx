@@ -8,5 +8,5 @@ export const Route = createFileRoute("/_protected/interviews/$interviewId/$")({
 })
 
 function RouteComponent() {
-  return <div>Hello "/_protected/interviews/$interviewId/$"!</div>
+  return <></>
 }

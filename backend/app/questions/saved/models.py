@@ -13,7 +13,7 @@ class SavedQuestion(SQLModel, table=True):
     user_id: str = Field(index=True)
     content: str
     phase_type: PhaseType
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     tags: list["SavedQuestionTag"] = Relationship()
 
@@ -24,4 +24,4 @@ class SavedQuestionTag(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     saved_question_id: int = Field(foreign_key="saved_questions.id", ondelete="CASCADE")
     content: str
-    created_at: datetime = Field(default_factory=datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

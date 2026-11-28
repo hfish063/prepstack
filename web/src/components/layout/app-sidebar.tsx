@@ -1,4 +1,4 @@
-import { Layers, LayoutDashboard, MessageSquare } from "lucide-react"
+import { Layers, LayoutDashboard, Library, MessageSquare } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +13,7 @@ import { Link, useMatchRoute } from "@tanstack/react-router"
 const SIDEBAR_LINKS = [
   { icon: LayoutDashboard, link: "/dashboard", label: "Dashboard" },
   { icon: MessageSquare, link: "/interviews", label: "Interviews" },
+  { icon: Library, link: "/question-bank", label: "Question Bank" },
 ]
 
 export default function AppSidebar() {

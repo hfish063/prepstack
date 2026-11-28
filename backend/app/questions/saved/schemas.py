@@ -7,6 +7,7 @@ from app.schemas import CamelModel
 
 
 class SavedQuestionRead(CamelModel):
+    id: int
     content: str
     phase_type: PhaseType
     tags: list[SavedQuestionTagRead]

@@ -22,7 +22,9 @@ def create_interview_with_phases(
     If generation fails, cleanup and delete the interview.
     """
     interview = interviews_service.save(db, new_interview_session, user_id)
-    phases = phases_service.create_interview_phases(db, interview.id)
+    phases = phases_service.create_interview_phases(
+        db, interview.id, new_interview_session.question_counts
+    )
 
     for phase in phases:
         if supports_questions(phase):

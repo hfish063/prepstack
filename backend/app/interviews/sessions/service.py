@@ -57,7 +57,9 @@ def get(db: Session, user_id: str, interview_id: int) -> InterviewSession:
 def save(
     db: Session, interview_create: InterviewSessionCreate, user_id: str
 ) -> InterviewSession:
-    interview = InterviewSession(**interview_create.model_dump(), user_id=user_id)
+    interview = InterviewSession(
+        **interview_create.model_dump(exclude={"question_counts"}), user_id=user_id
+    )
 
     try:
         db.add(interview)

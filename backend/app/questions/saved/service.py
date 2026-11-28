@@ -2,7 +2,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, select
 
 from app.exceptions import ResourceNotFoundError
-from app.questions.saved.models import SavedQuestion
+from app.questions.saved.models import SavedQuestion, SavedQuestionTag
 from app.questions.saved.schemas import SavedQuestionCreate
 
 
@@ -26,7 +26,14 @@ def get_all(db: Session, user_id: str) -> list[SavedQuestion]:
 def save(
     db: Session, saved_question_create: SavedQuestionCreate, user_id: str
 ) -> SavedQuestion:
-    question = SavedQuestion(**saved_question_create.model_dump(), user_id=user_id)
+    question = SavedQuestion(
+        **saved_question_create.model_dump(exclude={"tags"}),
+        user_id=user_id,
+        tags=[
+            SavedQuestionTag(content=tag.content)
+            for tag in saved_question_create.tags or []
+        ]
+    )
 
     try:
         db.add(question)

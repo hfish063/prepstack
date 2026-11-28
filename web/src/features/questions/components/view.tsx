@@ -2,6 +2,7 @@ import type { InterviewQuestionRead } from "@/lib/api/generated"
 import QuestionMenu from "./menu"
 import {
   Card,
+  CardAction,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -10,12 +11,14 @@ import {
 type QuestionViewProps = {
   activeQuestion: InterviewQuestionRead
   questions: InterviewQuestionRead[]
+  actions?: React.ReactNode
   children: React.ReactNode
 }
 
 export default function QuestionView({
   activeQuestion,
   questions,
+  actions,
   children,
 }: QuestionViewProps) {
   return (
@@ -31,6 +34,7 @@ export default function QuestionView({
           <CardHeader>
             <CardTitle>Prompt</CardTitle>
             <CardDescription>{activeQuestion.text}</CardDescription>
+            {actions && <CardAction>{actions}</CardAction>}
           </CardHeader>
         </Card>
         {children}

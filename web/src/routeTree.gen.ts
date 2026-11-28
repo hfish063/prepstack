@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
+import { Route as ProtectedQuestionBankRouteImport } from './routes/_protected/question-bank'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as ProtectedInterviewsIndexRouteImport } from './routes/_protected/interviews/index'
@@ -39,6 +40,11 @@ const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => ProtectedRouteRoute,
+} as any)
+const ProtectedQuestionBankRoute = ProtectedQuestionBankRouteImport.update({
+  id: '/question-bank',
+  path: '/question-bank',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
@@ -127,6 +133,7 @@ const ProtectedInterviewsInterviewIdTechnicalSubmissionsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/question-bank': typeof ProtectedQuestionBankRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/interviews/$interviewId': typeof ProtectedInterviewsInterviewIdRouteRouteWithChildren
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
+  '/question-bank': typeof ProtectedQuestionBankRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/interviews': typeof ProtectedInterviewsIndexRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/_protected/dashboard': typeof ProtectedDashboardRoute
+  '/_protected/question-bank': typeof ProtectedQuestionBankRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/_protected/interviews/$interviewId': typeof ProtectedInterviewsInterviewIdRouteRouteWithChildren
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/question-bank'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/interviews/$interviewId'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
+    | '/question-bank'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/interviews'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/_protected/dashboard'
+    | '/_protected/question-bank'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/_protected/interviews/$interviewId'
@@ -262,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof ProtectedDashboardRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/question-bank': {
+      id: '/_protected/question-bank'
+      path: '/question-bank'
+      fullPath: '/question-bank'
+      preLoaderRoute: typeof ProtectedQuestionBankRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
     '/auth/sign-in': {
@@ -421,12 +440,14 @@ const ProtectedInterviewsInterviewIdRouteRouteWithChildren =
 
 interface ProtectedRouteRouteChildren {
   ProtectedDashboardRoute: typeof ProtectedDashboardRoute
+  ProtectedQuestionBankRoute: typeof ProtectedQuestionBankRoute
   ProtectedInterviewsInterviewIdRouteRoute: typeof ProtectedInterviewsInterviewIdRouteRouteWithChildren
   ProtectedInterviewsIndexRoute: typeof ProtectedInterviewsIndexRoute
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedDashboardRoute: ProtectedDashboardRoute,
+  ProtectedQuestionBankRoute: ProtectedQuestionBankRoute,
   ProtectedInterviewsInterviewIdRouteRoute:
     ProtectedInterviewsInterviewIdRouteRouteWithChildren,
   ProtectedInterviewsIndexRoute: ProtectedInterviewsIndexRoute,

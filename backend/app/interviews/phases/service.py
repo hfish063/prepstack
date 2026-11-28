@@ -6,6 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.exceptions import ResourceNotFoundError, ResourceConflictError
 from app.enums import InterviewStatus, PhaseStatus, PhaseType
 from app.interviews.sessions.models import InterviewSession
+from app.interviews.sessions.schemas import PhaseQuestionConfig
 from app.interviews.phases.models import InterviewPhase
 
 
@@ -63,19 +64,23 @@ def get_phases_for_interview(
     ).all()
 
 
-def create_interview_phases(db: Session, interview_id: int) -> list[InterviewPhase]:
+def create_interview_phases(
+    db: Session, interview_id: int, question_counts: PhaseQuestionConfig
+) -> list[InterviewPhase]:
     phases = [
         InterviewPhase(
             interview_id=interview_id,
             phase_type=PhaseType.BEHAVIORAL,
             order_index=0,
             status=PhaseStatus.IN_PROGRESS,
+            question_count=question_counts.behavioral,
         ),
         InterviewPhase(
             interview_id=interview_id,
             phase_type=PhaseType.CONCEPTUAL,
             order_index=1,
             status=PhaseStatus.PENDING,
+            question_count=question_counts.conceptual,
         ),
         InterviewPhase(
             interview_id=interview_id,
