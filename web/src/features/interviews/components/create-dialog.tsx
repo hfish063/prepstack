@@ -14,6 +14,9 @@ import { Plus } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 import { useCreateInterview } from "@/features/interviews/hooks/use-create-interview"
 
+// Mirrors PhaseQuestionConfig bounds on the backend
+const QUESTION_COUNT = { min: 1, max: 20, default: 5 }
+
 export default function CreateInterviewDialog() {
   const [open, setOpen] = useState(false)
 
@@ -36,6 +39,10 @@ export default function CreateInterviewDialog() {
         experienceLevel: form.get("experienceLevel") as string,
         topics: form.get("topics") as string,
         description: (form.get("description") as string) || undefined,
+        questionCounts: {
+          behavioral: Number(form.get("behavioralCount")),
+          conceptual: Number(form.get("conceptualCount")),
+        },
       },
     })
   }
@@ -100,6 +107,38 @@ export default function CreateInterviewDialog() {
                 disabled={loading}
               />
             </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel htmlFor="behavioralCount">
+                  Behavioral Questions
+                </FieldLabel>
+                <Input
+                  id="behavioralCount"
+                  name="behavioralCount"
+                  type="number"
+                  min={QUESTION_COUNT.min}
+                  max={QUESTION_COUNT.max}
+                  defaultValue={QUESTION_COUNT.default}
+                  required
+                  disabled={loading}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="conceptualCount">
+                  Conceptual Questions
+                </FieldLabel>
+                <Input
+                  id="conceptualCount"
+                  name="conceptualCount"
+                  type="number"
+                  min={QUESTION_COUNT.min}
+                  max={QUESTION_COUNT.max}
+                  defaultValue={QUESTION_COUNT.default}
+                  required
+                  disabled={loading}
+                />
+              </Field>
+            </div>
           </FieldGroup>
           {createInterview.isError && (
             <p className="text-sm text-destructive">

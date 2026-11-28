@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { advancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPost, completeInterviewSessionApiInterviewsInterviewIdCompletePost, createHintForQuestionApiQuestionsQuestionIdHintsPost, createMessageForQuestionApiQuestionsQuestionIdMessagesPost, deleteInterviewNotesApiInterviewsInterviewIdNotesDeleteDelete, deleteInterviewSessionApiInterviewsDeleteInterviewIdDelete, deleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDelete, evaluateInterviewSessionApiInterviewsInterviewIdEvaluatePost, findAllInterviewSessionsApiInterviewsAllGet, findInterviewSessionApiInterviewsInterviewIdGet, findMessagesForPhaseApiPhasesPhaseIdMessagesGet, findPhasesForInterviewApiInterviewsInterviewIdPhasesGet, getCodingProblemApiCodingProblemsPhaseIdGet, getCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGet, getDashboardSummaryApiDashboardGet, getInterviewNotesApiInterviewsInterviewIdNotesGet, getInterviewSummaryApiInterviewsInterviewIdEvaluateGet, getMessagesForQuestionApiQuestionsQuestionIdMessagesGet, getProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGet, getQuestionApiQuestionsQuestionIdGet, getQuestionsForPhaseApiQuestionsPhaseIdAllGet, healthCheckApiHealthGet, type Options, runCodeApiCodingProblemsPhaseIdRunPost, saveInterviewNotesApiInterviewsInterviewIdNotesSavePost, saveInterviewSessionApiInterviewsSavePost, submitCodeApiCodingProblemsPhaseIdSubmitPost, updateInterviewNotesApiInterviewsInterviewIdNotesUpdatePut } from '../sdk.gen';
-import type { AdvancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPostData, AdvancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPostError, AdvancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPostResponse, CompleteInterviewSessionApiInterviewsInterviewIdCompletePostData, CompleteInterviewSessionApiInterviewsInterviewIdCompletePostError, CompleteInterviewSessionApiInterviewsInterviewIdCompletePostResponse, CreateHintForQuestionApiQuestionsQuestionIdHintsPostData, CreateHintForQuestionApiQuestionsQuestionIdHintsPostError, CreateHintForQuestionApiQuestionsQuestionIdHintsPostResponse, CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostData, CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostError, CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostResponse, DeleteInterviewNotesApiInterviewsInterviewIdNotesDeleteDeleteData, DeleteInterviewNotesApiInterviewsInterviewIdNotesDeleteDeleteError, DeleteInterviewSessionApiInterviewsDeleteInterviewIdDeleteData, DeleteInterviewSessionApiInterviewsDeleteInterviewIdDeleteError, DeleteInterviewSessionApiInterviewsDeleteInterviewIdDeleteResponse, DeleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDeleteData, DeleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDeleteError, DeleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDeleteResponse, EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostData, EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostError, EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostResponse, FindAllInterviewSessionsApiInterviewsAllGetData, FindAllInterviewSessionsApiInterviewsAllGetError, FindAllInterviewSessionsApiInterviewsAllGetResponse, FindInterviewSessionApiInterviewsInterviewIdGetData, FindInterviewSessionApiInterviewsInterviewIdGetError, FindInterviewSessionApiInterviewsInterviewIdGetResponse, FindMessagesForPhaseApiPhasesPhaseIdMessagesGetData, FindMessagesForPhaseApiPhasesPhaseIdMessagesGetError, FindMessagesForPhaseApiPhasesPhaseIdMessagesGetResponse, FindPhasesForInterviewApiInterviewsInterviewIdPhasesGetData, FindPhasesForInterviewApiInterviewsInterviewIdPhasesGetError, FindPhasesForInterviewApiInterviewsInterviewIdPhasesGetResponse, GetCodingProblemApiCodingProblemsPhaseIdGetData, GetCodingProblemApiCodingProblemsPhaseIdGetError, GetCodingProblemApiCodingProblemsPhaseIdGetResponse, GetCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGetData, GetCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGetError, GetCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGetResponse, GetDashboardSummaryApiDashboardGetData, GetDashboardSummaryApiDashboardGetResponse, GetInterviewNotesApiInterviewsInterviewIdNotesGetData, GetInterviewNotesApiInterviewsInterviewIdNotesGetError, GetInterviewNotesApiInterviewsInterviewIdNotesGetResponse, GetInterviewSummaryApiInterviewsInterviewIdEvaluateGetData, GetInterviewSummaryApiInterviewsInterviewIdEvaluateGetError, GetInterviewSummaryApiInterviewsInterviewIdEvaluateGetResponse, GetMessagesForQuestionApiQuestionsQuestionIdMessagesGetData, GetMessagesForQuestionApiQuestionsQuestionIdMessagesGetError, GetMessagesForQuestionApiQuestionsQuestionIdMessagesGetResponse, GetProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGetData, GetProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGetError, GetProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGetResponse, GetQuestionApiQuestionsQuestionIdGetData, GetQuestionApiQuestionsQuestionIdGetError, GetQuestionApiQuestionsQuestionIdGetResponse, GetQuestionsForPhaseApiQuestionsPhaseIdAllGetData, GetQuestionsForPhaseApiQuestionsPhaseIdAllGetError, GetQuestionsForPhaseApiQuestionsPhaseIdAllGetResponse, HealthCheckApiHealthGetData, RunCodeApiCodingProblemsPhaseIdRunPostData, RunCodeApiCodingProblemsPhaseIdRunPostError, RunCodeApiCodingProblemsPhaseIdRunPostResponse, SaveInterviewNotesApiInterviewsInterviewIdNotesSavePostData, SaveInterviewNotesApiInterviewsInterviewIdNotesSavePostError, SaveInterviewNotesApiInterviewsInterviewIdNotesSavePostResponse, SaveInterviewSessionApiInterviewsSavePostData, SaveInterviewSessionApiInterviewsSavePostError, SaveInterviewSessionApiInterviewsSavePostResponse, SubmitCodeApiCodingProblemsPhaseIdSubmitPostData, SubmitCodeApiCodingProblemsPhaseIdSubmitPostError, SubmitCodeApiCodingProblemsPhaseIdSubmitPostResponse, UpdateInterviewNotesApiInterviewsInterviewIdNotesUpdatePutData, UpdateInterviewNotesApiInterviewsInterviewIdNotesUpdatePutError, UpdateInterviewNotesApiInterviewsInterviewIdNotesUpdatePutResponse } from '../types.gen';
+import { advancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPost, analyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePost, completeInterviewSessionApiInterviewsInterviewIdCompletePost, createHintForQuestionApiQuestionsQuestionIdHintsPost, createMessageForQuestionApiQuestionsQuestionIdMessagesPost, createQuestionApiQuestionsPhaseIdPost, createSavedQuestionApiSavedQuestionsSavePost, deleteInterviewNotesApiInterviewsInterviewIdNotesDeleteDelete, deleteInterviewSessionApiInterviewsDeleteInterviewIdDelete, deleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDelete, deleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDelete, evaluateInterviewSessionApiInterviewsInterviewIdEvaluatePost, findAllInterviewSessionsApiInterviewsAllGet, findAllSavedQuestionsApiSavedQuestionsAllGet, findInterviewSessionApiInterviewsInterviewIdGet, findMessagesForPhaseApiPhasesPhaseIdMessagesGet, findPhasesForInterviewApiInterviewsInterviewIdPhasesGet, findSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGet, findSavedQuestionApiSavedQuestionsSavedQuestionIdGet, getCodingProblemApiCodingProblemsPhaseIdGet, getCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGet, getDashboardSummaryApiDashboardGet, getInterviewNotesApiInterviewsInterviewIdNotesGet, getInterviewSummaryApiInterviewsInterviewIdEvaluateGet, getMessagesForQuestionApiQuestionsQuestionIdMessagesGet, getProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGet, getQuestionApiQuestionsQuestionIdGet, getQuestionsForPhaseApiQuestionsPhaseIdAllGet, healthCheckApiHealthGet, type Options, runCodeApiCodingProblemsPhaseIdRunPost, saveInterviewNotesApiInterviewsInterviewIdNotesSavePost, saveInterviewSessionApiInterviewsSavePost, submitCodeApiCodingProblemsPhaseIdSubmitPost, updateInterviewNotesApiInterviewsInterviewIdNotesUpdatePut } from '../sdk.gen';
+import type { AdvancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPostData, AdvancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPostError, AdvancePhaseApiPhasesPhaseIdAdvanceTargetPhaseIndexPostResponse, AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostData, AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostError, AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostResponse, CompleteInterviewSessionApiInterviewsInterviewIdCompletePostData, CompleteInterviewSessionApiInterviewsInterviewIdCompletePostError, CompleteInterviewSessionApiInterviewsInterviewIdCompletePostResponse, CreateHintForQuestionApiQuestionsQuestionIdHintsPostData, CreateHintForQuestionApiQuestionsQuestionIdHintsPostError, CreateHintForQuestionApiQuestionsQuestionIdHintsPostResponse, CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostData, CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostError, CreateMessageForQuestionApiQuestionsQuestionIdMessagesPostResponse, CreateQuestionApiQuestionsPhaseIdPostData, CreateQuestionApiQuestionsPhaseIdPostError, CreateQuestionApiQuestionsPhaseIdPostResponse, CreateSavedQuestionApiSavedQuestionsSavePostData, CreateSavedQuestionApiSavedQuestionsSavePostError, CreateSavedQuestionApiSavedQuestionsSavePostResponse, DeleteInterviewNotesApiInterviewsInterviewIdNotesDeleteDeleteData, DeleteInterviewNotesApiInterviewsInterviewIdNotesDeleteDeleteError, DeleteInterviewSessionApiInterviewsDeleteInterviewIdDeleteData, DeleteInterviewSessionApiInterviewsDeleteInterviewIdDeleteError, DeleteInterviewSessionApiInterviewsDeleteInterviewIdDeleteResponse, DeleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDeleteData, DeleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDeleteError, DeleteProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsDeleteAllDeleteResponse, DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteData, DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteError, DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteResponse, EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostData, EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostError, EvaluateInterviewSessionApiInterviewsInterviewIdEvaluatePostResponse, FindAllInterviewSessionsApiInterviewsAllGetData, FindAllInterviewSessionsApiInterviewsAllGetError, FindAllInterviewSessionsApiInterviewsAllGetResponse, FindAllSavedQuestionsApiSavedQuestionsAllGetData, FindAllSavedQuestionsApiSavedQuestionsAllGetResponse, FindInterviewSessionApiInterviewsInterviewIdGetData, FindInterviewSessionApiInterviewsInterviewIdGetError, FindInterviewSessionApiInterviewsInterviewIdGetResponse, FindMessagesForPhaseApiPhasesPhaseIdMessagesGetData, FindMessagesForPhaseApiPhasesPhaseIdMessagesGetError, FindMessagesForPhaseApiPhasesPhaseIdMessagesGetResponse, FindPhasesForInterviewApiInterviewsInterviewIdPhasesGetData, FindPhasesForInterviewApiInterviewsInterviewIdPhasesGetError, FindPhasesForInterviewApiInterviewsInterviewIdPhasesGetResponse, FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetData, FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetError, FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetResponse, FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetData, FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetError, FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetResponse, GetCodingProblemApiCodingProblemsPhaseIdGetData, GetCodingProblemApiCodingProblemsPhaseIdGetError, GetCodingProblemApiCodingProblemsPhaseIdGetResponse, GetCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGetData, GetCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGetError, GetCodingProblemLanguageTemplateApiCodingProblemsPhaseIdTemplateGetResponse, GetDashboardSummaryApiDashboardGetData, GetDashboardSummaryApiDashboardGetResponse, GetInterviewNotesApiInterviewsInterviewIdNotesGetData, GetInterviewNotesApiInterviewsInterviewIdNotesGetError, GetInterviewNotesApiInterviewsInterviewIdNotesGetResponse, GetInterviewSummaryApiInterviewsInterviewIdEvaluateGetData, GetInterviewSummaryApiInterviewsInterviewIdEvaluateGetError, GetInterviewSummaryApiInterviewsInterviewIdEvaluateGetResponse, GetMessagesForQuestionApiQuestionsQuestionIdMessagesGetData, GetMessagesForQuestionApiQuestionsQuestionIdMessagesGetError, GetMessagesForQuestionApiQuestionsQuestionIdMessagesGetResponse, GetProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGetData, GetProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGetError, GetProblemSubmissionsApiCodingProblemsPhaseIdSubmissionsGetResponse, GetQuestionApiQuestionsQuestionIdGetData, GetQuestionApiQuestionsQuestionIdGetError, GetQuestionApiQuestionsQuestionIdGetResponse, GetQuestionsForPhaseApiQuestionsPhaseIdAllGetData, GetQuestionsForPhaseApiQuestionsPhaseIdAllGetError, GetQuestionsForPhaseApiQuestionsPhaseIdAllGetResponse, HealthCheckApiHealthGetData, RunCodeApiCodingProblemsPhaseIdRunPostData, RunCodeApiCodingProblemsPhaseIdRunPostError, RunCodeApiCodingProblemsPhaseIdRunPostResponse, SaveInterviewNotesApiInterviewsInterviewIdNotesSavePostData, SaveInterviewNotesApiInterviewsInterviewIdNotesSavePostError, SaveInterviewNotesApiInterviewsInterviewIdNotesSavePostResponse, SaveInterviewSessionApiInterviewsSavePostData, SaveInterviewSessionApiInterviewsSavePostError, SaveInterviewSessionApiInterviewsSavePostResponse, SubmitCodeApiCodingProblemsPhaseIdSubmitPostData, SubmitCodeApiCodingProblemsPhaseIdSubmitPostError, SubmitCodeApiCodingProblemsPhaseIdSubmitPostResponse, UpdateInterviewNotesApiInterviewsInterviewIdNotesUpdatePutData, UpdateInterviewNotesApiInterviewsInterviewIdNotesUpdatePutError, UpdateInterviewNotesApiInterviewsInterviewIdNotesUpdatePutResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -524,6 +524,26 @@ export const createMessageForQuestionApiQuestionsQuestionIdMessagesPostMutation 
     return mutationOptions;
 };
 
+export const createQuestionApiQuestionsPhaseIdPostMutationKey = (options?: Partial<Options<CreateQuestionApiQuestionsPhaseIdPostData>>) => createMutationKey('createQuestionApiQuestionsPhaseIdPost', options);
+
+/**
+ * Create Question
+ */
+export const createQuestionApiQuestionsPhaseIdPostMutation = (options?: Partial<Options<CreateQuestionApiQuestionsPhaseIdPostData>>): UseMutationOptions<CreateQuestionApiQuestionsPhaseIdPostResponse, CreateQuestionApiQuestionsPhaseIdPostError, Options<CreateQuestionApiQuestionsPhaseIdPostData>> => {
+    const mutationOptions: UseMutationOptions<CreateQuestionApiQuestionsPhaseIdPostResponse, CreateQuestionApiQuestionsPhaseIdPostError, Options<CreateQuestionApiQuestionsPhaseIdPostData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createQuestionApiQuestionsPhaseIdPost({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        },
+        mutationKey: createQuestionApiQuestionsPhaseIdPostMutationKey(options)
+    };
+    return mutationOptions;
+};
+
 export const createHintForQuestionApiQuestionsQuestionIdHintsPostMutationKey = (options?: Partial<Options<CreateHintForQuestionApiQuestionsQuestionIdHintsPostData>>) => createMutationKey('createHintForQuestionApiQuestionsQuestionIdHintsPost', options);
 
 /**
@@ -540,6 +560,120 @@ export const createHintForQuestionApiQuestionsQuestionIdHintsPostMutation = (opt
             return data;
         },
         mutationKey: createHintForQuestionApiQuestionsQuestionIdHintsPostMutationKey(options)
+    };
+    return mutationOptions;
+};
+
+export const findAllSavedQuestionsApiSavedQuestionsAllGetQueryKey = (options?: Options<FindAllSavedQuestionsApiSavedQuestionsAllGetData>) => createQueryKey('findAllSavedQuestionsApiSavedQuestionsAllGet', options);
+
+/**
+ * Find All Saved Questions
+ */
+export const findAllSavedQuestionsApiSavedQuestionsAllGetOptions = (options?: Options<FindAllSavedQuestionsApiSavedQuestionsAllGetData>) => queryOptions<FindAllSavedQuestionsApiSavedQuestionsAllGetResponse, DefaultError, FindAllSavedQuestionsApiSavedQuestionsAllGetResponse, ReturnType<typeof findAllSavedQuestionsApiSavedQuestionsAllGetQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await findAllSavedQuestionsApiSavedQuestionsAllGet({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: findAllSavedQuestionsApiSavedQuestionsAllGetQueryKey(options)
+});
+
+export const findSavedQuestionApiSavedQuestionsSavedQuestionIdGetQueryKey = (options: Options<FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetData>) => createQueryKey('findSavedQuestionApiSavedQuestionsSavedQuestionIdGet', options);
+
+/**
+ * Find Saved Question
+ */
+export const findSavedQuestionApiSavedQuestionsSavedQuestionIdGetOptions = (options: Options<FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetData>) => queryOptions<FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetResponse, FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetError, FindSavedQuestionApiSavedQuestionsSavedQuestionIdGetResponse, ReturnType<typeof findSavedQuestionApiSavedQuestionsSavedQuestionIdGetQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await findSavedQuestionApiSavedQuestionsSavedQuestionIdGet({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: findSavedQuestionApiSavedQuestionsSavedQuestionIdGetQueryKey(options)
+});
+
+export const createSavedQuestionApiSavedQuestionsSavePostMutationKey = (options?: Partial<Options<CreateSavedQuestionApiSavedQuestionsSavePostData>>) => createMutationKey('createSavedQuestionApiSavedQuestionsSavePost', options);
+
+/**
+ * Create Saved Question
+ */
+export const createSavedQuestionApiSavedQuestionsSavePostMutation = (options?: Partial<Options<CreateSavedQuestionApiSavedQuestionsSavePostData>>): UseMutationOptions<CreateSavedQuestionApiSavedQuestionsSavePostResponse, CreateSavedQuestionApiSavedQuestionsSavePostError, Options<CreateSavedQuestionApiSavedQuestionsSavePostData>> => {
+    const mutationOptions: UseMutationOptions<CreateSavedQuestionApiSavedQuestionsSavePostResponse, CreateSavedQuestionApiSavedQuestionsSavePostError, Options<CreateSavedQuestionApiSavedQuestionsSavePostData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createSavedQuestionApiSavedQuestionsSavePost({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        },
+        mutationKey: createSavedQuestionApiSavedQuestionsSavePostMutationKey(options)
+    };
+    return mutationOptions;
+};
+
+export const findSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetQueryKey = (options: Options<FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetData>) => createQueryKey('findSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGet', options);
+
+/**
+ * Find Saved Question Analysis
+ */
+export const findSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetOptions = (options: Options<FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetData>) => queryOptions<FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetResponse, FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetError, FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetResponse, ReturnType<typeof findSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await findSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGet({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: findSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetQueryKey(options)
+});
+
+export const analyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostMutationKey = (options?: Partial<Options<AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostData>>) => createMutationKey('analyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePost', options);
+
+/**
+ * Analyze Saved Question
+ */
+export const analyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostMutation = (options?: Partial<Options<AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostData>>): UseMutationOptions<AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostResponse, AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostError, Options<AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostData>> => {
+    const mutationOptions: UseMutationOptions<AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostResponse, AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostError, Options<AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await analyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePost({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        },
+        mutationKey: analyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostMutationKey(options)
+    };
+    return mutationOptions;
+};
+
+export const deleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteMutationKey = (options?: Partial<Options<DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteData>>) => createMutationKey('deleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDelete', options);
+
+/**
+ * Delete Saved Question
+ */
+export const deleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteMutation = (options?: Partial<Options<DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteData>>): UseMutationOptions<DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteResponse, DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteError, Options<DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteData>> => {
+    const mutationOptions: UseMutationOptions<DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteResponse, DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteError, Options<DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDelete({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        },
+        mutationKey: deleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteMutationKey(options)
     };
     return mutationOptions;
 };

@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -17,13 +18,16 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import type { InterviewQuestionRead } from "@/lib/api/generated"
 import { Link } from "@tanstack/react-router"
+import AddQuestionDialog from "./add-dialog"
 
 type QuestionMenuProps = {
+  phaseId: number
   questions: InterviewQuestionRead[]
   activeQuestionId: number
 }
 
 export default function QuestionMenu({
+  phaseId,
   questions,
   activeQuestionId,
 }: QuestionMenuProps) {
@@ -48,6 +52,9 @@ export default function QuestionMenu({
           </ItemGroup>
         </ScrollArea>
       </CardContent>
+      <CardFooter>
+        <AddQuestionDialog phaseId={phaseId} />
+      </CardFooter>
     </Card>
   )
 }

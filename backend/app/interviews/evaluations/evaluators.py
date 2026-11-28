@@ -27,7 +27,7 @@ class PhaseEvaluator(ABC):
 
 class ConversationEvaluator(PhaseEvaluator):
     def evaluate(self, db) -> InterviewPhaseEvaluationCreate:
-        questions = question_service.get_all(db, self.phase)
+        questions = question_service.get_all_for_phase(db, self.phase)
         messages = message_service.get_all_by_phase(db, self.phase)
 
         if not messages:

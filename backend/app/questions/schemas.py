@@ -1,3 +1,5 @@
+from typing import Optional
+
 from app.schemas import CamelModel
 
 
@@ -11,3 +13,7 @@ class InterviewQuestionRead(CamelModel):
 class InterviewQuestionCreate(CamelModel):
     text: str
     ordinal: int
+
+
+class CustomQuestionAdd(CamelModel):
+    text: str

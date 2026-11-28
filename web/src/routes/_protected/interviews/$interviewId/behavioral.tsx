@@ -10,6 +10,8 @@ import {
   loadPhaseQuestions,
   questionSearchSchema,
 } from "@/features/questions/utils/load-phase-questions"
+import SaveQuestionButton from "@/features/saved-questions/components/save-button"
+import { getSavedQuestionsQueryOptions } from "@/features/saved-questions/hooks/use-saved-questions"
 import type { InterviewPhaseRead } from "@/lib/api/generated"
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
@@ -21,11 +23,14 @@ export const Route = createFileRoute(
 )({
   validateSearch: questionSearchSchema,
   loader: ({ context, params }) =>
-    loadPhaseQuestions({
-      queryClient: context.queryClient,
-      interviewId: params.interviewId,
-      phaseType: PAGE_PHASE,
-    }),
+    Promise.all([
+      loadPhaseQuestions({
+        queryClient: context.queryClient,
+        interviewId: params.interviewId,
+        phaseType: PAGE_PHASE,
+      }),
+      context.queryClient.query(getSavedQuestionsQueryOptions()),
+    ]),
   component: BehavioralPhasePage,
 })
 
@@ -64,7 +69,18 @@ function BehavioralQuestions({ phase }: BehavioralQuestionsProps) {
   }
 
   return (
-    <QuestionView activeQuestion={activeQuestion} questions={questions}>
+    <QuestionView
+      phaseId={phase.id}
+      activeQuestion={activeQuestion}
+      questions={questions}
+      actions={
+        <SaveQuestionButton
+          questionId={activeQuestion.id}
+          content={activeQuestion.text}
+          phaseType={phase.phaseType}
+        />
+      }
+    >
       <Suspense
         fallback={
           <Card className="flex flex-1 items-center justify-center">

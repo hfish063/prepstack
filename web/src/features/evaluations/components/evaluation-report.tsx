@@ -1,6 +1,6 @@
 import type { InterviewSummaryRead, PhaseType } from "@/lib/api/generated"
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer"
-import { findEvaluationByPhaseType } from "../../utils/utils"
+import { findEvaluationByPhaseType } from "../utils/utils"
 
 type EvaluationReportProps = {
   summary: InterviewSummaryRead

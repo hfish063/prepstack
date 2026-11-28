@@ -1,7 +1,5 @@
 from pydantic import BaseModel, Field
 
-from app.enums import FeedbackType
-
 
 class InterviewPhaseEvaluationResponse(BaseModel):
     score: int = Field(ge=0, le=100)
@@ -21,3 +19,9 @@ class CodingEvaluationResponse(BaseModel):
     time_complexity: str
     space_complexity: str
     complexity_reasoning: str
+
+
+class QuestionAnalysisResponse(BaseModel):
+    example_response: str
+    follow_ups: list[str]
+    tips: list[str]

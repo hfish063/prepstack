@@ -1,4 +1,5 @@
 const HTTP_NOT_FOUND = 404
+const HTTP_UNAUTHORIZED = 401
 
 export class ApiError extends Error {
   status: number
@@ -14,4 +15,8 @@ export class ApiError extends Error {
 
 export function isNotFoundError(error: unknown) {
   return error instanceof ApiError && error.status === HTTP_NOT_FOUND
+}
+
+export function isUnauthorizedError(error: unknown) {
+  return error instanceof ApiError && error.status == HTTP_UNAUTHORIZED
 }

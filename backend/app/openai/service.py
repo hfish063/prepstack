@@ -22,6 +22,7 @@ from app.openai.prompts.context import (
     InterviewSummaryContext,
     PhaseEvaluationSummary,
     PhaseEvaluationContext,
+    QuestionAnalysisContext,
     QuestionContext,
     QuestionTranscript,
     TranscriptMessage,
@@ -31,6 +32,7 @@ from app.openai.prompts.builders import (
     build_interview_summary_prompt,
     build_message_prompt,
     build_phase_evaluation_prompt,
+    build_question_analysis_prompt,
     build_question_prompt,
     build_coding_evaluation_prompt,
 )
@@ -38,8 +40,10 @@ from app.openai.schemas import (
     InterviewPhaseEvaluationResponse,
     InterviewSummaryResponse,
     CodingEvaluationResponse,
+    QuestionAnalysisResponse,
 )
 from app.questions.models import InterviewQuestion
+from app.questions.saved.models import SavedQuestion
 from app.questions.schemas import InterviewQuestionCreate
 
 from openai.types.chat import ChatCompletionMessageParam
@@ -250,3 +254,22 @@ def generate_interview_summary(
     return InterviewSummaryCreate(
         overall_score=response.score, summary=response.summary, feedback=feedback
     )
+
+
+def generate_question_analysis(
+    saved_question: SavedQuestion,
+) -> QuestionAnalysisResponse:
+    """Generates an example response, likely follow-ups, and tips for a saved question."""
+    context = QuestionAnalysisContext(
+        question=saved_question.content, phase_type=saved_question.phase_type
+    )
+    sys_prompt = build_question_analysis_prompt()
+
+    client = OpenAIClient(system_message=sys_prompt)
+
+    response = client.chat_parse(context, QuestionAnalysisResponse)
+
+    if not response:
+        raise UpstreamServiceError("Failed to generate a question analysis.")
+
+    return response

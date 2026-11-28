@@ -9,7 +9,7 @@ from app.questions.models import InterviewQuestion
 from app.questions.schemas import InterviewQuestionCreate
 
 
-def get(db: Session, phase: InterviewPhase, question_id: int):
+def get_for_phase(db: Session, phase: InterviewPhase, question_id: int):
     question = db.exec(
         select(InterviewQuestion).where(
             InterviewQuestion.id == question_id,
@@ -23,7 +23,7 @@ def get(db: Session, phase: InterviewPhase, question_id: int):
     return question
 
 
-def get_all(db: Session, phase: InterviewPhase) -> list[InterviewQuestion]:
+def get_all_for_phase(db: Session, phase: InterviewPhase) -> list[InterviewQuestion]:
     return db.exec(
         select(InterviewQuestion)
         .where(InterviewQuestion.phase_id == phase.id)

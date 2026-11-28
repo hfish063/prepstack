@@ -8,6 +8,7 @@ from app.openai.prompts.strings import (
     SYSTEM_HINT_PROMPT,
     SYSTEM_QUESTION_PROMPT,
     CODING_EVALUATION_PROMPT,
+    QUESTION_ANALYSIS_PROMPT,
 )
 
 MESSAGE_PROMPTS: dict[PhaseType, str] = {
@@ -38,3 +39,7 @@ def build_phase_evaluation_prompt() -> str:
 
 def build_coding_evaluation_prompt() -> str:
     return BASE_SYSTEM_PROMPT + "\n" + CODING_EVALUATION_PROMPT
+
+
+def build_question_analysis_prompt() -> str:
+    return BASE_SYSTEM_PROMPT + "\n" + QUESTION_ANALYSIS_PROMPT
