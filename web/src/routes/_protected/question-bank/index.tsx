@@ -5,7 +5,7 @@ import { getSavedQuestionsQueryOptions } from "@/features/saved-questions/hooks/
 import { createFileRoute } from "@tanstack/react-router"
 import { Suspense } from "react"
 
-export const Route = createFileRoute("/_protected/question-bank")({
+export const Route = createFileRoute("/_protected/question-bank/")({
   loader: ({ context }) =>
     context.queryClient.query(getSavedQuestionsQueryOptions()),
   component: RouteComponent,

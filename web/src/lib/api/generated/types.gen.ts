@@ -564,6 +564,48 @@ export type RunCodeRequest = {
 };
 
 /**
+ * SavedQuestionAnalysisFollowUpRead
+ */
+export type SavedQuestionAnalysisFollowUpRead = {
+    /**
+     * Content
+     */
+    content: string;
+};
+
+/**
+ * SavedQuestionAnalysisRead
+ */
+export type SavedQuestionAnalysisRead = {
+    /**
+     * Exampleresponse
+     */
+    exampleResponse: string;
+    /**
+     * Followups
+     */
+    followUps: Array<SavedQuestionAnalysisFollowUpRead>;
+    /**
+     * Tips
+     */
+    tips: Array<SavedQuestionAnalysisTipRead>;
+    /**
+     * Createdat
+     */
+    createdAt: string;
+};
+
+/**
+ * SavedQuestionAnalysisTipRead
+ */
+export type SavedQuestionAnalysisTipRead = {
+    /**
+     * Content
+     */
+    content: string;
+};
+
+/**
  * SavedQuestionCreate
  */
 export type SavedQuestionCreate = {
@@ -595,6 +637,7 @@ export type SavedQuestionRead = {
      * Tags
      */
     tags: Array<SavedQuestionTagRead>;
+    analysis: SavedQuestionAnalysisRead | null;
     /**
      * Createdat
      */
@@ -1565,6 +1608,66 @@ export type CreateSavedQuestionApiSavedQuestionsSavePostResponses = {
 };
 
 export type CreateSavedQuestionApiSavedQuestionsSavePostResponse = CreateSavedQuestionApiSavedQuestionsSavePostResponses[keyof CreateSavedQuestionApiSavedQuestionsSavePostResponses];
+
+export type FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetData = {
+    body?: never;
+    path: {
+        /**
+         * Saved Question Id
+         */
+        saved_question_id: number;
+    };
+    query?: never;
+    url: '/api/saved-questions/{saved_question_id}/analysis';
+};
+
+export type FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetError = FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetErrors[keyof FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetErrors];
+
+export type FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SavedQuestionAnalysisRead;
+};
+
+export type FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetResponse = FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetResponses[keyof FindSavedQuestionAnalysisApiSavedQuestionsSavedQuestionIdAnalysisGetResponses];
+
+export type AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostData = {
+    body?: never;
+    path: {
+        /**
+         * Saved Question Id
+         */
+        saved_question_id: number;
+    };
+    query?: never;
+    url: '/api/saved-questions/{saved_question_id}/analyze';
+};
+
+export type AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostError = AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostErrors[keyof AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostErrors];
+
+export type AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SavedQuestionAnalysisRead;
+};
+
+export type AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostResponse = AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostResponses[keyof AnalyzeSavedQuestionApiSavedQuestionsSavedQuestionIdAnalyzePostResponses];
 
 export type DeleteSavedQuestionApiSavedQuestionsSavedQuestionIdDeleteDeleteData = {
     body?: never;

@@ -7,17 +7,6 @@ from app.questions.saved.models import SavedQuestion, SavedQuestionAnalysis
 from app.questions.saved.schemas import SavedQuestionAnalysisCreate
 
 
-def get_analysis(db: Session, saved_question: SavedQuestion) -> SavedQuestionAnalysis:
-    """Retrieves a question analysis from the database, ensuring the data exists by
-    throwing a ResourceNotFoundError when the query returns empty.
-    """
-    analysis = saved_question_service.get_analysis(db, saved_question)
-    if not analysis:
-        raise ResourceNotFoundError("This question has not been analyzed yet.")
-
-    return analysis
-
-
 def analyze_question(
     db: Session, saved_question: SavedQuestion
 ) -> SavedQuestionAnalysis:

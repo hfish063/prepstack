@@ -11,6 +11,7 @@ class SavedQuestionRead(CamelModel):
     content: str
     phase_type: PhaseType
     tags: list[SavedQuestionTagRead]
+    analysis: Optional[SavedQuestionAnalysisRead]
     created_at: datetime
 
 

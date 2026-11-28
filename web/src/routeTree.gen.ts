@@ -12,17 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
-import { Route as ProtectedQuestionBankRouteImport } from './routes/_protected/question-bank'
 import { Route as AuthSignInRouteImport } from './routes/auth/sign-in'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as ProtectedInterviewsIndexRouteImport } from './routes/_protected/interviews/index'
 import { Route as ProtectedInterviewsInterviewIdRouteRouteImport } from './routes/_protected/interviews/$interviewId/route'
+import { Route as ProtectedQuestionBankIndexRouteImport } from './routes/_protected/question-bank/index'
 import { Route as ProtectedInterviewsInterviewIdIndexRouteImport } from './routes/_protected/interviews/$interviewId/index'
 import { Route as ProtectedInterviewsInterviewIdSplatRouteImport } from './routes/_protected/interviews/$interviewId/$'
 import { Route as ProtectedInterviewsInterviewIdBehavioralRouteImport } from './routes/_protected/interviews/$interviewId/behavioral'
 import { Route as ProtectedInterviewsInterviewIdConceptualRouteImport } from './routes/_protected/interviews/$interviewId/conceptual'
 import { Route as ProtectedInterviewsInterviewIdEvaluateRouteImport } from './routes/_protected/interviews/$interviewId/evaluate'
 import { Route as ProtectedInterviewsInterviewIdTechnicalRouteRouteImport } from './routes/_protected/interviews/$interviewId/technical/route'
+import { Route as ProtectedQuestionBankQuestionIdIndexRouteImport } from './routes/_protected/question-bank/$questionId/index'
+import { Route as ProtectedQuestionBankQuestionIdAnalyzeRouteImport } from './routes/_protected/question-bank/$questionId/analyze'
 import { Route as ProtectedInterviewsInterviewIdTechnicalIndexRouteImport } from './routes/_protected/interviews/$interviewId/technical/index'
 import { Route as ProtectedInterviewsInterviewIdTechnicalNotesRouteImport } from './routes/_protected/interviews/$interviewId/technical/notes'
 import { Route as ProtectedInterviewsInterviewIdTechnicalQuestionRouteImport } from './routes/_protected/interviews/$interviewId/technical/question'
@@ -40,11 +42,6 @@ const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => ProtectedRouteRoute,
-} as any)
-const ProtectedQuestionBankRoute = ProtectedQuestionBankRouteImport.update({
-  id: '/question-bank',
-  path: '/question-bank',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
@@ -67,6 +64,12 @@ const ProtectedInterviewsInterviewIdRouteRoute =
   ProtectedInterviewsInterviewIdRouteRouteImport.update({
     id: '/interviews/$interviewId',
     path: '/interviews/$interviewId',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
+const ProtectedQuestionBankIndexRoute =
+  ProtectedQuestionBankIndexRouteImport.update({
+    id: '/question-bank/',
+    path: '/question-bank/',
     getParentRoute: () => ProtectedRouteRoute,
   } as any)
 const ProtectedInterviewsInterviewIdIndexRoute =
@@ -105,6 +108,18 @@ const ProtectedInterviewsInterviewIdTechnicalRouteRoute =
     path: '/technical',
     getParentRoute: () => ProtectedInterviewsInterviewIdRouteRoute,
   } as any)
+const ProtectedQuestionBankQuestionIdIndexRoute =
+  ProtectedQuestionBankQuestionIdIndexRouteImport.update({
+    id: '/question-bank/$questionId/',
+    path: '/question-bank/$questionId/',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
+const ProtectedQuestionBankQuestionIdAnalyzeRoute =
+  ProtectedQuestionBankQuestionIdAnalyzeRouteImport.update({
+    id: '/question-bank/$questionId/analyze',
+    path: '/question-bank/$questionId/analyze',
+    getParentRoute: () => ProtectedRouteRoute,
+  } as any)
 const ProtectedInterviewsInterviewIdTechnicalIndexRoute =
   ProtectedInterviewsInterviewIdTechnicalIndexRouteImport.update({
     id: '/',
@@ -133,17 +148,19 @@ const ProtectedInterviewsInterviewIdTechnicalSubmissionsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/question-bank': typeof ProtectedQuestionBankRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/interviews/$interviewId': typeof ProtectedInterviewsInterviewIdRouteRouteWithChildren
   '/interviews/': typeof ProtectedInterviewsIndexRoute
+  '/question-bank/': typeof ProtectedQuestionBankIndexRoute
   '/interviews/$interviewId/technical': typeof ProtectedInterviewsInterviewIdTechnicalRouteRouteWithChildren
   '/interviews/$interviewId/$': typeof ProtectedInterviewsInterviewIdSplatRoute
   '/interviews/$interviewId/behavioral': typeof ProtectedInterviewsInterviewIdBehavioralRoute
   '/interviews/$interviewId/conceptual': typeof ProtectedInterviewsInterviewIdConceptualRoute
   '/interviews/$interviewId/evaluate': typeof ProtectedInterviewsInterviewIdEvaluateRoute
+  '/question-bank/$questionId/analyze': typeof ProtectedQuestionBankQuestionIdAnalyzeRoute
   '/interviews/$interviewId/': typeof ProtectedInterviewsInterviewIdIndexRoute
+  '/question-bank/$questionId/': typeof ProtectedQuestionBankQuestionIdIndexRoute
   '/interviews/$interviewId/technical/notes': typeof ProtectedInterviewsInterviewIdTechnicalNotesRoute
   '/interviews/$interviewId/technical/question': typeof ProtectedInterviewsInterviewIdTechnicalQuestionRoute
   '/interviews/$interviewId/technical/submissions': typeof ProtectedInterviewsInterviewIdTechnicalSubmissionsRoute
@@ -152,15 +169,17 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/question-bank': typeof ProtectedQuestionBankRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/interviews': typeof ProtectedInterviewsIndexRoute
+  '/question-bank': typeof ProtectedQuestionBankIndexRoute
   '/interviews/$interviewId/$': typeof ProtectedInterviewsInterviewIdSplatRoute
   '/interviews/$interviewId/behavioral': typeof ProtectedInterviewsInterviewIdBehavioralRoute
   '/interviews/$interviewId/conceptual': typeof ProtectedInterviewsInterviewIdConceptualRoute
   '/interviews/$interviewId/evaluate': typeof ProtectedInterviewsInterviewIdEvaluateRoute
+  '/question-bank/$questionId/analyze': typeof ProtectedQuestionBankQuestionIdAnalyzeRoute
   '/interviews/$interviewId': typeof ProtectedInterviewsInterviewIdIndexRoute
+  '/question-bank/$questionId': typeof ProtectedQuestionBankQuestionIdIndexRoute
   '/interviews/$interviewId/technical/notes': typeof ProtectedInterviewsInterviewIdTechnicalNotesRoute
   '/interviews/$interviewId/technical/question': typeof ProtectedInterviewsInterviewIdTechnicalQuestionRoute
   '/interviews/$interviewId/technical/submissions': typeof ProtectedInterviewsInterviewIdTechnicalSubmissionsRoute
@@ -171,17 +190,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteRouteWithChildren
   '/_protected/dashboard': typeof ProtectedDashboardRoute
-  '/_protected/question-bank': typeof ProtectedQuestionBankRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/_protected/interviews/$interviewId': typeof ProtectedInterviewsInterviewIdRouteRouteWithChildren
   '/_protected/interviews/': typeof ProtectedInterviewsIndexRoute
+  '/_protected/question-bank/': typeof ProtectedQuestionBankIndexRoute
   '/_protected/interviews/$interviewId/technical': typeof ProtectedInterviewsInterviewIdTechnicalRouteRouteWithChildren
   '/_protected/interviews/$interviewId/$': typeof ProtectedInterviewsInterviewIdSplatRoute
   '/_protected/interviews/$interviewId/behavioral': typeof ProtectedInterviewsInterviewIdBehavioralRoute
   '/_protected/interviews/$interviewId/conceptual': typeof ProtectedInterviewsInterviewIdConceptualRoute
   '/_protected/interviews/$interviewId/evaluate': typeof ProtectedInterviewsInterviewIdEvaluateRoute
+  '/_protected/question-bank/$questionId/analyze': typeof ProtectedQuestionBankQuestionIdAnalyzeRoute
   '/_protected/interviews/$interviewId/': typeof ProtectedInterviewsInterviewIdIndexRoute
+  '/_protected/question-bank/$questionId/': typeof ProtectedQuestionBankQuestionIdIndexRoute
   '/_protected/interviews/$interviewId/technical/notes': typeof ProtectedInterviewsInterviewIdTechnicalNotesRoute
   '/_protected/interviews/$interviewId/technical/question': typeof ProtectedInterviewsInterviewIdTechnicalQuestionRoute
   '/_protected/interviews/$interviewId/technical/submissions': typeof ProtectedInterviewsInterviewIdTechnicalSubmissionsRoute
@@ -192,17 +213,19 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/question-bank'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/interviews/$interviewId'
     | '/interviews/'
+    | '/question-bank/'
     | '/interviews/$interviewId/technical'
     | '/interviews/$interviewId/$'
     | '/interviews/$interviewId/behavioral'
     | '/interviews/$interviewId/conceptual'
     | '/interviews/$interviewId/evaluate'
+    | '/question-bank/$questionId/analyze'
     | '/interviews/$interviewId/'
+    | '/question-bank/$questionId/'
     | '/interviews/$interviewId/technical/notes'
     | '/interviews/$interviewId/technical/question'
     | '/interviews/$interviewId/technical/submissions'
@@ -211,15 +234,17 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
-    | '/question-bank'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/interviews'
+    | '/question-bank'
     | '/interviews/$interviewId/$'
     | '/interviews/$interviewId/behavioral'
     | '/interviews/$interviewId/conceptual'
     | '/interviews/$interviewId/evaluate'
+    | '/question-bank/$questionId/analyze'
     | '/interviews/$interviewId'
+    | '/question-bank/$questionId'
     | '/interviews/$interviewId/technical/notes'
     | '/interviews/$interviewId/technical/question'
     | '/interviews/$interviewId/technical/submissions'
@@ -229,17 +254,19 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/_protected/dashboard'
-    | '/_protected/question-bank'
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/_protected/interviews/$interviewId'
     | '/_protected/interviews/'
+    | '/_protected/question-bank/'
     | '/_protected/interviews/$interviewId/technical'
     | '/_protected/interviews/$interviewId/$'
     | '/_protected/interviews/$interviewId/behavioral'
     | '/_protected/interviews/$interviewId/conceptual'
     | '/_protected/interviews/$interviewId/evaluate'
+    | '/_protected/question-bank/$questionId/analyze'
     | '/_protected/interviews/$interviewId/'
+    | '/_protected/question-bank/$questionId/'
     | '/_protected/interviews/$interviewId/technical/notes'
     | '/_protected/interviews/$interviewId/technical/question'
     | '/_protected/interviews/$interviewId/technical/submissions'
@@ -276,13 +303,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
-    '/_protected/question-bank': {
-      id: '/_protected/question-bank'
-      path: '/question-bank'
-      fullPath: '/question-bank'
-      preLoaderRoute: typeof ProtectedQuestionBankRouteImport
-      parentRoute: typeof ProtectedRouteRoute
-    }
     '/auth/sign-in': {
       id: '/auth/sign-in'
       path: '/auth/sign-in'
@@ -309,6 +329,13 @@ declare module '@tanstack/react-router' {
       path: '/interviews/$interviewId'
       fullPath: '/interviews/$interviewId'
       preLoaderRoute: typeof ProtectedInterviewsInterviewIdRouteRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/question-bank/': {
+      id: '/_protected/question-bank/'
+      path: '/question-bank'
+      fullPath: '/question-bank/'
+      preLoaderRoute: typeof ProtectedQuestionBankIndexRouteImport
       parentRoute: typeof ProtectedRouteRoute
     }
     '/_protected/interviews/$interviewId/': {
@@ -352,6 +379,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/interviews/$interviewId/technical'
       preLoaderRoute: typeof ProtectedInterviewsInterviewIdTechnicalRouteRouteImport
       parentRoute: typeof ProtectedInterviewsInterviewIdRouteRoute
+    }
+    '/_protected/question-bank/$questionId/': {
+      id: '/_protected/question-bank/$questionId/'
+      path: '/question-bank/$questionId'
+      fullPath: '/question-bank/$questionId/'
+      preLoaderRoute: typeof ProtectedQuestionBankQuestionIdIndexRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/question-bank/$questionId/analyze': {
+      id: '/_protected/question-bank/$questionId/analyze'
+      path: '/question-bank/$questionId/analyze'
+      fullPath: '/question-bank/$questionId/analyze'
+      preLoaderRoute: typeof ProtectedQuestionBankQuestionIdAnalyzeRouteImport
+      parentRoute: typeof ProtectedRouteRoute
     }
     '/_protected/interviews/$interviewId/technical/': {
       id: '/_protected/interviews/$interviewId/technical/'
@@ -440,17 +481,23 @@ const ProtectedInterviewsInterviewIdRouteRouteWithChildren =
 
 interface ProtectedRouteRouteChildren {
   ProtectedDashboardRoute: typeof ProtectedDashboardRoute
-  ProtectedQuestionBankRoute: typeof ProtectedQuestionBankRoute
   ProtectedInterviewsInterviewIdRouteRoute: typeof ProtectedInterviewsInterviewIdRouteRouteWithChildren
   ProtectedInterviewsIndexRoute: typeof ProtectedInterviewsIndexRoute
+  ProtectedQuestionBankIndexRoute: typeof ProtectedQuestionBankIndexRoute
+  ProtectedQuestionBankQuestionIdAnalyzeRoute: typeof ProtectedQuestionBankQuestionIdAnalyzeRoute
+  ProtectedQuestionBankQuestionIdIndexRoute: typeof ProtectedQuestionBankQuestionIdIndexRoute
 }
 
 const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
   ProtectedDashboardRoute: ProtectedDashboardRoute,
-  ProtectedQuestionBankRoute: ProtectedQuestionBankRoute,
   ProtectedInterviewsInterviewIdRouteRoute:
     ProtectedInterviewsInterviewIdRouteRouteWithChildren,
   ProtectedInterviewsIndexRoute: ProtectedInterviewsIndexRoute,
+  ProtectedQuestionBankIndexRoute: ProtectedQuestionBankIndexRoute,
+  ProtectedQuestionBankQuestionIdAnalyzeRoute:
+    ProtectedQuestionBankQuestionIdAnalyzeRoute,
+  ProtectedQuestionBankQuestionIdIndexRoute:
+    ProtectedQuestionBankQuestionIdIndexRoute,
 }
 
 const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(

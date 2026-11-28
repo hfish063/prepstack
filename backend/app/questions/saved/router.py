@@ -4,6 +4,7 @@ from starlette import status
 
 from app.auth.clerk import get_current_user_id
 from app.database.database import get_db
+from app.exceptions import ResourceNotFoundError
 from app.questions.saved.schemas import (
     SavedQuestionAnalysisRead,
     SavedQuestionCreate,
@@ -48,7 +49,12 @@ def find_saved_question_analysis(
 ):
     saved_question = saved_question_service.get(db, saved_question_id, user_id)
 
-    return saved_question_flows.get_analysis(db, saved_question)
+    analysis = saved_question_service.get_analysis(db, saved_question)
+
+    if not analysis:
+        raise ResourceNotFoundError("This question hasn't been analyzed yet.")
+
+    return analysis
 
 
 @router.post(
